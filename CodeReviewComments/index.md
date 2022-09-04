@@ -122,6 +122,23 @@ C言語などでは、一般的なテクニックとして`-1`や`null`を返す
 func Lookup(key string) (value string, ok bool)
 ```
 ## 17. Indent Error Flow
+エラーハンドリングの分岐を最小にしよう！
+- 良くない例
+  - if -> エラーハンドリング
+  - else -> 通常のコード
+
+- 良い例
+  - if -> エラーハンドリング
+    - return
+  - エラー処理と分断して通常のコード
+```go: Good code
+if err != nil {
+    // error handling
+    return // or continue, etc.
+}
+// normal code
+```
+
 ## 18. Initialisms
 ## 19. Interfaces
 ## 20. Line Length
