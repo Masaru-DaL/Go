@@ -1,6 +1,10 @@
 # CodeReviewCommentsを読む
 ## 1. Gofmt
+`gohtm`を実行すると、コードスタイルが自動的に修正される。
+必要に応じてimport行(および追加)できる`gofmt`のスーパーセットである`goimports`を使用することもできる。
+
 ## 2. Comment Sentences
+宣言を文書化するcomment文は、多少冗長に見えても完全な文にする必要がある。
 ## 3. Contexts
 ## 4. Copying
 ## 5. Crypto Rand
