@@ -98,6 +98,19 @@ import (
 この方法は、`メインパッケージ`、または`テスト`でのみ利用しましょう。
 
 ## 15. Import Dot
+```go: Import Dot
+import (
+  . "fmt"
+  "string"
+)
+```
+このように書くと通常`fmt.Println("hello world")`と書く所を`Println("hello world")`のように書く事ができる。
+
+このようなやり方は
+1. 可読性が極端に落ちる
+2. period importしたパッケージに含まれる関数と同名の関数を宣言できなくなる
+このような理由から、循環参照によってパッケージの一部がテストできないときに利用するのが望ましい。
+
 ## 16. In-Band Errors
 ## 17. Indent Error Flow
 ## 18. Initialisms
