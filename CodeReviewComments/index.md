@@ -71,10 +71,30 @@ Contextを調べた内容と同じ。
 それができない場合は、いつどんな理由で`goroutine`が終了するかドキュメントに書きましょう。
 
 ## 12. Handle Errors
-
+アンダースコア変数`_`(棄却処理)で、エラー無視をしてはいけない！きちんとエラー処理を行い、チェックすべき！
 
 ## 13. Imports
+packageをリネームするのはやめましょう。
+importする際は、空行でいくつかのグループに分けましょう。
+標準パッケージは最初のグループにしましょう。
+
+```go: Imports
+package main
+
+import (
+    "fmt"
+    "hash/adler32"
+    "os"
+
+    "appengine/foo"
+    "appengine/user"
+
+    "github.com/foo/bar"
+    "rsc.io/goversion/version"
+)
+```
 ## 14. Import Blank
+
 ## 15. Import Dot
 ## 16. In-Band Errors
 ## 17. Indent Error Flow
