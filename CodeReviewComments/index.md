@@ -112,6 +112,15 @@ import (
 このような理由から、循環参照によってパッケージの一部がテストできないときに利用するのが望ましい。
 
 ## 16. In-Band Errors
+C言語などでは、一般的なテクニックとして`-1`や`null`を返すことでエラーや結果を発見できなかったことを表現する場合があるが、Goでは推奨されません。
+なぜならGoは複数の値を返す事ができるからです。
+
+より良い方法は、`Error`型か`bool`を返して正しく取得できたか示す値を追加して返す方法です。
+※戻り値の中で最後に位置するべき。
+```go: In-Band Errors
+// Lookup returns the value for key or ok=false if there is no mapping for key.
+func Lookup(key string) (value string, ok bool)
+```
 ## 17. Indent Error Flow
 ## 18. Initialisms
 ## 19. Interfaces
