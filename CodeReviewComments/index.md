@@ -58,10 +58,11 @@ Contextを調べた内容と同じ。
 
 どういう事かと言うと、
 `log.Print("Reading %s: %v", filename, err)`が途中で大文字を出力する事がないように、`fmt.Errorf("Something bad")`ではなく、`fmt.Errorf("something bad")`とするべきである。
-
-
-
+※ロギングのような暗黙的な行指向や、他のメッセージと組み合わせないものには適用されない。
 ## 10. Examples
+新しいパッケージを追加した時、使い方のサンプルを含めると良い。
+実行可能な例や、一連の流れを追えるテストなどが該当します。
+
 ## 11. Goroutine Lifetimes
 ## 12. Handle Errors
 ## 13. Imports
