@@ -181,7 +181,19 @@ func (f *foo) Location() (lat, long float64, err error)
 **名前付き戻り値は、戻り値が何を意味をするか分かりづらい時に使う！**
 
 ## 23. Naked Returns
+変数無しの`return`文は、関数定義で宣言した変数の値を返します。
+
+```go: Naked Returns
+func split(sum int) (x, y int) {
+  x = sum * 4 / 9
+  y = sum - x
+  return
+}
+```
+
 ## 24. Package Comments
+
+
 ## 25. Package Names
 ## 26. Pass Values
 ## 27. Receiver Names
