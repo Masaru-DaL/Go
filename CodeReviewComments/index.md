@@ -242,5 +242,10 @@ p.Greet("Hi")
 - レシーバの型は統一しよう
 
 ## 29. Synchronous Functions
+非同期処理も同期処理(結果を直接返すか、値を返す前にコールバックやchannelの操作が終わっている関数)を好む。
+呼び出し側で別のgoroutineから呼び出してあげるのが良い。
+
 ## 30. Useful Test Failures
+
+
 ## 31. Variable Names
