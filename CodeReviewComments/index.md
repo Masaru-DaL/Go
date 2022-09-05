@@ -202,9 +202,15 @@ package math
   - **先頭は大文字にしろ！**
 
 ## 25. Package Names
-
+- パッケージから公開されている全ての識別子への参照は、パッケージ名を通して行われる
+  - 識別子にパッケージ名を使っている場合は外すべき
+例:
+`chubby`というパッケージの中で`ChubbyFile`という名前にすると、呼び出すときに`chubby.ChubbyFile`となるので良くない。
+`chubby.File`などが良い例になる。
 
 ## 26. Pass Values
+
+
 ## 27. Receiver Names
 ## 28. Receiver Type
 ## 29. Synchronous Functions
