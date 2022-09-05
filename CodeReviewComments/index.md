@@ -209,9 +209,12 @@ package math
 `chubby.File`などが良い例になる。
 
 ## 26. Pass Values
-
+たかだが数バイトを節約するために引数にポインタを指定するのはやめましょう。
+ただし、大きな構造体や今後大きくなりそうなものはこれに限らない。
 
 ## 27. Receiver Names
+
+
 ## 28. Receiver Type
 ## 29. Synchronous Functions
 ## 30. Useful Test Failures
