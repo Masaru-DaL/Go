@@ -160,14 +160,25 @@ ProtocolBufferによって生成されたコードは上記のようなルール
 
 ## 20. Line Length
 Goでは1行の長さを決めていないが、長すぎないようにしましょう。
-ただし、1行を短く保ちたいがために無理に改行を入れる必要はない。
-行の意味によって改行すべき。
+ただし、**1行を短く保ちたいがために無理に改行を入れる必要はない**。
+**行の意味によって改行すべき**。
 
 ## 21. Mixed Caps
 公開しない定数は`maxLength`としましょう。
 
 ## 22. Named Result Parameters
+関数内で戻り値のための変数の宣言を省略したいがために、名前付き戻り値を使うのはやめましょう。
 
+```go: Bad
+func (f *foo) Location() (float64, float64, error)
+```
+
+```go: Good
+// Location returns f's latitude and longitude.
+// Negative values mean south and west, respectively.
+func (f *foo) Location() (lat, long float64, err error)
+```
+**名前付き戻り値は、戻り値が何を意味をするか分かりづらい時に使う！**
 
 ## 23. Naked Returns
 ## 24. Package Comments
