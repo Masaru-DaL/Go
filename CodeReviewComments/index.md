@@ -192,9 +192,18 @@ func split(sum int) (x, y int) {
 ```
 
 ## 24. Package Comments
-
+Godocのパッケージのコメントは、パッケージ節の前に**改行無し**で書かなくてはいけない！
+```go: Package Comments
+// Package math provides basic constants and mathematical functions.
+package math
+```
+- Godocのコメントは公開されるものなので
+  - **正しい英語で書け！**
+  - **先頭は大文字にしろ！**
 
 ## 25. Package Names
+
+
 ## 26. Pass Values
 ## 27. Receiver Names
 ## 28. Receiver Type
