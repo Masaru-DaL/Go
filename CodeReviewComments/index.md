@@ -164,9 +164,11 @@ Goでは1行の長さを決めていないが、長すぎないようにしま�
 行の意味によって改行すべき。
 
 ## 21. Mixed Caps
-
+公開しない定数は`maxLength`としましょう。
 
 ## 22. Named Result Parameters
+
+
 ## 23. Naked Returns
 ## 24. Package Comments
 ## 25. Package Names
