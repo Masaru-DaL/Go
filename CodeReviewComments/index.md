@@ -140,6 +140,15 @@ if err != nil {
 ```
 
 ## 18. Initialisms
+`URL`は、`URL`か`url`にする。`Url`にしてはいけない。
+同様に、`appId`ではなく、`appID`にするべき。
+
+ProtocolBufferによって生成されたコードは上記のようなルールから免除されます。
+人が書いたコードには、機械が書いたコードよりも厳しい基準が要求される。
+
+- Protocol Buffer
+  - 簡単に言うと、構造化データをバイト列に変換(シリアライズ)するための技術
+
 ## 19. Interfaces
 ## 20. Line Length
 ## 21. Mixed Caps
