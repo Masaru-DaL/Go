@@ -146,3 +146,31 @@ $ docker build --target builder -t alexellis2/href-counter:latest .
 `COPY`でコピーできるステージはDockerfile内での直前のステージだけではない。
 **別のイメージ(外部イメージ)からコピーすることができる**。
 
+外部イメージをコピーする際には、
+- ローカル、またはDockerレジストリ上の
+  - イメージ名
+  - タグ名 or タグID
+を指定する。
+
+- コマンド構文例
+```docker: COPY
+COPY --from=nginx:latest /etc/nginx/nginx.conf /nginx.conf
+```
+
+#### 4-6. 前のステージを新しいステージとして利用する
+前にビルドしたステージを参照して、利用することができる。
+`FROM`命令を用いて、以下のようにする(一例)
+
+```docker: Stage
+# syntax=docker/dockerfile:1
+FROM alpine:latest AS builder
+RUN apk --no-cache add build-base
+
+FROM builder AS build1
+COPY source1.cpp source.cpp
+RUN g++ -o /binary source.cpp
+
+FROM builder AS build2
+COPY source2.cpp source.cpp
+RUN g++ -o /binary source.cpp
+```
