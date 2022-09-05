@@ -159,7 +159,13 @@ ProtocolBufferによって生成されたコードは上記のようなルール
   - 主にテストコードの中で活用され、一部の処理をテスト用に置き換えるために使用される
 
 ## 20. Line Length
+Goでは1行の長さを決めていないが、長すぎないようにしましょう。
+ただし、1行を短く保ちたいがために無理に改行を入れる必要はない。
+行の意味によって改行すべき。
+
 ## 21. Mixed Caps
+
+
 ## 22. Named Result Parameters
 ## 23. Naked Returns
 ## 24. Package Comments
