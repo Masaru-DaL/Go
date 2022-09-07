@@ -24,7 +24,20 @@ Dockerに対して`docker build`コマンドを実行してイメージビルド
 慣例として、`Dockerfile.<something>`や`<something>.Dockerfile`とする。(somethingにName)このように名前を付けたDockerfileは、`docker build`コマンドの実行に際して`--file`オプション(短縮系`-f`)を用いて指定する。
 **基本的にはデフォルト名の`Dockerfile`を用いる事が推奨されている。**
 
-#### 2-2. Dockerfileを書いてみる
+## 3. Dockerfileを書いてみる
 実際に書きながら何を意味しているかを確認しながら進めていきます。
 
+まず、プロジェクトのルートディレクトリに`Dockerfile`という名前のファイルを生成し、テキストエディタで開きます。
+
+## 3-1. パーサーディレクティブ
+1行目に書くのは`# syntax`パーサーディレクティブです。
+以下のように書きます。
+```docker: #syntax
+# syntax=docker/dockerfile:1
+```
+主な特徴は2点
+- **任意の記述**ではある。
+- 記述する場合は第一に(Dockerfileの一番最初に)記述する事が必要である。
+
+このパーサーディレクティブと呼ばれる記述が何を意味するかというと、Dockerfileの解析にあたってDockerビルダーがどの文法を採用するのかを指示する目的があります。
 
