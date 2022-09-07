@@ -195,7 +195,25 @@ RUN go mod download
 公式の冒頭でサンプルアプリケーションのクローンが促されています。
 今回作成したDockerfileも[サンプルアプリケーション](https://github.com/olliefr/docker-gs-ping)にあります。
 
+※自分は理解していなかったのですが、
+```docker: dockerfile
+COPY go.mod ./
+COPY go.sum ./
+```
+この記述はプロジェクトディレクトリに`go.mod`ファイル、`go.sum`ファイルがあり、それをコピーするという意味です。
+
+なので、公式のDockerfileはサンプルアプリケーションをクローンしてある前提でした。
+
 ```code:
 $ git clone https://github.com/olliefr/docker-gs-ping
 ```
-クローンしたファイル内で
+
+- クローンしたファイル内(ディレクトリ内のルート)で以下のコマンドを実行
+```code:
+$ docker build --tag docker-gs-ping .
+```
+エラーがなければ`FINISHED`と出ます。
+
+`--tag`は、ビルドしたイメージにラベルを付け、読みやすく認識しやすい文字列値で表示できます。
+もし`--tag`を付けない場合は、デフォルト値として`latest`が使用されます。
+
