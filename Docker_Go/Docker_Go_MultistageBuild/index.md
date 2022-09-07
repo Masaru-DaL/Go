@@ -217,3 +217,58 @@ $ docker build --tag docker-gs-ping .
 `--tag`は、ビルドしたイメージにラベルを付け、読みやすく認識しやすい文字列値で表示できます。
 もし`--tag`を付けない場合は、デフォルト値として`latest`が使用されます。
 
+無事にイメージをビルドできたら、`$ docker image ls`と打ち、作成したイメージを見てみましょう。
+REPOSITORY名が`docker-gs-ping`という名前で作成できているのが確認できます。
+
+## 4. マルチステージビルド
+[サンプルアプリケーション](https://github.com/olliefr/docker-gs-ping)には、`Dockerfile.multistage`という名前のファイルがあります。
+これがマルチステージビルドされた`Dockerfile`です。
+
+```docker: dockerfile(multistage)
+# syntax=docker/dockerfile:1
+
+##
+## Build
+##
+FROM golang:1.16-buster AS build
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY *.go ./
+
+RUN go build -o /docker-gs-ping
+
+##
+## Deploy
+##
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /docker-gs-ping /docker-gs-ping
+
+EXPOSE 8080
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/docker-gs-ping"]
+```
+
+#### 4-1. マルチステージビルドでイメージのビルド
+最初にイメージのビルドを行った階層で行います。
+```code:
+$ docker build -t docker-gs-ping:multistage -f Dockerfile.multistage .
+```
+TAGの名前に意味はなく、比較の為に`multistage`と付けています。
+`-f`でビルドに用いるファイルを指定します。(Dockerfile.multistageというファイル名のためです。)
+
+- `docker image ls`
+![](2022-09-07-17-18-05.png)
+
+注目すべきはSIZEです。
+**SIZEが桁違いに違います**。
+
