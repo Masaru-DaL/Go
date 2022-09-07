@@ -29,6 +29,27 @@ Dockerに対して`docker build`コマンドを実行してイメージビルド
 
 まず、プロジェクトのルートディレクトリに`Dockerfile`という名前のファイルを生成し、テキストエディタで開きます。
 
+- 3節でのDockerfile完成コード
+```docker: dockerfile
+# syntax=docker/dockerfile:1
+
+FROM golang:1.16-alpine
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY *.go ./
+
+RUN go build -o /docker-gs-ping
+
+EXPOSE 8080
+
+CMD [ "/docker-gs-ping" ]
+```
+
 ## 3-1. パーサーディレクティブ
 1行目に書くのは`# syntax`パーサーディレクティブです。
 以下のように書きます。
@@ -59,8 +80,6 @@ Dockerイメージは他のイメージから継承ができます。(既存の�
 
 以下は、公式のGoイメージを使用しています。
 ```docker: dockerfile
-# syntax=docker/dockerfile:1
-
 FROM golang:1.16-alpine
 ```
 このように`FROM ~`と記述します。
@@ -74,10 +93,6 @@ FROM以降に書くコマンドを簡単に実行するために、構築中の�
 ここでは`app`と名付けます。
 
 ```docker: dockerfile
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
-
 WORKDIR /app
 ```
 このようにディレクトリを作成すると、このディレクトリを基点としてコマンドを記述する事ができます。この場合、作成したディレクトリに基づく相対パスが使用できます。
@@ -90,12 +105,6 @@ WORKDIR /app
 詳細は[こちら](https://blog.framinal.life/entry/2021/04/11/013819#gomod%E3%81%A8%E3%81%AF)
 
 ```docker: dockerfile
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
-
-WORKDIR /app
-
 COPY go.mod ./
 COPY go.sum ./
 ```
@@ -110,31 +119,18 @@ COPY go.sum ./
 ローカルで実行した場合と全く同じように機能しますが、今回のコマンドは、Goモジュールがイメージ内のディレクトリにインストールされることを意味します。
 
 ```docker: dockerfile
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
-
-WORKDIR /app
-
-COPY go.mod ./
-COPY go.sum ./
 RUN go mod download
 ```
 
 #### 3-6. ソースコードをイメージにコピーする
 ```docker: dockerfile
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
-
-WORKDIR /app
-
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download
-
 COPY *.go ./
 ```
 `COPY *.go`が意味するのは、"ワイルドカード"を用いて、ホスト上の現在のディレクトリ(Dockerfileがあるディレクトリ)にある拡張子が`.go`である全てのファイルを、イメージ内のカレントディレクトリにコピーすることを意味しています。
 
 #### 3-7. アプリケーションのコンパイル
+次に、`RUN`コマンドを用いて、アプリケーションのコンパイルを行います。
+
+```docker: dockerfile
+RUN go build -o /docker-gs-ping
+```
