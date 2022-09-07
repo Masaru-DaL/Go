@@ -29,27 +29,6 @@ Dockerに対して`docker build`コマンドを実行してイメージビルド
 
 まず、プロジェクトのルートディレクトリに`Dockerfile`という名前のファイルを生成し、テキストエディタで開きます。
 
-- 3節でのDockerfile完成コード
-```docker: dockerfile
-# syntax=docker/dockerfile:1
-
-FROM golang:1.16-alpine
-
-WORKDIR /app
-
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download
-
-COPY *.go ./
-
-RUN go build -o /docker-gs-ping
-
-EXPOSE 8080
-
-CMD [ "/docker-gs-ping" ]
-```
-
 ## 3-1. パーサーディレクティブ
 1行目に書くのは`# syntax`パーサーディレクティブです。
 以下のように書きます。
@@ -144,8 +123,11 @@ RUN go build -o /docker-gs-ping
 > `-o <file>`
 > バイナリを指定されたファイルにコンパイルします。
 とあります。
-つまり、コンパイルした後のファイル名を"docker-gs-ping"として配置するという意味と捉えられます。配置場所は構築中のイメージのファイルシステムのルートです。
+つまり、コンパイルした後のファイル名を"docker-gs-ping"として配置するという意味と捉えられます。
 
+**コンパイルされた"docker-gs-ping"というファイルはDockerが実行できる状態になった**ということが重要です。
+
+配置場所は構築中のイメージのファイルシステムのルートです。
 ルートディレクトリ(配置場所)に特別な意味はないが、ルートに配置することで読みやすさ、ファイルパスが短くなるため、便利です。
 
 #### 3-8. ポート番号
@@ -153,4 +135,67 @@ RUN go build -o /docker-gs-ping
 
 `EXPOSE`は指定したポート番号をコンテナが公開することをDockerに伝えるという意味があります。
 
-#### 3-9. 
+#### 3-9. docker run時に実行するコマンド
+最後にコンパイルした"docker-gs-ping"ファイルをコンテナを起動する時に実行するコマンドとしてDockerに指示を出す文を記述します。
+
+```docker: dockerfile
+CMD [ "/docker-gs-ping" ]
+```
+
+#### 3-10. 完成したDockerfile
+完成したDockerfileが以下です。
+```docker: dockerfile
+# syntax=docker/dockerfile:1
+
+FROM golang:1.16-alpine
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY *.go ./
+
+RUN go build -o /docker-gs-ping
+
+EXPOSE 8080
+
+CMD [ "/docker-gs-ping" ]
+```
+
+#### 3-11. Comments
+Dockerfileには`#`を使用してコメントを書く事ができます。
+
+必ず行頭に`#`を付けて記述します。
+コメントはDockerfileを文書化するために便宜的に存在します。
+
+※syntaxディレクティブが存在する場合はこのディレクティブの後に書きましょう。syntaxディレクティブは全てにおいて最優先されます。
+
+- コメント例
+```docker: dockerfile(comments)
+# syntax=docker/dockerfile:1
+
+# Alpine is chosen for its small footprint
+# compared to Ubuntu
+FROM golang:1.16-alpine
+
+WORKDIR /app
+
+# Download necessary Go modules
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+# ... the rest of the Dockerfile is ...
+# ...   omitted from this example   ...
+```
+
+#### 3-12. イメージのビルド
+公式の冒頭でサンプルアプリケーションのクローンが促されています。
+今回作成したDockerfileも[サンプルアプリケーション](https://github.com/olliefr/docker-gs-ping)にあります。
+
+```code:
+$ git clone https://github.com/olliefr/docker-gs-ping
+```
+クローンしたファイル内で
