@@ -66,3 +66,38 @@ FROM golang:1.16-alpine
 このように`FROM ~`と記述します。
 `FROM`はベースとなるイメージを指定し、Dockerfileの先頭(#syntaxの後)に必ず必要です。
 
+この最初の`FROM`の後に続くコマンドはすべて、ここで指定した「ベースイメージ」の上に構築されます。
+
+#### 3-3. ディレクトリの作成
+FROM以降に書くコマンドを簡単に実行するために、構築中のイメージ内にディレクトリを作成する。
+`WORKDIR </ディレクトリ名>`と記述します。
+ここでは`app`と名付けます。
+
+```docker: dockerfile
+# syntax=docker/dockerfile:1
+
+FROM golang:1.16-alpine
+
+WORKDIR /app
+```
+このようにディレクトリを作成すると、このディレクトリを基点としてコマンドを記述する事ができます。この場合、作成したディレクトリに基づく相対パスが使用できます。
+
+#### 3-4. COPY
+通常、Goで記述されたプロジェクトをダウンロードして最初に行うことはコンパイルに必要なモジュールをインストールすることです。
+しかし、イメージ内でそれを実行するには先にファイルをイメージにコピーする必要があります。
+
+コピーするのは`go.mod`, `go.sum`の2つです。
+詳細は[こちら](https://blog.framinal.life/entry/2021/04/11/013819#gomod%E3%81%A8%E3%81%AF)
+
+```docker: dockerfile
+# syntax=docker/dockerfile:1
+
+FROM golang:1.16-alpine
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./
+```
+`./`は`WORKDIR`で作成したディレクトリから見た相対パスです。つまり`/app`ディレクトリにコピーすることを指しています。
+
