@@ -21,3 +21,10 @@ Dockerに対して`docker build`コマンドを実行してイメージビルド
 この名前を用いておければ、`docker build`というコマンドを実行する際に、コマンドラインフラグ(オプションのような`-l`などのこと)を追加して指定する必要がない。
 
 - プロジェクトによっては特定の目的のためにDockerfileに別名を与える場合がある。
+慣例として、`Dockerfile.<something>`や`<something>.Dockerfile`とする。(somethingにName)このように名前を付けたDockerfileは、`docker build`コマンドの実行に際して`--file`オプション(短縮系`-f`)を用いて指定する。
+**基本的にはデフォルト名の`Dockerfile`を用いる事が推奨されている。**
+
+#### 2-2. Dockerfileを書いてみる
+実際に書きながら何を意味しているかを確認しながら進めていきます。
+
+
