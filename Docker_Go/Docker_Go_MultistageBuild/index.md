@@ -387,3 +387,14 @@ $ docker run -d -p 8080:8080 docker-gs-ping
 $ curl http://localhost:8080/
 # Hello, Docker! <3 と返ってきます。
 ```
+これは[サンプルアプリケーション](https://github.com/olliefr/docker-gs-ping)の`main.go`の以下が返ってきていました。
+
+```go: main.go
+e.GET("/", func(c echo.Context) error {
+		return c.HTML(http.StatusOK, "Hello, Docker! <3")
+	})
+```
+
+**※コンテナの一覧表示、削除、起動、名前変更などは割愛**
+
+
