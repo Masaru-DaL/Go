@@ -406,4 +406,49 @@ e.GET("/", func(c echo.Context) error {
 
 **※この章のコンテナの一覧表示、削除、起動、などは割愛します。**
 
-## 6. 
+#### 5-4. ふとした疑問
+ここで立ち上げたコンテナってマルチステージビルドのイメージなの？という疑問が沸きました。
+
+一度コンテナを全部削除して、イメージもマルチステージを残して削除します。
+その後、`docker run`を実行します。
+
+```shell:
+$ docker run -d -p 8080:8080 docker-gs-ping
+
+# 以下にエラー文が出力されます。
+# Unable to find image 'docker-gs-ping:latest' locally
+# docker: Error response from daemon: pull access denied for docker-gs-ping, repository does not exist or may require 'docker login': denied: requested access to the resource is denied.
+# See 'docker run --help'.
+```
+
+その後付けたタグを指定して実行すると成功します。
+```shell:
+$ docker run -d -p 8080:8080 docker-gs-ping:multistage
+
+# コンテナIDの出力
+```
+マルチステージのタグを付けてイメージを作成していたので、デフォルトの`docker run`は`latest`を参照するのかなという推察です。
+タグ名を付けてイメージを作成した場合は明示的に指定する必要があると思われます。
+
+## 6. データベースエンジン
+公式の次の手順は、以下です。
+1. データベースエンジンを実行し、これをさプルアプリケーションに接続。
+2. `Docker Compose`を使用して複数コンテナの管理
+
+#### 6-1. 使用するデータベースエンジン
+[CockroachDB](https://www.cockroachlabs.com/product/)と呼ばれ、最新のクラウドネイティブの分散型SQLデータベースです。
+CockroachDBのDockerイメージを使用します。
+
+#### 6-2. ストレージ
+データベースの重要な点は、**データの永続的な保存を行うこと**と表記してます。
+
+この言い回しは、コンテナのサイクルと関係があります。
+コンテナ内で発生したデータは同じコンテナ内のどこかに書き出されるが、コンテナを破棄すると消えてしまいます。
+コンテナは生成->削除がある意味1セットな考え方、手軽さがありますので、コンテナにおいてデータを永続的に保存したい場合は"ボリューム"というメカニズムを利用します。
+
+ボリュームの作成には次を実行します。
+```shell:
+$ docker volume create roach
+# roach
+```
+
