@@ -661,3 +661,234 @@ $ curl localhost
 # 実行結果
 # Hello, Docker! (2)
 ```
+メッセージを投稿した数だけカウンターが上がっています -> `(2)`
+
+- データベースに保存されているか確認
+これは**ボリュームによるデータの保存の永続化**の確認です。
+1. コンテナの停止
+立ち上がっているコンテナを2つ停止します。
+`docker ps`でも確認出来ます。出てきた`NAMES`を指定します。
+```shell:
+$ docker container stop rest-server roach
+
+# 実行結果
+# rest-server
+# roach
+```
+
+2. コンテナの削除
+```shell:
+$ docker container rm rest-server roach
+
+# 実行結果
+# rest-server
+# roach
+```
+
+3. 削除されているかの確認
+```shell:
+$ docker container list --all
+
+# 実行結果
+# コンテナが出てこなければOK
+# CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+4. データベースのビルド
+```shell:
+docker run -d \
+  --platform linux/x86_64 \
+  --name roach \
+  --hostname db \
+  --network mynet \
+  -p 26257:26257 \
+  -p 8080:8080 \
+  -v roach:/cockroach/cockroach-data \
+  cockroachdb/cockroach:latest-v20.1 start-single-node \
+  --insecure
+```
+※M1Macの方はplatformの指定を忘れずに。
+
+5. アプリケーションのビルド
+```shell:
+docker run -it --rm -d \
+  --network mynet \
+  --name rest-server \
+  -p 80:8080 \
+  -e PGUSER=totoro \
+  -e PGPASSWORD=myfriend \
+  -e PGHOST=db \
+  -e PGPORT=26257 \
+  -e PGDATABASE=mydb \
+  docker-gs-ping-roach
+```
+
+6. クエリの実行
+```shell:
+curl localhost
+
+# 実行結果
+# Hello, Docker! (2)
+```
+データベースにきちんと保存されている結果が返ってきます。
+これは、CockroachDBの管理ボリュームを再利用しているためです。
+
+#### 6-11. 一度全てを停止、削除する
+説明していませんでしたが、データベースエンジンをビルドした際のコマンドに`--insecure`というコマンドがありました。
+これは"安全ではないモード(状態)"で実行するという意味です。
+本番環境ではこのモードで実行してはいけません。
+なので、一度全てのコンテナを停止、削除します。
+
+```shell:
+# 1. 起動しているコンテナの確認
+$ docker container list
+
+# 2. コンテナの停止
+$ docker container stop <コンテナ名>
+
+# 3. コンテナの削除
+$ docker container rm <コンテナ名>
+```
+
+## 7. Docker Compose
+ここまで長い`docker`コマンド(引数の長いリスト)を実行してきました。これは打ち間違いも多く、非常に労力がかかります。
+
+これを回避する方法として"Docker Compose"を利用する方法があります。
+**1つのDocker Composeファイル(docker-compose.yml)を用いて、"docker-gs-ping-roachアプリケーション"と"CockroachDBデータベース・エンジン"を起動させる事ができます。**
+
+#### 7-1. Docker Composeの構成
+アプリケーションのディレクトリに、`docker-compose.yml`という名前のファイルを作り以下のように記述していきます。
+
+```yml:
+version: '3.8'
+
+services:
+  docker-gs-ping-roach:
+    depends_on:
+      - roach
+    build:
+      context: .
+    container_name: rest-server
+    hostname: rest-server
+    networks:
+      - mynet
+    ports:
+      - 80:8080
+    environment:
+      - PGUSER=${PGUSER:-totoro}
+      - PGPASSWORD=${PGPASSWORD:?database password not set}
+      - PGHOST=${PGHOST:-db}
+      - PGPORT=${PGPORT:-26257}
+      - PGDATABASE=${PGDATABASE:-mydb}
+    deploy:
+      restart_policy:
+        condition: on-failure
+  roach:
+    image: cockroachdb/cockroach:latest-v20.1
+    container_name: roach
+    hostname: db
+    networks:
+      - mynet
+    ports:
+      - 26257:26257
+      - 8080:8080
+    volumes:
+      - roach:/cockroach/cockroach-data
+    command: start-single-node --insecure
+
+volumes:
+  roach:
+
+networks:
+  mynet:
+    driver: bridge
+```
+※`docker-compose.yml`におけるインデントは非常に大事です。これがずれているだけ思ったように動かない場合があります。
+
+このDocker Composeの設定は、`docker run`コマンドに渡すパラメータを全て渡す必要がありません。**超便利です**。
+
+#### 7-2. .envファイル
+DockerComposeは、`.env`ファイルがあればそこから自動的に環境変数を読み取ります。
+今回のComposeファイルでは`PGPASSWORD`を設定する必要があるため、`.env`ファイルに以下の内容を追加します。
+
+```yml:
+# 設定している値はこの値でなくても構いません。
+# エラーが発生しないように何らかの値を設定します。
+PGPASSWORD=whatever
+```
+
+- `.env`ファイルの扱い
+見て分かる通り、`.env`ファイルに書く内容はパスワードなど、**他者に知られてはいけない内容を記述します**。
+`git`などを用いてパプリックな場所に保管する場合は`.gitignore`にファイルを記載して、セキュアな状態にする必要があります。
+
+#### 7-3. Composeファイル
+"docker-compose.yml"というファイル名は、`-f`フラグを指定しない場合に`docker-compose`コマンドで認識されるデフォルトのファイル名です。
+これは複数のDockerComposeファイルを持つ事ができることを意味しています。
+
+#### 7-4. DockerComposeの変数置換
+- 前提知識
+  - 環境変数とは何か？
+環境変数とは、開発・テスト・本番などの**環境ごとに変化する値を入れる変数のこと**です。
+値を直接的な数値ではなく、変数にすることで**環境ごとに書き換える事なく運用することが出来るのが利用する利点**です。
+
+DockerComposeの非常に優れた機能の1つが**変数置換**です。
+`<変数>=${<変数に入れる値>}`のように`docker-compose.yml`に記述します。
+"7-1"で作成した`docker-compose.yml`の内容を例にとります。
+
+- `PGUSER=${PGUSER:-totoro}`
+環境変数`PGUSER`は、DockerComposeが実行されているホストマシンと同じ値に設定されること意味します。
+ホストマシンにこの名前の環境変数がない場合、コンテナ内の変数はデフォルトの`totoro`になります。
+
+- `PGPASSWORD=${PGPASSWORD:?database password not set}`
+環境変数`PGPASSWORD`がホスト上に設定されていない場合、DockerComposeがエラーを表示することを意味します。
+パスワードは値を設定するのではなく、`.env`から参照することを設定するので、これで問題ありません。
+**きちんと`.env`を`.gitignore`に記載してシークレットしましょう。**
+
+#### 7-5. DockerComposeの構成の検証
+```shell:
+# 以下のコマンドで検証ができる。
+$ docker-compose config
+```
+`.env`の作成を忘れずに行いましょう。
+これがないと"PGPASSWORDが設定されていませんよ"というエラーが出力されます。
+
+#### 7-6. DockerComposeを使用してアプリケーションをビルドして実行する
+アプリケーションを起動し、正しく動作するかを確認します。
+```shell:
+$ docker-compose up --build
+```
+`--build`は、Dockerがイメージをコンパイルして起動するように指定するフラグです。
+`--build`を指定した場合、ソースコードが更新された場合にリビルドが発生します。自分のソースコードを編集し、`docker-compose up`を実行する際に`--build`フラグを使い忘れるというのは非常によくある落とし穴、と記述されています。(自分も使い忘れていました。)
+
+DockerComposeによってセットアップが実行され、"プロジェクト名"が割り当てられた為、CockroachDBインスタンス用の新しいボリュームを取得しました。(新しく"docker-gs-ping-roach_roach"というボリュームがあります。)
+出力されている内容は、**データベースにこの新しいボリュームが存在しないためにアプリケーションがデータベースへの接続に失敗していることを意味するエラー**のようです。
+"docker-compose.yml"に`restart_policy:`を使用してデプロイ設定しているため、失敗したコンテナは20秒ごとに再起動しています。
+
+**これを解決するには、データベースエンジンにログインしてユーザーを作成する必要があります。**
+再起動を続けている状態のまま続けます。
+また、別のターミナルを立ち上げて以降のコマンドを実行します。
+
+- "6-6"で行ったことと同じ事をします。
+1. コンテナに入る
+2. データベースの作成 -> `mydb`
+3. ユーザーの作成 -> `totoro`
+4. 権限の付与
+一連の作業を行うと、コンテナが自動的に再起動されます。
+そうすると、コンテナの失敗と再起動が停止し、以下の表示が出力されます。
+
+```shell:
+rest-server  |
+rest-server  |    ____    __
+rest-server  |   / __/___/ /  ___
+rest-server  |  / _// __/ _ \/ _ \
+rest-server  | /___/\__/_//_/\___/ v4.3.0
+rest-server  | High performance, minimalist Go web framework
+rest-server  | https://echo.labstack.com
+rest-server  | ____________________________________O/_______
+rest-server  |                                     O\
+rest-server  | ⇨ http server started on [::]:8080
+```
+
+#### 7-6. アプリケーションのテスト
+フォアグラウンドで実行が続いてる場合は別のターミナルで実行します。
+
