@@ -385,6 +385,7 @@ $ docker run -d -p 8080:8080 docker-gs-ping
 # docker ps または、DockerDesktopで起動を確認してみてください。
 
 $ curl http://localhost:8080/
+
 # Hello, Docker! <3 と返ってきます。
 ```
 これは[サンプルアプリケーション](https://github.com/olliefr/docker-gs-ping)の`main.go`の以下が返ってきていました。
@@ -425,6 +426,7 @@ $ docker run -d -p 8080:8080 docker-gs-ping
 ```shell:
 $ docker run -d -p 8080:8080 docker-gs-ping:multistage
 
+# 実行結果
 # コンテナIDの出力
 ```
 マルチステージのタグを付けてイメージを作成していたので、デフォルトの`docker run`は`latest`を参照するのかなという推察です。
@@ -449,12 +451,16 @@ CockroachDBのDockerイメージを使用します。
 ボリュームの作成には次を実行します。
 ```shell:
 $ docker volume create roach
+
+# 実行結果
 # roach
 ```
 
 ボリュームのリストの表示
 ```shell:
 $ docker volume list
+
+# 実行結果
 # DRIVER    VOLUME NAME
 # local     roach
 ```
@@ -466,6 +472,8 @@ $ docker volume list
 ```shell:
 # -dはネットワークを管理するドライバーを指定するオプション
 $ docker network create -d bridge mynet
+
+# 実行結果
 # NETWORK ID
 ```
 - `docker network create`でブリッジネットワークが作成されます。
@@ -477,6 +485,7 @@ $ docker network create -d bridge mynet
 ```shell:
 $ docker network list
 
+# 実行結果
 # NETWORK ID     NAME      DRIVER    SCOPE
 # 96bd8ddeb5bb   bridge    bridge    local
 # 620d216e0654   host      host      local
@@ -516,6 +525,7 @@ $ docker run -d \
 原因はM1Macによるものです。
 明示的にplarformを指定する必要があります。
 `--platform linux/x86_64 \`の行です。
+※Dockerイメージがplatform(今回の場合M1のarm64)に対応していない場合に起こります。
 
 #### 6-6. データベースエンジンの設定
 アプリケーションでの使用を開始する前に行わなければいけない設定が幾つかあります。
@@ -592,10 +602,14 @@ $ docker run -it --rm -d \
 以下のコマンドが実行できればOKです。
 ```shell:
 $ curl localhost
+
+# 実行結果
 # Hello, Docker! (0)
 
 # または、
 $ curl http://localhost/
+
+# 実行結果
 # Hello, Docker! (0)
 ```
 DockerDesktopなどで確認すると分かりますが、`-p 80:8080 \`でホストポートを80にしています。
@@ -612,3 +626,38 @@ DockerDesktopなどで確認すると分かりますが、`-p 80:8080 \`でホ�
 
 - `--name rest-server \`
 ここで付けた"rest-server"という名前はコンテナのライフサイクルを管理(起動、削除など)するのに役立ちます。
+
+#### 6-10. アプリケーションのテスト
+[curl man page](http://www.mit.edu/afs.new/sipb/user/ssen/src/curl-7.11.1/docs/curl.html)
+
+- メッセージを投稿してみる
+```shell:
+curl --request POST \
+  --url http://localhost/send \
+  --header 'content-type: application/json' \
+  --data '{"value": "Hello, Docker!"}'
+```
+`--data`でHTMLフォームでデータを送信したかのように出来ます。
+何をやってるかというと、**データを指定urlにJSON形式でPOSTしています**。
+
+`{"value":"Hello, Docker!"}`が出力されます。
+これはメッセージがデータベースに保存されたことを意味しています。
+
+- 別のメッセージを投稿してみる
+```shell:
+$ curl --request POST \
+  --url http://localhost/send \
+  --header 'content-type: application/json' \
+  --data '{"value": "Hello, Oliver!"}'
+
+# 実行結果
+# {"value":"Hello, Oliver!"}
+```
+
+- メッセージカウンターの確認
+```shell:
+$ curl localhost
+
+# 実行結果
+# Hello, Docker! (2)
+```
