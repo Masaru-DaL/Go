@@ -452,3 +452,38 @@ $ docker volume create roach
 # roach
 ```
 
+ボリュームのリストの表示
+```shell:
+$ docker volume list
+# DRIVER    VOLUME NAME
+# local     roach
+```
+
+#### 6-3. ネットワークの構築
+サンプルアプリケーションとデータベースエンジンは、ネットワークを介して相互に通信を行います。
+さまざまな種類のネットワーク構成が可能で、ユーザー定義ブリッジネットワークと呼ばれるものを使用します。
+
+```shell:
+# -dはネットワークを管理するドライバーを指定するオプション
+$ docker network create -d bridge mynet
+# NETWORK ID
+```
+- `docker network create`でブリッジネットワークが作成されます。
+- ブリッジネットワークは仮想ブリッジを使用する。
+(ブリッジはOSI参照モデルのデータリンク層における通信を制御する)
+- ユーザーが作成したブリッジネットワークをユーザー定義ブリッジネットワークと呼ぶ。
+
+ネットワークを一覧表示して確認する
+```shell:
+$ docker network list
+
+# NETWORK ID     NAME      DRIVER    SCOPE
+# 96bd8ddeb5bb   bridge    bridge    local
+# 620d216e0654   host      host      local
+# c49f4a66c445   mynet     bridge    local
+# e1be2f472332   none      null      local
+```
+mynet以外に3つありますが、これはDocker自体によって作成されている。
+詳細: [ネットワークの概要](https://matsuand.github.io/docs.docker.jp.onthefly/network/)に、今回作成された<NAME>で見ると何であるか確認出来ます。
+
+#### 6-4. 
