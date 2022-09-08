@@ -517,11 +517,89 @@ $ docker run -d \
 明示的にplarformを指定する必要があります。
 `--platform linux/x86_64 \`の行です。
 
-### 6-6. データベースエンジンの設定
+#### 6-6. データベースエンジンの設定
 アプリケーションでの使用を開始する前に行わなければいけない設定が幾つかあります。
-1. 空のデータベースの作成
-2. データベースエンジンに新しいユーザーアカウントを登録
-3. 新しいユーザーにデータベースへのアクセス権の付与
+コンテナに入り、SQLコマンドを用いて行います。これはCockroachDBの組み込みSQLシェルの機能です。
 
-これらの設定は、
-#### 6-6-1. 空のデータベースの作成
+```shell:
+$ docker exec -it roach ./cockroach sql --insecure
+# root@~ のようにSQLコマンドを受け付ける状態になる
+```
+
+1. 空のデータベースの作成
+```sql:
+CREATE DATABASE mydb;
+```
+
+2. データベースエンジンに新しいユーザーアカウントを登録
+```sql:
+CREATE USER totoro;
+```
+"totoro"は任意です。
+
+3. 新しいユーザーにデータベースへのアクセス権の付与
+```sql:
+GRANT ALL ON DATABASE mydb TO totoro;
+```
+
+4. `quit`と入力し、シェルの終了
+
+#### 6-7. この先動かすサンプルアプリケーション
+ここから使用するサンプルアプリケーションは、これまでに使用してきた"docker-gs-ping"を拡張したものになります。
+- 拡張するには
+1. ローカルにコピーしたものを更新する
+2. [拡張済みのもの](https://github.com/olliefr/docker-gs-ping-roach)をクローンして使用する
+公式では2を推奨していますので、倣ってクローンします。
+(docker-gs-pingとは違うディレクトリが良いでしょう。)
+```shell:
+$ git clone https://github.com/olliefr/docker-gs-ping-roach.git
+# ... output omitted ...
+```
+"docker-gs-ping-roach"というディレクトリがクローンされました。
+
+- 拡張後の変更点
+`main.go` ->
+データベースの初期化コードと新しいビジネス要件を実装するコードの追加
+
+拡張後のDockerfileを見ると、マルチステージビルドに対応した記述がされていますね。
+`FROM gcr.io/distroless/base-debian10`
+ここを調べると、ポイントは"distoless"のようです。
+
+ベースとしてディストリビューションにはカーネルを除く基本的な設定ファイルやパッケージが一通り含まれているので、こうした**不要なファイルを削除し、アプリケーションの実行に必要な最小限のファイルのみを含んだコンテナイメージ**をビルドすることを意味しています。
+
+#### 6-8. アプリケーションのビルド
+- アプリケーションのビルド
+```shell:
+$ docker build --tag docker-gs-ping-roach .
+```
+#### 6-9. アプリケーションの実行
+まず、アプリケーションがデータベースへのアクセス方法が認識できるように、いくつかの環境変数を設定する必要があるようです。
+`docker run`コマンドを用いて行います。
+
+```shell:
+$ docker run -it --rm -d \
+  --network mynet \
+  --name rest-server \
+  -p 80:8080 \
+  -e PGUSER=totoro \
+  -e PGPASSWORD=myfriend \
+  -e PGHOST=db \
+  -e PGPORT=26257 \
+  -e PGDATABASE=mydb \
+  docker-gs-ping-roach
+```
+
+以下のコマンドが実行できればOKです。
+```shell:
+$ curl localhost
+# Hello, Docker! (0)
+
+# または、
+$ curl http://localhost/
+# Hello, Docker! (0)
+```
+DockerDesktopなどで確認すると分かりますが、`-p 80:8080 \`でホストポートを80にしています。
+ポート80は**WebサーバがHTTPでWebブラウザなどと通信するために**用いられています。
+
+出力された`(0)`はメッセージの合計数です。アプリケーションにはまだ何も投稿していないので問題ありません。
+
