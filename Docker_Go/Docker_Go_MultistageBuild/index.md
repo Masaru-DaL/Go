@@ -486,4 +486,42 @@ $ docker network list
 mynet以外に3つありますが、これはDocker自体によって作成されている。
 詳細: [ネットワークの概要](https://matsuand.github.io/docs.docker.jp.onthefly/network/)に、今回作成された<NAME>で見ると何であるか確認出来ます。
 
-#### 6-4. 
+#### 6-4. 適切な名前付け
+- コンピュータサイエンスで難しいと言われている事が2つ
+1. キャッシュの無効化と名前付け
+2. [Off-by-one-Error](https://ja.wikipedia.org/wiki/Off-by-one%E3%82%A8%E3%83%A9%E3%83%BC)
+
+ネットワークおよび管理ボリュームの名前は、意図した目的を示す名前を付ける事が推奨されている。
+
+#### 6-5. データベースエンジンの起動
+ここまでの一通りの作業が終わると、CockroachDBをコンテナで実行し、先ほど作成したボリュームとネットワークに接続できるようになりました。
+
+以下のコマンドを実行すると、DockerがDocker Hubからイメージを取得してローカルで実行してくれる。
+```shell:
+$ docker run -d \
+  --platform linux/x86_64 \
+  --name roach \
+  --hostname db \
+  --network mynet \
+  -p 26257:26257 \
+  -p 8080:8080 \
+  -v roach:/cockroach/cockroach-data \
+  cockroachdb/cockroach:latest-v20.1 start-single-node \
+  --insecure
+
+# ... output omitted ...
+```
+- M1Macの人は
+公式通りにコマンドを打つとエラーになります。
+原因はM1Macによるものです。
+明示的にplarformを指定する必要があります。
+`--platform linux/x86_64 \`の行です。
+
+### 6-6. データベースエンジンの設定
+アプリケーションでの使用を開始する前に行わなければいけない設定が幾つかあります。
+1. 空のデータベースの作成
+2. データベースエンジンに新しいユーザーアカウントを登録
+3. 新しいユーザーにデータベースへのアクセス権の付与
+
+これらの設定は、
+#### 6-6-1. 空のデータベースの作成
