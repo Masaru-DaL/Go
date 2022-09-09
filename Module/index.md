@@ -140,4 +140,13 @@ import "github.com/goark/pa-api/entity"
 メジャーバージョンサフィックスである、という所だけが良く分かりませんね。
 参考: [Go modulesで依存モジュールのメジャーバージョンがv2以上の時の対応](https://christina04.hatenablog.com/entry/go-modules-major-version)
 ポイントとしては、
-1. go modules(モジュールのシステム、アルゴリズム)
+1. go modules(モジュールのシステム、アルゴリズム)は、複数依存モジュールがあった場合に、**より新しいバージョンを使おうとする**。
+2. 使おうとしたモジュールに後方互換性がなかった場合、期待する動作が得られない場合がある。
+3. 複数の依存モジュール間で互換性を持たせるかどうか(互換性が必要かどうか)を書く事で期待した通りの動作を得られるようにするということ。
+
+> "If an old package and a new package have the same import path, the new package must be backwards compatible with the old package."
+
+この基準は、同じ"import path"なら互換性を保つ、互換性を保たないなら別の"import path"にする、という事です。
+引用: [Semantic Import Versioning](https://research.swtch.com/vgo-import)
+
+## 4. モジュールの管理
