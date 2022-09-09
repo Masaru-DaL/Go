@@ -54,13 +54,15 @@ GOPATHモード -> 最新バージョンのみ
 > A module is a collection of packages that are released, versioned, and distributed together.
 
 1. モジュールは、**パッケージの集合体**であること。
+引用: [Go Module image](https://www.practical-go-lessons.com/img/3_modules.3b193265.png)
+
 2. パッケージはバージョン管理されている。
 
 と書かれています。
 まずは、パッケージを理解する必要があるようです。
 
 #### 2-1. Go: パッケージ
-引用: [Go Package image](https://d33wubrfki0l68.cloudfront.net/9dd0ebe575f5a77e6f73fa74d44ea96cb66d5cb4/4b97c/static/a5258526ae54e5c5e977c741d1bc2cfb/bd6b9/go-package-illustration.jpg)
+引用: [Go Package image](https://www.practical-go-lessons.com/img/go_program_package.acdaaa3b.png)
 
 > Each package within a module is a collection of source files in the same directory that are compiled together.
 
@@ -109,3 +111,14 @@ graph LR;
 > A module path should describe both what the module does and where to find it. Typically, a module path consists of a repository root path, a directory within the repository (usually empty), and a major version suffix (only for major version 2 or higher).
 
 - モジュールパスは、**モジュールが何をするのか、どこにあるのかを記述する必要がある**。
+- モジュールパスの構成は、リポジトリのルートパス、リポジトリ内のディレクトリ(通常は空)、メジャーバージョンサフィックスである。
+
+ここは例を挙げながら理解します。
+参考: [Go のモジュール管理【バージョン 1.17 改訂版】](https://zenn.dev/spiegel/articles/20210223-go-module-aware-mode)
+
+- 外部パッケージ"github.com/goark/pa-api/entity"をインポートする場合
+```go:
+import "github.com/goark/pa-api/entity"
+```
+この時のモジュール対応モードの処理を追います。
+1. 宣言された`import "github.com/goark/pa-api/entity"`を解釈して、`https://github.com/goark/pa-api`にある
