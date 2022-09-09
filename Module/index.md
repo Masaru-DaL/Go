@@ -121,4 +121,23 @@ graph LR;
 import "github.com/goark/pa-api/entity"
 ```
 この時のモジュール対応モードの処理を追います。
-1. 宣言された`import "github.com/goark/pa-api/entity"`を解釈して、`https://github.com/goark/pa-api`にある
+> 1. 宣言された`import "github.com/goark/pa-api/entity"`を解釈して、`https://github.com/goark/pa-api`にあるリポジトリの指定りビジョンをフェッチする。(りビジョンは自パッケージの`go.mod`ファイルで指定されたバージョンから類推する)
+
+> 2. フェッチしたリポジトリにある`go.mod`ファイルからモジュール名`github.com/goark/pa-api`を取得する。(`go.mod`ファイルがない場合は物理パスがそのままモジュール名となる)
+
+> 3. 宣言されたパスとモジュール名からサブディレクトリ`entity`を該当のパッケージと解釈してインポートする。
+
+上記の例から考えます。
+> モジュールパスは、**モジュールが何をするのか、どこにあるのかを記述する必要がある**。
+
+これは、モジュール名`github.com/goark/pa-api`は、
+1. "github.com" -> http://github.comにある
+2. "goark/pa-api" -> golang用で、Amazon PA-APIv5にアクセスするためのもの
+と、モジュール名を見ただけで推察できることが分かります。
+
+> モジュールパスの構成は、リポジトリのルートパス、リポジトリ内のディレクトリ(通常は空)、メジャーバージョンサフィックスである。
+
+メジャーバージョンサフィックスである、という所だけが良く分かりませんね。
+参考: [Go modulesで依存モジュールのメジャーバージョンがv2以上の時の対応](https://christina04.hatenablog.com/entry/go-modules-major-version)
+ポイントとしては、
+1. go modules(モジュールのシステム、アルゴリズム)
