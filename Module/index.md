@@ -106,3 +106,6 @@ graph LR;
 例でもありましたが、パッケージパス`golang.org/x/net/html`の"golang.org/x/net"がモジュールパスに当たります。
 (htmlディレクトリの中のパッケージを示す時は、htmlまでのルートからのパスをプレフィックス(接頭辞)として付けると解釈して良さそうです。)
 
+> A module path should describe both what the module does and where to find it. Typically, a module path consists of a repository root path, a directory within the repository (usually empty), and a major version suffix (only for major version 2 or higher).
+
+- モジュールパスは、**モジュールが何をするのか、どこにあるのかを記述する必要がある**。
