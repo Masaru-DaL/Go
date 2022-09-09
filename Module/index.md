@@ -82,7 +82,7 @@ GOPATHモード -> 最新バージョンのみ
 
 - モジュールは、**モジュールパスで識別され、モジュールの依存関係の情報とともに`go.mod`ファイルで宣言される**
 - モジュールは、`go.mod`ファイルのあるディレクトリ以下の全てのパッケージのことを指している。
-(`**go.mod`はモジュールを管理するファイルなので、モジュールには含まれない**。)
+(**`go.mod`はモジュールを管理するファイルなので、モジュールには含まれない**。)
 
 > A package path is the module path joined with the subdirectory containing the package (relative to the module root). For example, the module "golang.org/x/net" contains a package in the directory "html". That package’s path is "golang.org/x/net/html".
 
@@ -150,3 +150,21 @@ import "github.com/goark/pa-api/entity"
 引用: [Semantic Import Versioning](https://research.swtch.com/vgo-import)
 
 ## 4. モジュールの管理
+**モジュールの管理は`go.mod`および`go.sum`という名前のファイルで行う**。
+参考: [Go のモジュール管理【バージョン 1.17 改訂版】](https://zenn.dev/spiegel/articles/20210223-go-module-aware-mode)
+
+#### 4-1. go.mod
+- `go.mod`の中身
+```go: go.mod
+module github.com/goark/pa-api
+
+go 1.17
+```
+この"module", "go"と呼ばれるのは、モジュールで取り上げましたが、"**ディレクティブ(directive)**と呼ばれるものです。
+例えば、"module"ディレクティブは、モジュール名を定義する。
+`1.17`から、"go"ディレクティブ未定時の規定値が`1.11`とみなされるようになった。
+
+![](2022-09-10-06-27-18.png)
+
+#### 4-2. go.sum
+`go.sum`には、インポートするモジュールの"SHA-256 チェックサム値"というものが格納されている。
