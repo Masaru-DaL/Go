@@ -79,13 +79,16 @@ GOPATHモード -> 最新バージョンのみ
 > A module is identified by a module path, which is declared in a go.mod file, together with information about the module’s dependencies. The module root directory is the directory that contains the go.mod file. The main module is the module containing the directory where the go command is invoked.
 
 - モジュールは、**モジュールパスで識別され、モジュールの依存関係の情報とともに`go.mod`ファイルで宣言される**
-- モジュールは、`go.mod`ファイルのあるディレクトリ以下の全てのパッケージのことを指している。(`**go.mod`はモジュールを管理するファイルなので、モジュールには含まれない**。)
+- モジュールは、`go.mod`ファイルのあるディレクトリ以下の全てのパッケージのことを指している。
+(`**go.mod`はモジュールを管理するファイルなので、モジュールには含まれない**。)
 
 > A package path is the module path joined with the subdirectory containing the package (relative to the module root). For example, the module "golang.org/x/net" contains a package in the directory "html". That package’s path is "golang.org/x/net/html".
 
-- パッケージのパスは、モジュールのパスと、パッケージを含むサブディレクトリを足したものである。(モジュールルート、つまりディレクトリ内のルートからの相対パスを指しています。)
+- パッケージのパスは、モジュールのパスと、パッケージを含むサブディレクトリを足したものである。
+**(モジュールルート、つまりディレクトリ内のルートからの相対パスを指しています。)**
 
 - 例えば、モジュール"golang.org/x/net"には"html"という名前のディレクトリがあり、その中にパッケージを含んでいます。この場合のパッケージパスは、「golang.org/x/net/html」となります。
+
 ```mermaid
 graph LR;
     A[golang.org] -->B[x];
@@ -93,4 +96,13 @@ graph LR;
     C -->D(html);
     D -->E[package];
 ```
+
+## 3. モジュールパス
+> A module path is the canonical name for a module, declared with the module directive in the module’s go.mod file. A module’s path is the prefix for package paths within the module.
+
+- モジュールパスとは、`go.mod`の"goディレクティブ"で宣言された**モジュールの正式名称**
+※`go.mod`の中に"goディレクティブ"と呼ばれるgoのバージョンを指定する項目がある。
+- モジュールのパスは、そのモジュール内のパッケージパスのプレフィックスとなる。
+例でもありましたが、パッケージパス`golang.org/x/net/html`の"golang.org/x/net"がモジュールパスに当たります。
+(htmlディレクトリの中のパッケージを示す時は、htmlまでのルートからのパスをプレフィックス(接頭辞)として付けると解釈して良さそうです。)
 
