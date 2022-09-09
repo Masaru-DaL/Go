@@ -4,6 +4,8 @@
 ## 1. Golangにおけるモジュールとは
 > A module is a collection of packages that are released, versioned, and distributed together.
 
+[引用](https://go.dev/ref/mod#modules-overview)
+
 これは、モジュールは、**パッケージの集まり**として扱われということを言っています。
 これは以下のような相関関係です。(各言語によって扱いが違うようです。)
 ![](2022-09-09-08-46-42.png)
@@ -49,21 +51,18 @@ GOPATHモード -> 最新バージョンのみ
 ## 2. モジュール
 "GOPATHモード"は使おうと思わないと使わないという事がわかりましたので、"モジュールモード"、というよりは"モジュール"に関して調査していきます。
 
-[Go Modules Reference - The Go Programming Language](https://go.dev/ref/mod#modules-overview)を引用しながら理解を深めます。(個人的に言語していますので意訳という意味で書きます。)
+2章とその節、および3章では、[Go Modules Reference - The Go Programming Language](https://go.dev/ref/mod#modules-overview)を引用しながら理解を深めます。(個人的に言語化していますので意訳という意味で書きます。)
 
 > A module is a collection of packages that are released, versioned, and distributed together.
 
+冒頭でも引用しましたが、
 1. モジュールは、**パッケージの集合体**であること。
-引用: [Go Module image](https://www.practical-go-lessons.com/img/3_modules.3b193265.png)
-
 2. パッケージはバージョン管理されている。
 
 と書かれています。
 まずは、パッケージを理解する必要があるようです。
 
 #### 2-1. Go: パッケージ
-引用: [Go Package image](https://www.practical-go-lessons.com/img/go_program_package.acdaaa3b.png)
-
 > Each package within a module is a collection of source files in the same directory that are compiled together.
 
 - パッケージは、**ソースファイルの集合体**である。
@@ -167,4 +166,29 @@ go 1.17
 ![](2022-09-10-06-27-18.png)
 
 #### 4-2. go.sum
+`go.sum`とは何なのか？というのを調べていきます。
+
 `go.sum`には、インポートするモジュールの"SHA-256 チェックサム値"というものが格納されている。
+
+SHA-256は、どんな長さの原文からも256ビットのハッシュ値を算出することができるハッシュ関数の1つ。
+チェックサム値は、ファイルの"同一性"を確認するもの。
+
+> A module may have a text file named go.sum in its root directory, alongside its go.mod file. The go.sum file contains cryptographic hashes of the module’s direct and indirect dependencies. When the go command downloads a module .mod or .zip file into the module cache, it computes a hash and checks that the hash matches the corresponding hash in the main module’s go.sum file. go.sum may be empty or absent if the module has no dependencies or if all dependencies are replaced with local directories using replace directives.
+
+> The checksum database is a global source of go.sum lines. The go command can use this in many situations to detect misbehavior by proxies or origin servers.
+
+> The checksum database is served by sum.golang.org, which is run by Google. It is a Transparent Log (or “Merkle Tree”) of go.sum line hashes, which is backed by Trillian. The main advantage of a Merkle tree is that independent auditors can verify that it hasn’t been tampered with, so it is more trustworthy than a simple database.
+
+[引用](https://go.dev/ref/mod#modules-overview)
+
+ちょっと長いですね...
+ポイントとなる部分と上記の"SHA-256 チェックサム値"とを統合し、`go.sum`が何であるかをまとめます。
+1. `go`コマンド時に`go.mod`のハッシュを計算し、`go.sum`に書かれているハッシュ(SHA-256)と一致するかをチェックする(チェックサム値)。
+2. `go.sum`に書かれているのは"チェックサムデータベース"というもので、Googleから提供されていて信頼性が高い。
+
+この仕組みは外部パッケージの使用などに起因していると思われます。
+モジュールの取得自体は"`go.mod`の`require`ディレクティブにある情報で完結できる"ため、`go.sum`自体は無くてもビルド再現性は得られるようです。
+パブリックなリポジトリやGitHub(アカウント)が悪意のある第三者に悪用された場合の確認手段、という意味合いが強いと思われます。
+
+## 5. Go Module まとめ
+
