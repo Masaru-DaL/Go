@@ -1,5 +1,4 @@
 # Go Moduleについて調べる
-参考: [Go Modules Reference - The Go Programming Language](https://go.dev/ref/mod#modules-overview)
 自分が知っているモジュールというと以下のような位置関係(相関関係)です。
 ![](2022-09-09-08-46-19.png)
 ## 1. Golangにおけるモジュールとは
@@ -50,6 +49,34 @@ GOPATHモード -> 最新バージョンのみ
 ## 2. モジュール
 "GOPATHモード"は使おうと思わないと使わないという事がわかりましたので、"モジュールモード"、というよりは"モジュール"に関して調査していきます。
 
+[Go Modules Reference - The Go Programming Language](https://go.dev/ref/mod#modules-overview)を引用しながら理解を深めます。(個人的に言語していますので意訳という意味で書きます。)
+
+> A module is a collection of packages that are released, versioned, and distributed together.
+
+1. モジュールは、**パッケージの集合体**であること。
+2. パッケージはバージョン管理されている。
+
+と書かれています。
+まずは、パッケージを理解する必要があるようです。
+
+#### 2-1. Go: パッケージ
+引用: [Go Package image](https://d33wubrfki0l68.cloudfront.net/9dd0ebe575f5a77e6f73fa74d44ea96cb66d5cb4/4b97c/static/a5258526ae54e5c5e977c741d1bc2cfb/bd6b9/go-package-illustration.jpg)
+
+> Each package within a module is a collection of source files in the same directory that are compiled together.
+
+- パッケージは、**ソースファイルの集合体**である。
+と書かれています。
+
+つまりパッケージは、**1つ以上のGoソースファイル(または他のGoパッケージ)を含むGoワークスペース内のディレクトリのこと**を言っています。
+
+#### 2-2. Go: モジュール
+パッケージがなんであるか分かった所で再度モジュールに戻ります。
+
+> Modules may be downloaded directly from version control repositories or from module proxy servers.
+
+- モジュールはバージョン管理リポジトリ、またはモジュールプロキシサーバーからダウンロード出来る。
+
 > A module is identified by a module path, which is declared in a go.mod file, together with information about the module’s dependencies. The module root directory is the directory that contains the go.mod file. The main module is the module containing the directory where the go command is invoked.
 
-モジュールは、**モジュールパスで識別され、モジュールの依存関係の情報とともに`go.mod`ファイルで宣言される**、と書かれています。
+- モジュールは、**モジュールパスで識別され、モジュールの依存関係の情報とともに`go.mod`ファイルで宣言される**
+- モジュールは、`go.mod`ファイルのあるディレクトリ以下の全てのパッケージのことを指している。(`**go.mod`はモジュールを管理するファイルなので、モジュールには含まれない**。)
