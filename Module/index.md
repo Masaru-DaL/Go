@@ -1,11 +1,12 @@
 # Go Moduleについて調べる
 参考: [Go Modules Reference - The Go Programming Language](https://go.dev/ref/mod#modules-overview)
-通常モジュールというと以下のような位置関係(相関関係)です。
+自分が知っているモジュールというと以下のような位置関係(相関関係)です。
 ![](2022-09-09-08-46-19.png)
 ## 1. Golangにおけるモジュールとは
 > A module is a collection of packages that are released, versioned, and distributed together.
+
 これは、モジュールは、**パッケージの集まり**として扱われということを言っています。
-Golangにおけるモジュールは冒頭で説明したパッケージとモジュールの関係が逆で扱われるというように受け止めます。(真偽の詳しい調査はしていません。)
+これは以下のような相関関係です。(各言語によって扱いが違うようです。)
 ![](2022-09-09-08-46-42.png)
 
 Golangのバージョン1.11以前にはモジュールという物はなかった。
@@ -49,4 +50,6 @@ GOPATHモード -> 最新バージョンのみ
 ## 2. モジュール
 "GOPATHモード"は使おうと思わないと使わないという事がわかりましたので、"モジュールモード"、というよりは"モジュール"に関して調査していきます。
 
+> A module is identified by a module path, which is declared in a go.mod file, together with information about the module’s dependencies. The module root directory is the directory that contains the go.mod file. The main module is the module containing the directory where the go command is invoked.
 
+モジュールは、**モジュールパスで識別され、モジュールの依存関係の情報とともに`go.mod`ファイルで宣言される**、と書かれています。
