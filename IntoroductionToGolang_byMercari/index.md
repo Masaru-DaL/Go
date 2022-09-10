@@ -471,3 +471,41 @@ $ go mod init hello
 ```
 `go.mod`が作成される。
 **Goの開発に必要なファイルなので、毎回作成する。**
+
+2. Goの拡張機能の追加
+```m:
+Name: Go
+Id: golang.go
+Description: Rich Go language support for Visual Studio Code
+Version: 0.35.2
+Publisher: Go Team at Google
+VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=golang.Go
+```
+
+3. Goに必要な機能の追加
+自動的に聞いてくるので`install ALL`で追加
+
+4. main.go
+helloディレクトリ内に作成
+```go: main.go
+package main
+
+func main() {
+  println("Hello, World")
+}
+```
+
+5. 実行
+```shell:
+go run .
+
+/* 実行結果 */
+// Hello, World
+```
+
+## 1-6. 開発支援ツール
+#### 1-6-1. コードの書式を揃える
+- gofmt
+  - 読み方: ごーふむと
+  - 絶対に使う！
+  - `-s`で冗長な書き方をシンプルにできる
