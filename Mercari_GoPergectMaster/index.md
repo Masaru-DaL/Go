@@ -101,23 +101,9 @@ go f()
 | html/template     | HTMLテンプレート       |
 | os, path/filepath | ファイル操作など         |
 
-- fmt
-  - 書式に関する処理など
-- net/http
-  - HTTPサーバなど
-- archive, compress
-  - zipやgzipなど
-- encoding
-  - JSON, XML, CSVなど
-- html/template
-  - HTMLテンプレート
-- os, path/filepath
-  - ファイル操作など
-
 #### 1-1-9. Goの特徴.4
 -**周辺ツールの充実**-
 - `go <tool名>`で実行可能, 標準/順標準で提供
-
 
 | ツール名             | 機能                           |
 | ---------------- | ---------------------------- |
@@ -146,3 +132,42 @@ $ GOOS=windows GOARCH=386 go build
 # Linux(64ビット)向けにコンパイル
 $ GOOS=linux GOARCH=amd64 go build
 ```
+
+#### 1-1-11. Goに入ってはGoに従え
+- **言語だけではなく、文化も学ぶ**
+  - ≠Goの慣習に従いなさい
+  - 他の言語にも必要な考え方
+  - なぜGoが開発されたのかを知ること
+
+
+## 1-2. Goが利用できる領域
+#### 1-2-1. Goの利用状況
+- Go開発者向けのアンケート
+  - 回答者のうち75%が職場でGoを使用
+  - 用途は、API, CLI, Web, DevOpsなど
+    - 前年比として傾向は変わっていない
+
+- サーバサイドでの利用
+  - HTTPやらそういった用途
+
+#### 1-2-2. gRPCとGo
+- gRPC
+  - Googleが開発したプロトコルの1つ
+  - RPCを実現するために開発された
+  - 高速な通信を実現できる
+
+Goではこれが使われているということ。
+
+#### 1-2-3. Google App Engine for Go
+- Googleが提供するPaaS(簡単に言うとGoogleの機能を使用する)
+  - 高いスケーラビリティ
+  - 簡単に利用でき、メンテナンスコストが低い
+  - Goのインスタンスの起動は恐ろしく早い！
+
+- Go1.11~ (gVisorベース)
+  - Go Modulesが使える
+  - ファイルアクセス可能
+  - Go1.12から第2世代と呼ばれる
+    - App Engine APIが非推奨(サポートされていない)
+
+gVisor? App Engine API? 実体が分からない。
