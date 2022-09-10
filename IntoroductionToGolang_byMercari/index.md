@@ -224,3 +224,19 @@ https://play-with-go.dev/
 
 - Microsoftが提供するGoのチュートリアル
 https://docs.microsoft.com/ja-jp/learn/paths/go-first-steps/
+
+- プログラミング言語Go完全入門
+http://tenn.in/go
+
+- Gopher道場 自習室
+Gopher道場の動画資料を誰でも閲覧できる
+https://gopherdojo.org/studyroom
+
+- Goのハンズオン
+https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gfdjg/edit#slide=id.gd6675bb4dc_1_25
+
+- 公式ドキュメントで学ぶ
+https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gfdjg/edit#slide=id.g11401cd09fe_1_151
+
+- 書籍で学ぶ
+https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gfdjg/edit#slide=id.g1298f90f44e_41_0
