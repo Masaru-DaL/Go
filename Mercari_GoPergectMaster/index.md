@@ -16,9 +16,7 @@
   - 周辺ツールの充実
   - シングルバイナリ
     - 「一つのバイナリ」
-    - デプロイ(別サーバへの配置・実行)が容易になるメリット
   - クロスコンパイル
-    - 1つのGoプログラムから複数のOS向け(linux, mac, Windows)のバイナリを作成できる
 
 ####　1-1-1. Goが開発された理由
 - **Google内の課題を解決する為**に開発された
@@ -76,3 +74,75 @@
 
 #### 1-1-7. Goの特徴.2
 -**並行プログラミング**-
+- ゴールーチン
+  - 並列処理の際に用いる
+  - **軽量なスレッド**に近いもの
+  - 呼び出す関数に`go`を付ける
+```go: goroutine
+/* 関数fを別のゴールーチンで呼び出す */
+go f()
+```
+
+- チャネル
+  - ゴールーチン間のデータのやり取り
+  - **安全にデータをやり取り**できる
+[引用: Channel image](https://learnetutorials.com/assets/images/go/channel/image1.png)
+
+#### 1-1-8. Goの特徴.3
+-**豊富なライブラリ**-
+[標準パッケージ一覧](https://pkg.go.dev/std)
+
+| パッケージ名            | 機能                 |
+| ----------------- | ---------------- |
+| fmt               | 書式に関する処理など       |
+| net/http          | HTTPサーバなど        |
+| archive, compress | zipやgzipなど       |
+| encoding          | JSON, XML, CSVなど |
+| html/template     | HTMLテンプレート       |
+| os, path/filepath | ファイル操作など         |
+
+- fmt
+  - 書式に関する処理など
+- net/http
+  - HTTPサーバなど
+- archive, compress
+  - zipやgzipなど
+- encoding
+  - JSON, XML, CSVなど
+- html/template
+  - HTMLテンプレート
+- os, path/filepath
+  - ファイル操作など
+
+#### 1-1-9. Goの特徴.4
+-**周辺ツールの充実**-
+- `go <tool名>`で実行可能, 標準/順標準で提供
+
+
+| ツール名             | 機能                           |
+| ---------------- | ---------------------------- |
+| go build         | ビルドを行う                       |
+|  go test                | `xxxx_test.go`に書かれたテストコードの実行 |
+| go doc, godoc    | ドキュメント生成                     |
+| gofmt, goimports | コードフォーマッター                   |
+| go vet           | コードチェッカー                     |
+|  gopls                | Language Server Protocol(LSP)の実装                             |
+
+#### 1-1-10. Goの特徴.5
+-**シングルバイナリ・クロスコンパイル**-
+- シングルバイナリになる
+  - コンパイルするとデフォルトで単一の実行可能ファイルになる
+  - 動作環境を特別に用意しなくてもよい
+    - デプロイ(別サーバへの配置・実行)が容易になるメリット
+
+- クロスコンパイルできる
+  - 開発環境とは違うOSやアーキテクチャ向けのバイナリが作れる
+    - 1つのGoプログラムから複数のOS向け(linux, mac, Windows)のバイナリを作成できる
+  - 環境変数の`GOOS`と`GOARCH`を指定する
+    - GOOS -> OS指定, GOARCH -> CPUの指定
+```shell:
+# Windows(32ビット)向けにコンパイル
+$ GOOS=windows GOARCH=386 go build
+# Linux(64ビット)向けにコンパイル
+$ GOOS=linux GOARCH=amd64 go build
+```
