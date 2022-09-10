@@ -515,3 +515,23 @@ go run .
   - 未使用パッケージのimportはコンパイルエラーなので必須
   - フォーマットもかけてくれる
   - `-s`オプション無し
+
+#### 1-6-2. コードの品質を保つ
+- 静的解析ツール各種
+  - go vet
+    - コンパイラでは発見できないバグを見つける
+    - go testを走らせれば自動で実行される(Go1.10~)
+
+#### 1-6-3. PRレビューで静的解析ツールを使用
+- reviewdog
+  - https://github.com/reviewdog/reviewdog
+  - レビュー時に自動で静的解析ツールを実行する
+  - 設定ファイルを書いておくと勝手にPRにコメントをくれる
+
+#### 1-6-4. リファクタリング
+https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gfdjg/edit#slide=id.g4e29971f9a_0_569
+
+#### 1-6-5. デバッグ
+https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gfdjg/edit#slide=id.g4e29971f9a_0_563
+
+
