@@ -243,15 +243,14 @@ https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gf
 
 
 ## 1-4. Hello, World
-- サードパーティパッケージも使える
-  - 標準パッケージ以外の利用
-  - `import "github.com/k0kubun/pp"`
+#### 1-4-1. サードパーティパッケージも使える
+- 標準パッケージ以外の利用
+- `import "github.com/k0kubun/pp"`
 
-- 複数ファイルも使える
-  - txtar(テキストアーカイブ)形式で記述する
-    - `-- <ファイルパス> --`
-    - or `-- <ディレクトリ名/ファイル名> --`
-
+#### 1-4-2. 複数ファイルも使える
+- txtar(テキストアーカイブ)形式で記述する
+  - `-- <ファイルパス> --`
+  - or `-- <ディレクトリ名/ファイル名> --`
 ```shell:
 $ tree .
 .
@@ -301,3 +300,23 @@ func main() {
 
 // Go build failed.
 ```
+
+#### 1-4-3. 同時編集できるPlayground
+- ルームごとに同時に編集が行える
+- https://gpgsync.herokuapp.com/
+
+#### 1-4-4. Goのソースコードファイルの構成
+```go:
+/* パッケージの定義 */
+package main
+
+/* main関数の定義 */
+fun main() {
+  /* println -> 画面に表示する組み込み関数 */
+  println("Hello, 世界")
+}
+```
+
+#### 1-4-5. コメント
+`//` -> 行コメント: `//`から行末まで
+`/*  */` -> ブロックコメント: `/*`から`*/`まで(複数行可)
