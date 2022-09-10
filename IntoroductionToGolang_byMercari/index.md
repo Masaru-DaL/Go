@@ -240,3 +240,64 @@ https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gf
 
 - 書籍で学ぶ
 https://docs.google.com/presentation/d/1Z5b5fIA5vqVII7YoIc4IesKuPWNtcU00cWgW08gfdjg/edit#slide=id.g1298f90f44e_41_0
+
+
+## 1-4. Hello, World
+- サードパーティパッケージも使える
+  - 標準パッケージ以外の利用
+  - `import "github.com/k0kubun/pp"`
+
+- 複数ファイルも使える
+  - txtar(テキストアーカイブ)形式で記述する
+    - `-- <ファイルパス> --`
+    - or `-- <ディレクトリ名/ファイル名> --`
+
+```shell:
+$ tree .
+.
+├── fuga
+│   └── fuga.go
+├── go.mod
+└── main.go
+```
+```go:
+-- go.mod --
+module hogera
+
+go 1.12
+-- fuga/fuga.go --
+package fuga
+func Fuga() string { return "Fuga" }
+-- main.go --
+package main
+import "fmt"
+import "hogera/fuga"
+func main() {
+   fmt.Println(fuga.Fuga())
+}
+
+/* 実行結果 */
+// Fuga
+```
+
+- 上手く行かない例
+  - コメントの中に`--`で始まる行を含む場合
+    - `--`でファイルが区切られてしまう
+```go:
+package main
+
+import "fmt"
+
+/*
+-- hogera --
+*/
+
+func main() {
+   fmt.Println("Hello, playground")
+}
+
+/* 実行結果 */
+// prog.go:5:1: comment not terminated
+
+// Go build failed.
+```
