@@ -68,4 +68,57 @@ func main() {
 }
 ```
 
+#### 2-1-6. 組み込み型
+https://docs.google.com/presentation/d/1CIMDenDLZ7NPNgzmfbCNH_W3dYjaTEBdUYfUuXXuMHk/edit#slide=id.g4e29972148_0_32
 
+#### 2-1-7. 変数のゼロ値
+- Goの変数は**明示的な初期化をしなくても使える**
+  - **ゼロ値という値が設定され、型によって違う**
+
+| 型                | ゼロ値   |
+| ---------------- | ----- |
+| intやfloat64などの数値 | 0     |
+| string           | ""    |
+| bool             | false |
+| errorなどのインタフェース  | nil      |
+
+#### 2-1-8. 変数の利用
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	var first_word string = "Hello, World"
+	fmt.Println(first_word)
+}
+
+/* 実行結果 */
+// Hello, World
+```
+
+## 2-2. 定数
+#### 2-2-1. 定数
+`const`の説明とは別？
+数値や文字列のリテラルそのものを言ってるのかな。
+
+#### 2-2-2. 2進数, 8進数, 16進数表記
+ちょっと分からなかったので別で調べる
+```go:
+package main
+
+import "fmt"
+
+func main() {
+    s := ""
+    s = fmt.Sprintf("%b", 255)
+    fmt.Println(s) // => "11111111"
+    s = fmt.Sprintf("%o", 255)
+    fmt.Println(s) // => "11111111"
+    s = fmt.Sprintf("%x", 255)
+    fmt.Println(s) // => "ff"
+}
+```
+こっちの方が分かりやすい感じがあった。
+
+#### 
