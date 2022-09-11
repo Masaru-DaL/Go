@@ -243,3 +243,40 @@ func main() {
 - グループ化で宣言する際に有効。
 - 省略された定数定義の右辺は、**最後の省略されていない定数と同じ**になる
 
+#### 2-2-11. iota
+```go:
+package main
+
+import "fmt"
+
+const (
+	zero        = iota
+	one         = iota
+	two         = iota
+	three, four = iota, iota
+)
+
+const five = iota
+
+func main() {
+	fmt.Printf("zero:%v\n", zero)
+	fmt.Printf("one:%v\n", one)
+	fmt.Printf("two:%v\n", two)
+	fmt.Printf("three:%v\n", three)
+	fmt.Printf("four:%v\n", four)
+	fmt.Printf("five:%v\n", five)
+}
+
+/* 実行結果 */
+/*
+zero:0
+one:1
+two:2
+three:3
+four:3
+five:0
+ */
+```
+試したみた感じ、まとめて宣言した場合のindex番号を表している
+別で定義するとindex番号はまた0から。
+
