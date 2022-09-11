@@ -205,4 +205,16 @@ ms = s                  // NG
 独自定義した`MyString`に定数が代入出来ていると書かれています。もし定数`hello`を"string"として定義していたら代入できていないということです。
 
 - 型無しの定数がないと型変換ばかりのコードになる
-- 
+
+- Go言語が提供する単純さの1つが定数
+https://gihyo.jp/news/report/01/GoCon2014Autumn/0001#:~:text=%E3%81%84%E3%82%8B%E3%81%9D%E3%81%86%E3%81%A7%E3%81%99%E3%80%82-,%E5%AE%9A%E6%95%B0,-%E5%90%8C%E6%B0%8F%E3%81%AF%E3%80%81
+
+#### 2-2-9. 定数の利用
+```go:
+package main
+
+func main() {
+	const first_word = "Hello, World"
+	println(first_word)
+}
+```
