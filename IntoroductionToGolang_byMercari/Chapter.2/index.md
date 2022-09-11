@@ -191,3 +191,18 @@ func main() {
 `const n`が1でint型なので、それを代入した`m`もint型になる。
 ※型変換できない場合はコンパイルエラーになる。
 
+#### 2-2-8. なぜ型なしの定数が必要か？
+- 定数をただの数字のように扱いたい
+ちょっと分かりづらかったので別で調べます。
+https://qiita.com/hkurokawa/items/a4d402d3182dff387674
+```go:
+const hello = "Hello, ワールド"
+var s string = hello    // OK
+type MyString string
+var ms MyString = hello // OK
+ms = s                  // NG
+```
+独自定義した`MyString`に定数が代入出来ていると書かれています。もし定数`hello`を"string"として定義していたら代入できていないということです。
+
+- 型無しの定数がないと型変換ばかりのコードになる
+- 
