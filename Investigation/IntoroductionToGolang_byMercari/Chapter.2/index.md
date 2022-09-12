@@ -352,3 +352,33 @@ if x == 1 {
   println("xは1でも2でもない")
 }
 ```
+
+```go:
+/* 代入文を書く */
+if a := f(); a > 0 {
+	fmt.Println(a)
+} else {
+	fmt.Println(2*a)
+}
+
+/* f関数を代入したaはifとelseのブロックで使えるようになる */
+/* コンパイル時に後ろに改行があると、自動でセミロンを付与する */
+```
+
+#### 2-4-2. 条件分岐: switch
+`break`がいらない(書けるけど基本書かない)
+```go:
+/* 通常の書き方 */
+switch a {
+case 1, 2: // 1または2の時
+	fmt.Println("a is 1 or 2")
+default:
+	fmt.Println("default")
+}
+
+/* caseに式が使える */
+switch {
+  case a == 1:
+    fmt.Println("a is 1")
+}
+```
