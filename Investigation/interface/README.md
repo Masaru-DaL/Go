@@ -2,5 +2,5 @@
 
 An examination of Golang's interface.
 
-- interface bookmarks
-https://github.com/Masaru-DaL/Go/tree/main/interface/bookmarks_interface.html
+## The site we used as a reference during our research for INTERFACE.
+https://github.com/Masaru-DaL/Go/blob/main/Investigation/interface/bookmarks_interface.html
