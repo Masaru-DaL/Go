@@ -433,4 +433,18 @@ for i, v := range []int{1, 2, 3} {
 ```
 
 #### 2-4-4. breakによるループの抜け出し
-
+for文中にbreakを用いるとループから抜け出せる。
+```go:
+/* ラベル指定のbreak */
+func main() {
+	var i int
+LOOP: // for文にラベルをつける
+	for {
+		switch {
+		case i%2 == 1:
+			break LOOP // breakするループを明示的に指定
+		}
+		i++
+	}
+}
+```
