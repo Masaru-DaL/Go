@@ -448,3 +448,29 @@ LOOP: // for文にラベルをつける
 	}
 }
 ```
+
+#### 2-4-5. TRY 奇数と偶数
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	for i := 1; i <= 100; i++ {
+		if i%2 == 1 {
+			fmt.Println(i, "-奇数")
+		} else if i%2 == 0 {
+			fmt.Println(i, "-偶数")
+		}
+	}
+}
+
+/* 実行結果 */
+/*
+1 -奇数
+2 -偶数
+3 -奇数
+4 -偶数
+...
+*/
+```
