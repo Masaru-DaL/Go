@@ -501,3 +501,41 @@ func main() {
 	}
 }
 ```
+
+#### 2-4-7. ランダムな値の作り方
+- 疑似乱数
+  - コンピュータ上では完全な乱数は作れない
+乱数の生成には`math/rand`パッケージを使う
+普通に使うと、乱数生成時の決定の時にだけ乱数が生成されるが、出力は毎回固定値になってしまう。
+現在時刻に基づいて乱数生成を行うようにすれば、出力自体が毎回ランダムにできる。
+**timeパッケージを使う**
+
+```go:
+package main
+
+import(
+	"math/rand"
+	"time"
+)
+
+func main() {
+	t := time.Now().UnixNano()
+	rand.Seed(t)
+	s := rand.Intn(10)
+	println(s)
+
+	now := time.Now()
+	println(now)
+}
+
+/* 1~10の間でランダムな数値が出力 */
+```
+- UnixNano
+https://pkg.go.dev/time#Time.UnixNano:~:text=func%20(Time)%20UnixNano%20%C2%B6
+
+- Unix time
+https://en.wikipedia.org/wiki/Unix_time
+
+なんとなくわかる。
+
+
