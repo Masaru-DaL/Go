@@ -59,9 +59,23 @@ func main() {
 	}
 }
 ```
-a && b -> aとbがtrueの時
-b || !c -> bがtrue, cがfalse, どちらかtrueならtrue
+a, b, cがそれぞれtrue, or falseの時
+a && b -> aとbが同じだったらその値になる
+b || !c -> a && b の結果がbに入る。bとcの否定を比較する。
 
 - 埋める真理値表
 https://docs.google.com/presentation/d/1DtWB-8FcnNb9asxSpIaOLYbAEc9OjBAwMLNxKnPA8pc/edit#slide=id.g4cbe4d134e_0_125
+
+| a   | b   | c   | a && b | !c  | a && b ll !c |
+| --- | --- | --- | ------ | --- | ------------ |
+| F   | F   | F   | F      | T   | T            |
+| F   | F   | T   | F      | F   | F            |
+| F   | T   | F   | F      | T   | T            |
+| F   | T   | T   | F      | F   | F            |
+| T   | F   | F   | F      | T   | T            |
+| T   | F   | T   | F      | F   | F            |
+| T   | T   | F   | T      | T   | T            |
+| T   | T   | T   | T      | F   | T             |
+
+合っていた。
 
