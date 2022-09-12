@@ -367,6 +367,7 @@ if a := f(); a > 0 {
 
 #### 2-4-2. 条件分岐: switch
 `break`がいらない(書けるけど基本書かない)
+if文で大量に書くよりもswitch文の方が見通しがよくなる。
 ```go:
 /* 通常の書き方 */
 switch a {
@@ -380,5 +381,53 @@ default:
 switch {
   case a == 1:
     fmt.Println("a is 1")
+}
+```
+
+- fallthroughを使った例
+https://tech.yyh-gl.dev/blog/go-switch-fallthrough/
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	num := 1
+	switch num {
+	case 1:
+		fmt.Print("I ")
+		fallthrough
+	case 2:
+		fmt.Print("am ")
+		fallthrough
+	case 3:
+		fmt.Println("yyh-gl.")
+		// fallthrough // 次の節がなければコンパイルエラー
+	}
+}
+
+/* 実行結果 */
+// I am yyh-gl.
+```
+`fallthrough` -> 複数のcaseをまたぐ(というよりも次のケースに渡すイメージ)
+
+#### 2-4-3. 繰り返し: for
+**whileは無い！**, forのみ！
+```go:
+/* 初期値; いつまで繰り返すのか; 1回終わった後の処理 */
+for i := 0; i <= 100; i++ {
+}
+
+/* 継続条件のみでも可能 */
+for i <= 100 {
+}
+
+/* 無限ループ */
+for {
+}
+
+/* rangeを使った繰り返し */
+/* index番号と配列からの要素がi, vのそれぞれに入る */
+for i, v := range []int{1, 2, 3} {
 }
 ```
