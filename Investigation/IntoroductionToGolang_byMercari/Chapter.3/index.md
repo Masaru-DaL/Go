@@ -47,3 +47,21 @@ func main() {
 2. `var sum int`を`var sum float64`としてint型ではなく、浮動小数点型にする
 
 #### 3-1-4. TRY 組み込み型(真偽値)
+- 検証プログラム
+```go:
+package main
+func main() {
+	var a, b, c bool
+	if a && b || !c {
+		println("true")
+	} else {
+		println("false")
+	}
+}
+```
+a && b -> aとbがtrueの時
+b || !c -> bがtrue, cがfalse, どちらかtrueならtrue
+
+- 埋める真理値表
+https://docs.google.com/presentation/d/1DtWB-8FcnNb9asxSpIaOLYbAEc9OjBAwMLNxKnPA8pc/edit#slide=id.g4cbe4d134e_0_125
+
