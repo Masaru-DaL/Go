@@ -125,4 +125,8 @@ var p struct {
 ```
 
 #### 3-1-9. 構造体リテラル
+構造体の初期化
+[こっち](https://nishinatoshiharu.com/go-structure-initialize/)の方が分かりやすかった。
+
+#### 3-1-10. 文法で理解しよう
 
