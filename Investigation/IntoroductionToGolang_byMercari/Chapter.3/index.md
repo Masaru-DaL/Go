@@ -532,4 +532,72 @@ Playgroundで動かす場所が空白だった。
 
 何となく分かる。
 
-####
+####　3-1-32. ユーザ定義型
+typeで名前を付けて新しい型を定義する
+
+MyInt, MyWriter, Personがユーザ定義した型(型名)
+```go:
+// 組み込み型を基にする
+type MyInt int
+
+// 他のパッケージの型を基にする
+type MyWriter io.Writer
+
+// 型リテラルを基にする
+type Person struct {
+     Name string
+}
+```
+
+#### 3-1-33. Underlying type
+空欄だったので、意味は調べてみた。
+参考記事: https://qiita.com/behiron/items/89bf7292aec48b097fe4
+
+```go:
+// 組み込み型を基にする
+type MyInt int
+```
+これを元にすると、intという基底となる型のことを"underlying type"と呼ぶ。
+
+#### 3-1-34. ユーザ定義型の特徴
+- 同じUnderlying typeを持つ型同志は型変換できる
+```go:
+type MyInt int
+var n int = 100
+m := MyInt(n)
+n = int(m)
+```
+
+- 型無し定数から明示的な型変換は不要
+	-	デフォルトの方からユーザ定義型へ変換できる場合
+```go:
+// 10秒を表す（time.Duration型）
+d := 10 * time.Second
+/* type Duration int64 */
+```
+(型推論から来てるのかなぁと)
+
+#### 3-1-35. TRY ユーザ定義型の利用
+構造体でやるのか〜
+`type Score int`ぐらいまではやろうとはできた。
+```go:
+/*
+次の仕様のデータ構造を考えてみてください
+とあるゲームの得点を集計をするプログラム
+ゲームの結果は0点から100点まで1点刻みで点数が付けられる
+集計は複数回のゲームの結果をもとにユーザごとに行う
+どういうデータ構造で1回のゲーム結果を表現すべきか
+適切だと思うユーザ定義型を定義してください
+*/
+
+package main
+
+type Score struct {
+	UserName string
+	GameID int
+	Point  int
+}
+
+func main() {
+}
+```
