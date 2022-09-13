@@ -330,3 +330,96 @@ println(len(ns), cap(ns)) // 長さと容量
 ```
 
 #### 3-1-20. appendの挙動
+- 容量が足りる場合
+  - 新しい要素をコピーする
+  - lenを更新する
+
+- 容量が足りない場合
+  - 元の**およそ2倍**の容量(cap)の配列を確保しなおす
+    - 1024を超えた場合はおよそ1/2ずつ増える
+  1. 配列へのポインタを貼り直す
+  2. 元の配列から要素をコピーする
+  3. 新しい要素をコピーする
+  4. lenとcapを更新する
+
+
+```go:
+a := []int{10, 20}
+// [10 20] 2
+fmt.Println(a, cap(a))
+
+/* ここで容量を超える処理を行なったため、capが倍になる */
+b := append(a, 30) // (1)
+a[0] = 100 // (2)
+// [10 20 30] 4
+fmt.Println(b, cap(b))
+
+c := append(b, 40) // (3)
+b[1] = 200 // (4)
+// [10 200 30 40] 4
+fmt.Println(c, cap(c))
+```
+
+#### 3-1-21. 配列・スライスへのスライス演算
+```go:
+ns := []int{10, 20, 30, 40, 50}
+n, m := 2, 4
+
+// n番目以降のスライスを取得する
+fmt.Println(ns[n:]) // [30 40 50]
+
+// 先頭からm-1番目までのスライスを取得する
+fmt.Println(ns[:m]) // [10 20 30 40]
+
+// capを指定する
+ms := ns[:m:m]
+fmt.Println(cap(ms)) // 4
+```
+`[:m:m]`は何を意味してるのか。
+https://qiita.com/Kashiwara/items/e621a4ad8ec00974f025#%E5%AE%8C%E5%85%A8%E3%82%B9%E3%83%A9%E3%82%A4%E3%82%B9%E5%BC%8F:~:text=%E9%81%95%E3%81%86%E3%81%AE%E3%81%A7%E6%B3%A8%E6%84%8F%E3%81%97%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82-,%E5%AE%8C%E5%85%A8,-%E3%82%B9%E3%83%A9%E3%82%A4%E3%82%B9%E5%BC%8F
+完全スライス式というそう。
+容量を指定できる利点がありそう。
+
+#### 3-1-22. スライスの要素をfor文で取得する
+`for range`文を使用する
+
+#### 3-1-23. Slice Tricks
+https://ueokande.github.io/go-slice-tricks/
+なんとなくやってることは分かる。
+
+#### 3-1-24. x/exp/slicesパッケージ
+スライスに関する便利なパッケージ
+- ジェネリクス使用
+- 標準ライブラリ入りするかも
+- `"golang.org/x/exp/slices"`このパッケージをインポートする
+
+```go:
+package main
+
+import (
+	"fmt"
+
+	"golang.org/x/exp/slices"
+)
+
+func main() {
+	ns := []int{10, 20, 30, 40, 50}
+
+	// 削除: [10 40 50]
+	ns = slices.Delete(ns, 1, 3)
+	fmt.Println(ns)
+
+	// 挿入: [10 60 70 40 50]
+	ns = slices.Insert(ns, 1, 60, 70)
+	fmt.Println(ns)
+
+	// 要素があるか: true
+	ok := slices.Contains(ns, 70)
+	fmt.Println(ok)
+
+	// ソート: [10 40 50 60 70]
+	slices.Sort(ns)
+	fmt.Println(ns)
+}
+```
+試してみると直感的で分かりやすい。
