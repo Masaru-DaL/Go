@@ -147,3 +147,21 @@ var p struct {
 /* 構造はどちらも同じ！ */
 ```
 
+#### 3-1-11. フィールドの参照
+"."(ドット)でアクセスする。
+
+```go:
+package main
+
+func main() {
+	p := struct {
+		name string
+		age  int
+	}{name: "Gopher", age: 10}
+	// フィールドにアクセスする例
+	p.age++
+	println(p.name, p.age)
+}
+```
+構造体`p`のフィールドname, ageにアクセス -> `p.name`, `p.age`
+
