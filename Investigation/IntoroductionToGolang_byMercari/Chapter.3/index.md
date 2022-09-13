@@ -423,3 +423,92 @@ func main() {
 }
 ```
 試してみると直感的で分かりやすい。
+
+#### 3-1-25. TRY スライスの利用
+```go:
+package main
+
+func main() {
+	// 3つの変数しか使わないように修正してください
+	// プログラムの動作はそのままにすること
+
+	l := [4]int{19, 86, 1, 12}
+	var sum int
+
+	for i := 0; i < len(l); i++ {
+		sum += l[i]
+	}
+
+	println(sum)
+}
+```
+要練習。
+
+#### 3-1-26. マップ
+マップ -> ハッシュ(連想配列)のこと
+`var m map[string]int`
+この場合、key->string, value->int
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	var m map[string]int
+	fmt.Println(m)
+}
+
+/* 実行結果 */
+// map[]
+```
+
+#### 3-1-27. マップの初期化
+- 初期化方法いろいろ
+
+```go:
+// ゼロ値はnil
+var m map[string]int
+// makeで初期化
+m = make(map[string]int)
+// 容量を指定できる
+m = make(map[string]int, 10)
+// リテラルで初期化
+m := map[string]int{"x": 10, "y": 20}
+// 空の場合
+m := map[string]int{}
+```
+試して見た感じ、`m = make(map[string]int)`これはスライスを宣言するのではなく、初期化処理のイメージ。
+`var m map[string]int`ここでマップを作成してあるものを初期化する。`var m`とせずに最初から`make`を使用するようなことはできなかった。
+
+makeは変数宣言に使えるが、スライスの場合は**配列を参照する**という説明がしっくりきました。
+https://wireless-network.net/go-make-memory/
+
+#### 3-1-28. マップの操作
+```go:
+package main
+
+func main() {
+	m := map[string]int{"x": 10, "y": 20}
+
+	// キーを指定してアクセス
+	println(m["x"])
+
+	// キーを指定して入力
+	m["z"] = 30
+
+	// 存在を確認する
+	n, ok := m["z"]
+	println(n, ok)
+
+	// キーを指定して削除する
+	delete(m, "z")
+
+	// 削除されていることを確認
+	n, ok = m["z"] // ゼロ値とfalseを返す
+	println(n, ok)
+}
+```
+何をやってるかは理解できた。
+
+#### 3-1-29. マップの要素をfor文で取得する
+`for range`文を使用する
