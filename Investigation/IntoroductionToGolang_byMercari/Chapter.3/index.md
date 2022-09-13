@@ -579,7 +579,7 @@ d := 10 * time.Second
 
 #### 3-1-35. TRY ユーザ定義型の利用
 構造体でやるのか〜
-`type Score int`ぐらいまではやろうとはできた。
+`type Score int`かなぁという思考まで。
 ```go:
 /*
 次の仕様のデータ構造を考えてみてください
@@ -601,3 +601,30 @@ type Score struct {
 func main() {
 }
 ```
+
+#### 3-1-36. 型エイリアス(Go1.9以上)
+localがgo1.19.1なので関係ある。
+- 型エイリアスを定義できる
+  - 完全に同じ型
+  - キャスト(変数を別の変換すること)不要
+`type Applicant = http.Client`
+
+- **型名を出力する%T**が同じ元の型名を出力する
+```go:
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+type Applicant = http.Client
+
+func main() {
+	fmt.Printf("%T", Applicant{})
+}
+
+/* 実行結果 */
+// http.Client
+```
+
