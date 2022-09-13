@@ -129,4 +129,21 @@ var p struct {
 [こっち](https://nishinatoshiharu.com/go-structure-initialize/)の方が分かりやすかった。
 
 #### 3-1-10. 文法で理解しよう
+**プログラミングの言語の文法は決まっている**
+- 一見難しい記述方法でも文法上ではそんなに変わらない
+
+```go:
+/* 変数定義の文法 */
+var 変数名 型
+
+// int型の変数
+var n int
+
+// 構造体の変数
+var p struct {
+	name string
+	age int
+}
+/* 構造はどちらも同じ！ */
+```
 
