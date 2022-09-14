@@ -1134,4 +1134,29 @@ func main() {
 `var hex Hex = 100`のように、固定値として関数を呼び出すメソッドのみ。動的な関数の代入はできない。
 
 #### 3-3-7. メソッド式
+```go:
+package main
 
+import "fmt"
+
+type Hex int
+
+func (h Hex) String() string {
+	return fmt.Sprintf("%x", int(h))
+}
+
+func main() {
+	// 100をHex型として代入
+	var hex Hex = 100
+	// メソッド式
+	f := Hex.String
+	fmt.Printf("%T\n%s\n", f, f(hex))
+}
+
+/* 実行結果 */
+// func(main.Hex) string
+// 64
+```
+`func(main.Hex) string`
+main関数内だから`main.Hex`となっていると思われる。
+`func(Hex) string` -> レシーバを第1引数とした関数
