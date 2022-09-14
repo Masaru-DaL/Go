@@ -230,3 +230,52 @@ func main() {
   - 複雑な初期化を行う場合に用いる！
     - パッケージ変数への代入分だけでは表現できない場合
   - エラーハンドリングが必要な処理は書かない
+
+## 4-4. ライブラリのバージョン管理
+#### 4-4-1. go getでライブラリを取得する
+- `go get`コマンド
+  - Goのライブラリなどを取得する
+  - 依存するライブラリも一緒に取得する
+  - 指定した場所からダウンロード&インストールしてくれる
+  - 一度取得したものは2度取得しない
+  - `-u`オプションでダウンロードを強制する
+```shell:
+$ go get github.com/tenntenn/greeting
+$ ls $GOPATH/src/github.com/tenntenn/greeting
+# README.md          greeting.go
+```
+GOPATHに入る
+
+#### 4-4-2. TRY ライブラリを取得してみよう
+```shell:
+-> go get github.com/tenntenn/greeting
+# go: downloading github.com/tenntenn/greeting v1.0.0
+# go: added github.com/tenntenn/greeting v1.0.0
+```
+
+```go:
+package main
+
+import "github.com/tenntenn/greeting"
+
+func main() {
+	println(greeting.Do())
+}
+
+/* 実行結果 */
+// こんにちは
+```
+
+#### 4-4-3. GoDocを生成する
+- GoDocとは？
+  - ソースコード上に書かれたコメントをドキュメントとして扱う
+  - エクスポートされたものに書くことが多い
+
+- pkg.go.devを使ってパッケージドキュメントを読む
+  - pkg.go.dev -> 自動でGoDocを生成するサービス
+  - 後ろにインポートパスを付けてアクセスするとそのパッケージドキュメントが読める
+
+https://pkg.go.dev/fmt#Println
+Printlnに関するドキュメントが読めた。
+
+#### 4-4-4. Go Modules (vgo)
