@@ -152,4 +152,35 @@ import "fmt"
 - 大文字から始まる識別子は他のパッケージからも参照できる
   - パッケージ外へのエクスポートの話
 
+#### 4-2-5. パッケージ変数
+```go:
+package main
 
+var msg string = "hello"
+
+func f() {
+	println(msg)
+}
+
+/* f関数とmain関数で"msg"変数を共有したい */
+func main() {
+
+	/* main関数内(同じ関数の中)なら"msg"関数を共有できる */
+	f()
+	msg = "hi, gophers"
+	f()
+}
+
+/* 実行結果 */
+// hello
+// hi, gophers
+```
+
+#### 4-2-6. ユニバーススコープ
+- 組み込み型や、組み込み関数を保持するスコープのこと
+  - プログラム実行時からずっとあるスコープ
+  - 他のスコープの一番ルートとなるスコープ
+[参考](https://www.twihike.dev/docs/golang-primer/scope#%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B9:~:text=%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB-,%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B9,-%E3%81%99%E3%81%B9%E3%81%A6%E3%81%AE%E3%82%BD%E3%83%BC%E3%82%B9)
+int, stringなどの型は既にint型, string型であることが決まっているもの -> ユニバーススコープ
+
+#### 4-2-7. 
