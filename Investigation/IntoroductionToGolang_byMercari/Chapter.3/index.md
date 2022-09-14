@@ -833,3 +833,71 @@ ns[1]の更新に合わせてns2[1]の値も更新されている。
     - マップ
     - チャネル
 
+#### 3-2-13. TRY 奇数偶数判定関数
+- 奇数偶数判定関数の作成
+  - 以下のプログラムの条件式の部分で使用
+```go:
+package main
+func main() {
+	for i := 1; i <= 100; i++ {
+		print(i)
+		if i%2 == 0 {
+			println("-偶数")
+		} else {
+			println("-奇数")
+		}
+	}
+}
+```
+
+```go:
+package main
+
+import "fmt"
+
+func check_num(x int) string {
+	if x%2 == 1 {
+		return "-奇数"
+	} else {
+		return "-偶数"
+	}
+}
+
+func main() {
+	for i := 1; i <= 100; i++ {
+		s := check_num(i)
+		fmt.Printf("%d - %s\n", i, s)
+	}
+}
+```
+if, elseifでやってたらエラーが出てた。
+if, elseにしないといけなかった。
+変数の命名規則的には短い変数名が推奨されている点も気にする。
+
+#### 3-2-14. TRY 複数戻り値の利用
+- 値を入れ替えるswap関数を実装してください
+  - 次のコードが正しく動作するように実装してください
+```go:
+package main
+func main() {
+	n, m := swap(10, 20)
+	println(n, m)
+}
+```
+
+```go:
+package main
+
+func swap(y, x int) (int, int) {
+	return x, y
+}
+
+func main() {
+	n, m := swap(10, 20)
+	println(n, m)
+}
+```
+syntaxエラーが出た。
+基本的な書き方を身につけていく。
+
+
