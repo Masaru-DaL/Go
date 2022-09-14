@@ -931,3 +931,68 @@ func main() {
 普通の入れ替えだと上手くいかなかった。
 `swap(&n, &m)`がポインタの参照というところを理解しなくてはいけない。
 関数の内部で入れ替えて、それを参照するということ。
+
+## 3-3. メソッド
+- レシーバとは？
+```go:
+p := Person{Name: "Taro"}
+p.Greet("Hi")
+/* ↑の"p"がレシーバと呼ぶもの */
+```
+**メソッドを呼び出される対象のこと**
+
+- メソッドとは
+  - レシーバと紐づけられた関数
+    - データとそれに対する操作を紐づけるために用いる
+    - `.`(ドット)でメソッドにアクセスする
+```go:
+package main
+
+import "fmt"
+
+type Hex int
+
+func (h Hex) String() string {
+	return fmt.Sprintf("%x", int(h))
+}
+
+func main() {
+	// 100をHex型として代入
+	var hex Hex = 100
+	// Stringメソッドを呼び出す
+	fmt.Println(hex.String())
+}
+
+/* 実行結果 */
+// 64(100(10進数)を16進数に変換して出力している)
+```
+- %x
+https://qiita.com/rock619/items/14eb2b32f189514b5c3c#x-1:~:text=%25-,X,-16%E9%80%B2%E6%95%B0%E3%81%A7%E3%81%AE%E8%A1%A8%E7%8F%BE(A%2DF%E3%81%AF%E5%A4%A7%E6%96%87%E5%AD%97
+
+- メソッドの書き方がいまいち分かってない。
+**関数の場合**
+```go: func
+// 関数
+func Add(q Calc) int {
+    return q.atai1 + q.atai2
+}
+/* ↓ ↓ ↓ */
+func 関数名（引数）戻り値の型 {
+    // 処理
+    return
+}
+```
+
+**メソッドの場合**
+```go: method
+// メソッド
+func (p Calc) Add() int {
+    return p.atai1 + p.atai2
+}
+/* ↓ ↓ ↓ */
+func (レシーバ 型) 関数名(引数) 戻り値の型 {
+    // 処理
+    return
+}
+```
+大きな違いはレシーバの存在。
