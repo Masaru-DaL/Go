@@ -651,6 +651,7 @@ func main() {
 https://docs.google.com/presentation/d/1DtWB-8FcnNb9asxSpIaOLYbAEc9OjBAwMLNxKnPA8pc/edit#slide=id.g4cbe4d134e_0_280
 
 #### 3-2-3. 関数の定義
+- 関数の定義方法
 ```go:
 package main
 
@@ -658,8 +659,8 @@ import (
 	"fmt"
 )
 
-/* add->関数名, x,y->引数, int-> 引数の型, 次のint->戻り値の型 */
-func add(x, y int) int {
+/* add->関数名, x int,y int->引数とその引数の型, int->戻り値の型 */
+func add(x int, y int) int {
 	// 戻り値(引数を加算して返す)
 	return x + y
 }
@@ -672,3 +673,25 @@ func main() {
 // 30
 ```
 
+- 複数の戻り値を返す
+```go:
+/* (x, y int)->xとyがint型であることをまとめて記述 */
+/* (int, int)-> 戻り値yとxがそれぞれint型であることを記述 */
+func swap(x, y int) (int, int) {
+	return y, x
+}
+```
+
+#### 3-2-4. 多値の受け取り方
+```go:
+/* x->第1戻り値, y->第2戻り値 */
+x, y := swap(10, 20)
+```
+
+- 省略したい場合は`_`(ブランク変数)を用いる
+```go:
+/* 第2戻り値を棄却 */
+x, _ := swap(10, 20)
+/* 第1戻り値を棄却 */
+_, y := swap(10, 20)
+```
