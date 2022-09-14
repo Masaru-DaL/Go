@@ -279,3 +279,8 @@ https://pkg.go.dev/fmt#Println
 Printlnに関するドキュメントが読めた。
 
 #### 4-4-4. Go Modules (vgo)
+[vgo: Versioned Go Command](https://github.com/golang/vgo)
+Go Modules -> 外部パッケージの管理システム(vgoと呼ばれることもある)
+**Go1.13~正式導入**
+- modulesの特徴
+  - 
