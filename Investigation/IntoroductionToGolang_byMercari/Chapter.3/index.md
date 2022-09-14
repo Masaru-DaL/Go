@@ -703,3 +703,53 @@ _, y := swap(10, 20)
 視認性の向上や、変数のスコープを狭くすることが狙えるようです。
 参考: https://zenn.dev/yuyu_hf/articles/c7ab8e435509d2
 
+#### 3-2-6. 値の入れ替え
+- 一時変数無しで値を入れ替えることができる
+  - 一時避難の必要がないということ
+`x, y = y, x`
+なんか矢印が違う気がする。
+左辺の`x`に右辺の`y`, 左辺の`y`に右辺の`x`が代入される。
+
+#### 3-2-7. 無名関数
+- 名前の無い関数のこと
+  - **クロージャ**とも呼ばれる
+```go:
+package main
+
+func main() {
+	msg := "Hello, 世界"
+	/* 以下、無名関数 */
+	func() {
+		/* 関数外の変数msgを参照できる */
+		println(msg)
+	}() // 無名関数を定義後、すぐに自身を呼び出している
+}
+
+/* 実行結果 */
+// Hello, 世界
+```
+無名関数のメリットは**記述が短くて済むこと**。
+
+#### 3-2-8. 関数型
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	/* stringを返す関数(要素)が2つ格納されたスライスを定義 */
+	fs := make([]func() string, 2)
+	fmt.Println(fs) // [<nil> <nil>]
+
+	fs[0] = func() string { return "hoge" }
+	fs[1] = func() string { return "fuga" }
+	for _, f := range fs {
+		fmt.Println(f()) // hoge fuga
+	}
+}
+```
+- ファーストクラスオブジェクトとは
+https://ja.wikipedia.org/wiki/%E7%AC%AC%E4%B8%80%E7%B4%9A%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88
+- 数値や文字列のように
