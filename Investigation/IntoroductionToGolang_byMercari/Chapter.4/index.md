@@ -183,4 +183,50 @@ func main() {
 [参考](https://www.twihike.dev/docs/golang-primer/scope#%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B9:~:text=%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB-,%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B9,-%E3%81%99%E3%81%B9%E3%81%A6%E3%81%AE%E3%82%BD%E3%83%BC%E3%82%B9)
 int, stringなどの型は既にint型, string型であることが決まっているもの -> ユニバーススコープ
 
-#### 4-2-7. 
+## 4-3. パッケージの初期化
+#### 4-3-1. パッケージの初期化
+1. importしているパッケージリストを出す
+2. 依存関係を解決する
+   1. 依存されていないパッケージ -> 依存しているパッケージの順で初期化
+
+- 各パッケージの初期化
+  - パッケージ変数の初期化をする
+  - init関数の実行を行う
+
+#### 4-3-2. init関数
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+var msg = message()
+
+func message() string {
+	return "Hello"
+}
+
+func init() {
+	fmt.Print(msg)
+}
+
+func main() {
+	fmt.Println(", playground")
+}
+
+/* 実行結果 */
+// Hello, playground
+```
+実行結果から分かるように、main関数より先にinit関数が呼ばれている。
+[参考](https://qiita.com/tenntenn/items/7c70e3451ac783999b4f)
+- 記事も合わせて見て、init関数の特徴
+  - **パッケージの初期化を行う関数**
+  - init関数は明示的に呼び出せない
+    - 実行順がシビアなものはinit関数には書かない
+  - 複数用意しても良い
+
+- init関数の用途と注意
+  - 複雑な初期化を行う場合に用いる！
+    - パッケージ変数への代入分だけでは表現できない場合
+  - エラーハンドリングが必要な処理は書かない
