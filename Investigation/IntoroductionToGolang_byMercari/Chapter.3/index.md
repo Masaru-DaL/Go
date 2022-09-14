@@ -996,3 +996,52 @@ func (レシーバ 型) 関数名(引数) 戻り値の型 {
 }
 ```
 大きな違いはレシーバの存在。
+
+```go:
+package main
+
+import "fmt"
+
+type Hex int
+
+/* 2進数 */
+func (h Hex) Two() string {
+	return fmt.Sprintf("%b", int(h))
+}
+
+/* 8進数 */
+func (h Hex) Eight() string {
+	return fmt.Sprintf("%o", int(h))
+}
+
+/* 16進数 */
+func (h Hex) Sixteen() string {
+	return fmt.Sprintf("%x", int(h))
+}
+
+func main() {
+	p := Hex(100)
+
+/* それぞれの組みのは同じ事をしている。 */
+
+	fmt.Println(p.Two())
+	fmt.Println(Hex.Two(100))
+
+	fmt.Println(p.Eight())
+	fmt.Println(Hex.Eight(100))
+
+	fmt.Println(p.Sixteen())
+	fmt.Println(Hex.Sixteen(100))
+}
+
+/* 実行結果 */
+/*
+1100100
+1100100
+144
+144
+64
+64
+*/
+```
+このようにすると理解できた。
