@@ -1076,4 +1076,61 @@ https://qiita.com/tenntenn/items/49bf8b5cc69c2fcfb627
 - 内部にポインタを持つ型
   - マップやスライスなどもレシーバにできる
 
-#### 3-3-5. 
+#### 3-3-5. TRY レシーバに変更を与える
+```go:
+/*
+- 次のプログラムを正しく動作するようにしてください
+Incメソッドは自身を1ずつ加算する
+今の実装だと正しく動かない
+動かない理由を考え、意図通り動くように修正してください
+*/
+
+package main
+
+type MyInt int
+
+func (n *MyInt) Inc() {
+	*n += 1
+}
+func main() {
+	var n MyInt
+	println(n)
+	n.Inc()
+	println(n)
+	n.Inc()
+	println(n)
+	n.Inc()
+	println(n)
+}
+
+// 0 1 2 3
+```
+いまいち分かった感じがしない。
+
+#### 3-3-6. メソッド値
+**メソッドも値として扱える**
+レシーバは束縛された状態??
+```go:
+package main
+
+import "fmt"
+
+type Hex int
+
+func (h Hex) String() string {
+	return fmt.Sprintf("%x", int(h))
+}
+
+func main() {
+	// 100をHex型として代入
+	var hex Hex = 100
+
+	/* 変数fにメソッドを代入している */
+	f := hex.String
+	fmt.Println(f())
+}
+```
+呼ぶ時に`f`じゃなくて`f()`なのが注意点。
+`var hex Hex = 100`のように、固定値として関数を呼び出すメソッドのみ。動的な関数の代入はできない。
+
+
