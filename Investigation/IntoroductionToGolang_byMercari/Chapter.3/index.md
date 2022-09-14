@@ -646,3 +646,29 @@ func main() {
   - 引数が複数ある場合はカンマで区切って指定する
   - 戻り値がある場合は、変数に代入したり式中で使う
 例: `x := f(10, 1+1, y)`
+
+#### 3-2-2. 組み込み関数
+https://docs.google.com/presentation/d/1DtWB-8FcnNb9asxSpIaOLYbAEc9OjBAwMLNxKnPA8pc/edit#slide=id.g4cbe4d134e_0_280
+
+#### 3-2-3. 関数の定義
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+/* add->関数名, x,y->引数, int-> 引数の型, 次のint->戻り値の型 */
+func add(x, y int) int {
+	// 戻り値(引数を加算して返す)
+	return x + y
+}
+
+func main() {
+	fmt.Println(add(10, 20))
+}
+
+/* 実行結果 */
+// 30
+```
+
