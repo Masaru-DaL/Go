@@ -40,6 +40,30 @@ func main() {
 // 64
 // 3e8
 ```
+型Tが構造体でフィールド3つ4つ持っていたとする。
+そこからインターフェースIを実装する際に、型Tのフィールドから実装するフィールドを選んでインターフェースIに実装できる。
+
+引用: [Goのinterfaceがわからない人へ](https://qiita.com/rtok/items/46eadbf7b0b7a1b0eb08)
+```go:
+// 食べるためのインターフェース
+type Eater interface{
+    PutIn() // 口に入れる
+    Chew() // 噛む
+    Swallow() // 飲み込む
+}
+
+// 人間用のインターフェースの実装
+func (h Human) PutIn(){
+    fmt.Println("道具を使って丁寧に口に運ぶ")
+}
+func (h Human) Chew(){
+    fmt.Println("歯でしっかり噛む")
+}
+func (h Human) Swallow(){
+    fmt.Println("よく噛んだら飲み込む")
+}
+```
+実装イメージとしては、ここらへんが凄い分かりやすい。
 
 #### 6-1-3. interface{}
-
+empty(空の) interface
