@@ -119,6 +119,13 @@ func main() {
 /* 実行結果 */
 // hello
 ```
+
+```go:
+/* fmt.Stringer -> インタフェース */
+type Stringer interface {
+    String() string
+}
+```
 `fmt.Stringer = Func`
 ここでメソッドをFunc型に型変換している。
 
@@ -140,4 +147,55 @@ func main() {
 コピーするにはforで要素を取り出して格納するしかない。
 
 #### 6-1-6. インタフェースの実装チェック
+参考: [値がインターフェイスを実装しているかどうかの確認の説明](https://www.web-dev-qa-db-ja.com/ja/interface/%E5%80%A4%E3%81%8C%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%82%A4%E3%82%B9%E3%82%92%E5%AE%9F%E8%A3%85%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%81%8B%E3%81%A9%E3%81%86%E3%81%8B%E3%81%AE%E7%A2%BA%E8%AA%8D%E3%81%AE%E8%AA%AC%E6%98%8E/1049952806/)
+
+- コンパイル時に実装しているかチェックする
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+type Func func() string
+
+func (f Func) String() string { return f() }
+
+/* インタフェース型の変数に代入する */
+var _ fmt.Stringer = Func(nil)
+
+func main() {}
+
+/* インタフェースが実装されていなかったらエラーが出力されるということだと思う。 */
+```
+
+#### 6-1-7. 型アサーション
+インタフェースの値の基になる具体的な値を利用する手段を提供する
+参考:
+[型アサーション](https://blog.y-yuki.net/entry/2017/05/08/000000#:~:text=%22world%22%7D)%0A%7D-,%E5%9E%8B%E3%82%A2%E3%82%B5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3,-%E3%81%A9%E3%82%93%E3%81%AA%E5%9E%8B%E3%81%AE)
+[Go言語入門(Goの型アサーション)](https://qiita.com/knt45/items/2ae6f0dcbf84d0a24c42)
+
+`<インタフェース>.(<型>)`
+`value, ok := <変数>.(<型>)`
+1番目の変数(value)には**型アサーション成功時に実際の値が格納される**。
+2番目の変数(ok)には**型アサーションの成功の有無（true/false）が格納される**。
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	var v interface{}
+	v = 100
+
+	n, ok := v.(int)
+	fmt.Println(n, ok) // n->vがint型だったのでチェックが成功したので100が格納されている。
+	s, ok := v.(string)
+	fmt.Println(s, ok) // s->vがstring型ではないのでチェックが成功しなかったため、値に格納されなかった。
+}
+
+/* 実行結果 */
+// 100 true
+// false
+```
 
