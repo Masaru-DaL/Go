@@ -152,4 +152,22 @@ func main() {
 ```
 
 #### 7-1-10. エラー処理をまとめる
+bufio.Scannerの実装が参考になる
+```go:
+s := bufio.NewScanner(r)
+for s.Scan() {
+	fmt.Println(s.Text())
+}
+if err := s.Err(); err != nil {
+	// エラー処理
+}
+```
+参考: [Golang Error Handling lesson by Rob Pike](https://jxck.hatenablog.com/entry/golang-error-handling-lesson-by-rob-pike)
+> Goでは多値を返して、その最後がエラーになるという形式が一般的であり、かつ型として定義されている。
+
+ここから来る問題点の解消ができる。
+- 途中でエラーが発生したらそれ以降の処理を飛ばす
+- 全ての処理が終わったらまとめてエラーを処理
+エラー処理が一箇所になるというのが利点で、エラーが発生した後の処理を実行する必要のない場合に利用する。
+
 
