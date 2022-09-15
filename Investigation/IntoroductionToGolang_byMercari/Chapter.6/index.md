@@ -224,3 +224,20 @@ func main() {
 // 200
 ```
 
+#### 6-1-9. インタフェースの設計
+参考:
+[Best Practices for Interfaces in Go](https://blog.boot.dev/golang/golang-interfaces/)
+[[翻訳] Golang におけるinterface 実装のベストプラクティス](https://qiita.com/takuya_sss/items/ed162724bbce7b4b4bd0)
+
+**interface設計におけるベストプラクティス**
+- interfaceは小さく作る
+最も重要なトピック
+最小の必要な振る舞いの定義
+HTTP Packageがinterface設計の良い例
+
+- interfaceをclassのように扱わない
+...クラスのように扱うのかと思っていました。
+何が問題かというと、**Goでは型階層が作れない点**のようです。
+5つinterfaceを作成したらその5つそれぞれが別の振る舞いをすることが求められる -> エラーハンドリングもそれぞれに必要、ということかと思われる。
+
+
