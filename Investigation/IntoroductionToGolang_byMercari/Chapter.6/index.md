@@ -449,3 +449,20 @@ func HiHoge(h Hoge) Hoge {
 	return fuga{h} // 構造体作る: Hogeと同じメソッドを持つ構造体fugaの作成
 }
 ```
+参考、復習: [Interface(インターフェース)の定義方法](https://qiita.com/k-penguin-sato/items/885a61d819cc431304f5#interface%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%83%BC%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E6%96%B9%E6%B3%95)
+
+#### 6-2-5. インタフェースの埋め込み
+インタフェースをインタフェースに埋め込む
+- 複数のインタフェースを合成する
+- 複雑なインタフェースが必要な場合
+```go:
+type Reader interface { Read(p []byte) (n int, err error) }
+type Writer interface { Write(p []byte) (n int, err error) }
+// ReaderとWriterを埋め込む
+type ReadWriter interface {
+       Reader
+       Writer
+}
+```
+Reader, Writerのメソッドの実装の必要がある
+メソッドの復習: [メソッド](https://qiita.com/pei0804/items/2a3010df39623fadc3c6#:~:text=%E5%87%A6%E7%90%86%0A%20%20%20%20return%0A%7D-,method,-//%20%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%0Afunc%20()
