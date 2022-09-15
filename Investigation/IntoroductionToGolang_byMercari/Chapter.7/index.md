@@ -65,4 +65,91 @@ if err != nil {
 [errcheck](https://github.com/kisielk/errcheck)などの静的解析ツールで回避できる。
 errcheck-> goのプログラムでチェックされていないエラーをチェックするためのプログラム
 
-#### 7-1-6. 
+#### 7-1-6. エラー処理で大事なこと
+- 必要十分な正しい情報を伝えること
+誰に？ユーザかな...
+意図しない使われ方をした場合にエラーを吐いて「こう使ってしまったからエラーが出たんですよ」と、ユーザに伝わるようなエラー情報を吐かなくてはいけない、ということかなと。
+1つのエラー情報だけで伝わらなければ情報を増やす。
+基本的には無駄に情報を増やさない(ユーザが分かりにくくなるだけ)
+
+- 受け取り手によって伝え方を変える
+  - 同じパッケージの別の関数なのか？別のパッケージ？
+    - エラーハンドリングによる分岐処理が必要
+  - クライアント？
+  - エンドユーザ？
+
+#### 7-1-7. 文字列ベースで簡単なエラーの作り方
+- errors.Newを使う
+  - エラーが起こった場合に引数に指定した文字列が返る
+`err := errors.New("Error")`
+
+- fmt.ErrorFを使う
+  - 書式を指定する。文字列が返るのは同じ
+`err := fmt.Errorf("%s is not found", name)`
+
+#### 7-1-8. エラー型の定義
+Errorメソッドを実装している型を定義する
+```go:
+type PathError struct {
+       Op   string
+       Path string
+       Err  error
+}
+
+func (e *PathError) Error() string {
+       return e.Op + " " + e.Path + ": " + e.Err.Error()
+}
+```
+対応するエラーがどんなエラーか？どういった物を吐くのか？
+対応させるエラー型の構造をエラーに必要なメソッドを実装する。
+
+#### 7-1-9. TRY エラー処理をしてみよう
+```go:
+package main
+
+import (
+	"fmt"
+	"os" // 標準エラー出力用
+)
+
+/* 文字列を返すStringerインタフェース */
+type Stringer interface {
+	String() string
+}
+
+/* (v interface{})->引数が空のインタフェース
+戻り値が文字列とエラーを返す */
+func ToStringer(v interface{}) (Stringer, error) {
+	if s, ok := v.(Stringer); ok {
+		return s, nil
+	}
+	return nil, MyError("CastError")
+}
+
+type MyError string
+
+func (e MyError) Error() string {
+	return string(e)
+}
+
+type S string
+
+func (s S) String() string {
+	return string(s)
+}
+
+func main() {
+  /* 今回は文字列の場合は正常としている */
+	v := S("hoge")
+  /* ToStringerの引数が空のインタフェースなので、vに何の型を入れてもエラー処理が行える */
+	if s, err := ToStringer(v); err != nil {
+		fmt.Fprintln(os.Stderr, "ERROR:", err)
+	} else {
+		fmt.Println(s.String())
+	}
+
+}
+```
+
+#### 7-1-10. エラー処理をまとめる
+
