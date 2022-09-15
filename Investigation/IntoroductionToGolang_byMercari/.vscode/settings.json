@@ -1,3 +1,11 @@
 {
-  "cSpell.words": ["println"]
+  "cSpell.words": ["println"],
+  "cSpell.customDictionaries": {
+    "custom-dictionary-workspace": {
+      "name": "custom-dictionary-workspace",
+      "path": "${workspaceFolder:IntoroductionToGolang_byMercari}/.cspell/custom-dictionary-workspace.txt",
+      "addWords": true,
+      "scope": "workspace"
+    }
+  }
 }
