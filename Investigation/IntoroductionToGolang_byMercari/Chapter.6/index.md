@@ -122,4 +122,22 @@ func main() {
 `fmt.Stringer = Func`
 ここでメソッドをFunc型に型変換している。
 
-#### 6-1-5.
+#### 6-1-5. スライスとインタフェース
+```go:
+package main
+
+func main() {
+	ns := []int{1, 2, 3, 4}
+	// できない
+	var vs []interface{} = ns
+}
+
+/* 実行結果 */
+/* cannot use ns (variable of type []int) as type []interface{} in variable declaration */
+/* 変数宣言で ns (型[]int の変数) を型 []interface{} として使用できない */
+```
+スライスとインタフェースに互換性がない。
+コピーするにはforで要素を取り出して格納するしかない。
+
+#### 6-1-6. インタフェースの実装チェック
+
