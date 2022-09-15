@@ -59,4 +59,33 @@ osパッケージで提供されている*os.File型の変数
 1. さまざまな関数やメソッドの引数として渡せる
 2. エラーを出力する場合は標準エラー出力に出力する
 
+#### 5-3-2. fmt.Fprintln関数
+**出力先を指定して出力する**
+- 末尾に改行をつけて表示する
+- 標準出力(os.Stdout), 標準エラー出力(os.Stderr)に出力できる
+- ファイルにも出力できる
+```go:
+package main
 
+import "fmt"
+
+func main() {
+	fmt.Fprintln(os.Stderr, "エラー")  // 標準エラー出力に出力
+	fmt.Fprintln(os.Stderr, "Hello”)  // 標準出力に出力
+}
+```
+`Fprintln`の第1引数にどこに出力するかを指定している。
+
+#### 5-3-3. プログラムの終了
+os.Exit(code int)
+```go:
+func main() {
+	fmt.Fprintln(os.Stderr, "エラー")
+  /* プログラムの呼び出し元に終了状態を伝えられる */
+  /* 0: 成功(デフォルト) */
+	os.Exit(1) // 終了コード(1)を指定してプログラムを終了
+}
+```
+
+#### 5-3-4. プログラムの終了(エラー)
+log.Fatal
