@@ -170,4 +170,35 @@ if err := s.Err(); err != nil {
 - 全ての処理が終わったらまとめてエラーを処理
 エラー処理が一箇所になるというのが利点で、エラーが発生した後の処理を実行する必要のない場合に利用する。
 
+#### 7-1-11. TRY エラー処理をまとめる
+https://docs.google.com/presentation/d/1HW3wG8J_Q2536Iu__7HGr_mhurHajC7IOGjCnn3kZmg/edit#slide=id.g7e7c89dcc9_0_355
 
+回答コードを見ても何を処理しているか分からない。
+
+#### 7-1-12. エラーをまとめる
+[multierr](https://github.com/uber-go/multierr)を使う
+- 特徴
+  - 成功したものは成功させたい -> ok
+  - 失敗したものだけエラーとして報告したい -> ok
+  - N番目のエラーはどういうエラなのか知れる
+
+```go:
+var rerr error
+
+/* 条件分岐の場合の例 */
+if err := step1(); err != nil {
+	rerr = multierr.Append(rerr, err)
+}
+if err := step2(); err != nil {
+	rerr = multierr.Append(rerr, err)
+}
+return rerr
+/* ------------------------------- */
+
+/* 繰り返しの場合の例 */
+for _, err := range multierr.Errors(rerr) {
+       fmt.Println(err)
+}
+```
+
+#### 7-1-13. エラーに文脈を持たせる
