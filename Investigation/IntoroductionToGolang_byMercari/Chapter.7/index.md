@@ -44,3 +44,25 @@ if err := f(); err != nil {
 }
 ```
 
+#### 7-1-5. エラー処理のよくあるミス
+err変数を使い回すことによるハンドル(エラー処理)ミス
+```go:
+/* 1. */
+f, err := os.Open("file.txt")
+if err != nil {
+	// エラー処理
+}
+
+/* 2. */
+// 本来は err = doSomething(f) としたつもり
+doSomething(f)
+if err != nil {
+	// エラー処理
+}
+```
+スコープの違いから起こるエラーだと思われる。
+エラーが発生してもハンドルされずに次に進んでしまう。
+[errcheck](https://github.com/kisielk/errcheck)などの静的解析ツールで回避できる。
+errcheck-> goのプログラムでチェックされていないエラーをチェックするためのプログラム
+
+#### 7-1-6. 
