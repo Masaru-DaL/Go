@@ -265,3 +265,71 @@ type Writer interface {
        Write(p []byte) (n int, err error)
 }
 ```
+
+#### 6-1-11. TRY インタフェースを作ろう
+レシーバが分からなくなったので再度整理。
+関数の外から他の関数のメソッドを呼び出す際にレシーバを通してアクセスする。
+レシーバを通してメソッドの操作(引数の値の指定)なども行える。
+
+```go:
+package main
+
+import "fmt"
+
+/* interface型をStringerと名前を付け、
+メソッド名Stringがstring型であることを定義する */
+type Stringer interface {
+	String() string
+}
+
+/* interfaceをINT型かどうかをチェックするための関数 */
+type I int
+// レシーバにint型
+func (i I) String() string {
+  return "type int"
+}
+
+/* bool型 */
+type B bool
+// レシーバにbool型
+func (b B) String() string {
+	return "type bool"
+}
+
+/* string型 */
+type S string
+// レシーバにstring型
+func (s S) String() string {
+	return "type string"
+}
+
+/* 引数で渡した型とinterface(Stringer)を比較する=>s.(type) */
+func F(s Stringer) {
+	switch v := s.(type) {
+	case I:
+		fmt.Println(int(v), "I")
+	case B:
+		fmt.Println(bool(v), "B")
+	case S:
+		fmt.Println(string(v), "S")
+	}
+}
+
+/* <インタフェース>.(<型>) */
+func main() {
+	var i I = I(100)
+	F(i) // 変数iにはI型(int型)が代入されているので、caseIが出力される
+  /* B(true->bool), S("hoge"->string)は型を指定している */
+	F(B(true))
+	F(S("hoge"))
+}
+
+/* 実行結果 */
+/*
+100 I
+true B
+hoge S
+*/
+```
+
+## 6-2. 埋め込みとインタフェース
