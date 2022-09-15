@@ -67,3 +67,27 @@ func (h Human) Swallow(){
 
 #### 6-1-3. interface{}
 empty(空の) interface
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	/* 変数vを空のinterfaceで宣言する */
+	var v interface{}
+
+	/* int型を代入 */
+	v = 100
+	fmt.Println(v)
+	/* string型を代入 */
+	v = "hoge"
+	fmt.Println(v)
+}
+
+/* 実行結果 */
+// 100
+// hoge
+```
+空のインタフェースにはどの型の値も実装できる！
+
+#### 6-1-4. 関数にインタフェースを実装させる
