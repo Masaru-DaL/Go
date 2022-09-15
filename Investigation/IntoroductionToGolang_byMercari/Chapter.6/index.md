@@ -91,3 +91,35 @@ func main() {
 空のインタフェースにはどの型の値も実装できる！
 
 #### 6-1-4. 関数にインタフェースを実装させる
+参考:
+[無名関数](https://blog.y-yuki.net/entry/2017/05/04/000000)
+[Golang入門（関数）](https://qiita.com/gorilla0513/items/7e734c4e0680b5ea341d)
+[【備忘】Go 言語のデータ型と型変換](https://qiita.com/t-yama-3/items/724f5f76356b814b0b2d)
+
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+/* func([引数]) [戻り値の型] { [関数の本体] } */
+// 関数型
+type Func func() string
+
+/* レシーバが関数型, String(関数名), 戻り値->関数を実行してstring型で返す */
+func (f Func) String() string { return f() }
+
+func main() {
+	/* 変数sにfmtパッケージの文字列を返すメソッドを代入(helloを戻り値で返す) */
+	var s fmt.Stringer = Func(func() string { return "hello" })
+	fmt.Println(s) // 戻り値のhelloを出力する
+}
+
+/* 実行結果 */
+// hello
+```
+`fmt.Stringer = Func`
+ここでメソッドをFunc型に型変換している。
+
+#### 6-1-5.
