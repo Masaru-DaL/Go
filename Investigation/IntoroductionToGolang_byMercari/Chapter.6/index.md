@@ -429,4 +429,23 @@ func main() {
 ```
 
 #### 6-2-4. インタフェースと埋め込み
+既存のインタフェースの振る舞いを変える
+```go:
+type Hoge interface{
+  M();
+  N()
+}
 
+type fuga struct {
+  Hoge
+}
+
+func (f fuga) M() {
+	fmt.Println("Hi")
+	f.Hoge.M() // 元のメソッドを呼ぶ
+}
+
+func HiHoge(h Hoge) Hoge {
+	return fuga{h} // 構造体作る: Hogeと同じメソッドを持つ構造体fugaの作成
+}
+```
