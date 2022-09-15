@@ -335,6 +335,8 @@ hoge S
 ## 6-2. 埋め込みとインタフェース
 #### 6-2-1. 構造体の埋め込み
 構造体の中に構造体を埋め込む
+参考: [【Go入門】構造体の埋め込み（Embedded structs）](https://code-graffiti.com/embedded-structs-in-golang/)
+
 ```go:
 type Hoge struct {
 	N int
@@ -382,3 +384,49 @@ func main() {
 3. `f.Hoge.N`
 やっている事は2と変わらない。
 明示的にHoge型を指定してNフィールドへアクセスしている。
+
+#### 6-2-3. 埋め込みの特徴
+- [型リテラル](https://zenn.dev/syumai/articles/77bc12aca9b654#:~:text=%E5%9E%8B%E3%83%AA%E3%83%86%E3%83%A9%E3%83%AB%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6-,%E5%9E%8B%E3%83%AA%E3%83%86%E3%83%A9%E3%83%AB%E3%81%A8%E3%81%AF%E4%BD%95%E3%81%8B,-%E9%85%8D%E5%88%97%E5%9E%8B%E3%82%84)でなければ埋め込み可能
+  - **typeで定義したもの**や、組み込み型
+  - **インタフェース**も埋め込み可能
+
+- インタフェースの実装
+```go:
+package main
+
+import "fmt"
+
+type Stringer interface {
+	String() string
+}
+
+// Stringerを実装
+type Hex int
+
+func (h Hex) String() string {
+	return fmt.Sprintf("%x", int(h))
+}
+
+// Hex2もStringerを実装
+/* このHexは上の関数の事を指しているのだろうか */
+/* だとすればHex2の構造体に上のStringerが埋め込まれているということになる */
+type Hex2 struct{ Hex }
+
+func main() {
+	var s Stringer
+	h := Hex(100)
+	s = h
+	fmt.Println(s.String())
+
+	h2 := Hex2{h} //ここでやっていることは"h := Hex(100)"と同じ
+	s = h2
+	fmt.Println(s.String())
+}
+
+/* 実行結果: 同じ場所にアクセスしている */
+// 64
+// 64
+```
+
+#### 6-2-4. インタフェースと埋め込み
+
