@@ -101,3 +101,35 @@ func main() {
 // os.Exit(1)で異常終了させる
 ```
 **終了コードがコントロールできないため(os.Exit(1))あまり多用しない**
+
+#### 5-3-5. ファイルを扱う
+- osパッケージを用いる
+参考: [ファイルの読み書き](https://zenn.dev/hsaki/books/golang-io-package/viewer/file)
+
+#### 5-3-6. defer
+関数の遅延実行
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	msg := "!!!"
+	defer fmt.Println(msg) // msg := "!!!"を保持
+	msg = "world"
+	defer fmt.Println(msg) // msg = "world"を保持
+	fmt.Println("hello")
+}
+
+/* 実行結果 */
+// hello
+// world
+// !!!
+```
+- スタック形式で実行される(LIFO: Last In First Out)
+- 引数の評価は関数が呼び出された時
+
+#### 5-3-7. forの中でdeferは避ける
+
