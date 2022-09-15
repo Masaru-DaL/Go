@@ -199,3 +199,28 @@ func main() {
 // false
 ```
 
+#### 6-1-8. 型スイッチ
+型によって処理をスイッチする
+代入文は省略可能
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	var i interface{}
+	i = 100
+	switch v := i.(type) {
+	case int:
+		fmt.Println(v * 2) // i=100でint型なので、この処理だけ実行される。
+	case string:
+		fmt.Println(v + "hoge")
+	default:
+		fmt.Println("default")
+	}
+}
+
+/* 実行結果 */
+// 200
+```
+
