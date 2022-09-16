@@ -202,4 +202,15 @@ for _, err := range multierr.Errors(rerr) {
 ```
 
 #### 7-1-13. エラーに文脈を持たせる
-aa
+fmt.Errorf関数の％wを使う
+```go:
+/* 変数errのエラー出力"foo"を%wを使用してラップしている */
+err := fmt.Errorf("bar: %w", errors.New("foo"))
+/* "foo" -ラップ後-> "bar: foo" */
+fmt.Println(err)                // bar: foo
+
+/* erros.Unwrap関数で元のエラーが取得できる */
+fmt.Println(errors.Unwrap(err)) // foo
+```
+
+  
