@@ -21,4 +21,59 @@
   - 変更に対する品質の保証
   - ドキュメントの役割(パッケージの最初のユーザ)
 
+#### 8-1-2. go test
+`go test` -> 単体テストを行うためのコマンド
+末尾に`_test.go`が付いたファイルを対象にテストを実行する
+前節で参考にさせて頂いた記事を元に実際に書いてみます。
+```go: hello.go
+package hello
+
+func GetHello(s string) string {
+  return "こんにちは、" + s + "！"
+}
+```
+
+- 上のhello.goをインポートして使用するプログラム
+```go: main.go
+package main
+
+import (
+  "fmt"
+  "./hello"
+)
+
+func main() {
+  s := hello.GetHello("山澤さん")
+  fmt.Println(s)
+}
+
+/* 実行結果 */
+// こんにちは、山澤さん！
+```
+
+- 上のサンプルコードに対するテストコード
+```go: hello_test.go
+package hello
+
+import (
+  "testing"
+)
+
+func TestHello(t *testing.T) {
+  result := GetHello("山澤さん")
+  expect := "こんにちは、山澤さん！！"
+  if result != expect {
+    t.Error("\n実際： ", result, "\n理想： ", expect)
+  }
+
+  t.Log("TestHello終了")
+}
+```
+1. `testing`をインポートしている
+2. テストコードのファイル名を`hello_test.go`にする
+3. `TestHello(t *testing.T)`という関数名
+ルールに則っている。
+
+- testingパッケージ
+  - テストを行うための機能を提供するパッケージ
 
