@@ -2,7 +2,7 @@
 
 An examination of Golang's error.
 
-### The site we used as a reference during our research.
+### The sites we used as a reference during our research.
 [Golangのエラーハンドリングの基本 - Qiita](https://qiita.com/immrshc/items/13199f420ebaf0f0c37c)
 
 [Goエラーハンドリング戦略](https://zenn.dev/nobonobo/articles/0b722c9c2b18d5)

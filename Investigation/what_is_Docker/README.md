@@ -2,7 +2,7 @@
 
 An examination of Docker.
 
-### The site we used as a reference during our research.
+### The sites we used as a reference during our research.
 [Docker とは | AWS](https://aws.amazon.com/jp/docker/)
 
 [Part 1：概要説明とセットアップ — Docker-docs-ja 20.10 ドキュメント](https://docs.docker.jp/get-started/index.html#id5)
