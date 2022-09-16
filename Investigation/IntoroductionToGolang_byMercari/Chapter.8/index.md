@@ -90,4 +90,16 @@ func TestHello(t *testing.T) {
     - testing/quickパッケージ
 
 #### 8-1-4. テストの後処理
+- t.Cleanup
+Go1.14でtestingパッケージに追加
+テスト終了時に行う関数を登録
+deferの置き換え異常に便利らしい。
+参考: [Go の t.Cleanup がとてもべんり](https://syfm.hatenablog.com/entry/2020/05/17/161842)
 
+- t.TempDir
+(ちょっとあやしいですが)Go1.15でtestingパッケージに追加
+参考: [一時的なファイル出力を伴うテストにtesting.TB.TempDir()が便利そう](https://pod.hatenablog.com/entry/2021/01/31/201137)
+一時的にファイルを作成 -> テスト終了時にはきれいに消してくれる
+ファイルと書いてありますが、ディレクトリかな？
+
+#### 8-1-5. テスティングフレームを使わない理由
