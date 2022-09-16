@@ -166,4 +166,56 @@ Exampleテストがどういったものかは分かった。
   - 可変長引数を上手く使った関数を作る
   - []interface をうまく使う
 
+#### 8-1-13. coverprofile
+テストのカバレッジを分析
+カバレッジ -> 所定の網羅条件がテストによってどれだけ実行されたかを割合で表したもの
+参考: [Goでテストカバレッジを測定する - Qiita](https://qiita.com/takehanKosuke/items/4342ca544d205fb36eb0)
+
+## 8-2. テスタビリティ
+#### 8-2-1. テスタブルなコードと抽象化
+テスタブル = テストしやすいコード
+- 個々の機能が疎結合で単体でテストしやすい
+  - 分離が重要
+- interfaceの利点を使う
+  - 抽象化
+
+#### 8-2-2. インタフェースを使う
+外部につながる部分はモックに差し替え可能にする
+[Mock object](https://en.wikipedia.org/wiki/Mock_object)
+```go:
+type DB interface {
+   Get(key string) string
+   Set(key, value string) error
+}
+// DBはインタフェースなので実装を入れ替えれる
+type Server struct { DB DB }
+```
+なんとなく分かる。
+
+#### 8-2-3. テストする部分だけ実装する
+埋め込みを使って一部分だけモックを用意する
+**呼び出さないメソッドは実装しなくてもコンパイルエラーにならない**
+```go:
+type getTestDB struct {
+   // DBを埋め込むことで実装したことになる
+   DB
+}
+// Getだけテスト用に実装する
+func (db getTestDB) Get(key string) string {...}
+```
+
+#### 8-2-4. 環境変数を使う
+環境変数(os.Getenvで取得できる)を使って切り替える
+[github.com/jinzhu/configor](https://github.com/jinzhu/configor)
+
+#### 8-2-5. テストデータを用意する
+**どの環境でも使用できるテストデータを用意する**
+- テストデータは`testdata`というディレクトリに入れる。
+`testdata`はパッケージとみなされない。
+
+- テストの再現性を担保する(テストデータに求められる事)
+  - ネットワークアクセスを発生させない
+  - テストデータ以外のファイルにアクセスしない
+
+#### 8-2-6. 非公開な機能を使ったテスト
 
