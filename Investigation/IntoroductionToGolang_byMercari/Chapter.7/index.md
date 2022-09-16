@@ -310,3 +310,32 @@ func main() {
 どんな時にパニックを起こすのか？気になったので調べてみました。
 [引用: 遭遇した例](https://qiita.com/nayuneko/items/9534858156dfd50b43fb#:~:text=%E4%B8%8B%E8%A8%98%E3%81%AB%E8%A8%98%E3%81%99%E5%86%85%E5%AE%B9%E3%81%AF%E3%81%BB%E3%82%93%E3%81%AE%E4%B8%80%E9%83%A8%E3%81%A7%E3%81%99%E3%81%8C%E3%80%81%E3%81%93%E3%81%93%E3%81%A7%E3%81%AF%E8%87%AA%E8%BA%AB%E3%81%8C%E9%81%AD%E9%81%87%E3%81%97%E3%81%9F%E7%99%BA%E7%94%9F%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88%E3%82%92%E6%8C%99%E3%81%92%E3%81%A6%E3%81%84%E3%81%8D%E3%81%BE%E3%81%99%E3%80%82)
 
+#### 7-2-3. Must*関数
+パッケージ初期化時のエラー処理に用いる
+[MustCompile](https://pkg.go.dev/regexp#MustCompile)
+> MustCompile は Compile に似ていますが、式を解析できない場合はパニックになります。コンパイルされた正規表現を保持するグローバル変数の安全な初期化を簡素化します。
+
+- エラーではなくパニックを発生させる
+- 実行直後にパニックが発生する
+- 正規表現やテンプレートエンジンの初期化関数に設けられている
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp" // 正規表現検索のパッケージ
+)
+
+// パッケージの初期化時に行う
+var validID = regexp.MustCompile(`^[a-z]+\[[0-9]+\]$`)
+
+func main() {
+	fmt.Println(validID.MatchString("adam[23]")) // 出力される箇所
+
+	// 関数内で行う場合はエラー処理をする
+	validID2, err := regexp.Compile(`^[a-z]+\[[0-9]+\]$`)
+	if err != nil { /* エラー処理 */
+	}
+	fmt.Println(validID2.MatchString("adam[23]")) // 出力される箇所
+}
+```
