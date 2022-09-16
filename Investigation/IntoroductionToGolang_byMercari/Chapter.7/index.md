@@ -246,4 +246,15 @@ if errors.Is(err, os.ErrExist) {
 ```
 判定不能の場合は`errors.Unwrap`関数を読んでアンラップ後に判定
 
-
+#### 7-1-16. エラーから情報を取り出す
+errors.As関数を用いる
+第1引数で指定したエラーを第2引数で指定した**ポインタが指す変数**に代入する
+```go:
+var pathError *os.PathError
+if errors.As(err, &pathError) {
+	fmt.Println("Failed at path:", pathError.Path)
+} else {
+	fmt.Println(err)
+}
+```
+キャスト不可の場合は`errors.Unwrap`関数でアンラップ後に試みる
