@@ -280,7 +280,7 @@ if errors.As(err, &pathError) {
 - パニック
   - 回復不能だと判断された実行時のエラーを発生させる機構
     - パニックは基本的に使わないらしい
-    - 目指すべきは、安定してプログラムを運用し、p**anicをいかに発生させないかが重要**
+    - 目指すべきは、安定してプログラムを運用し、**panicをいかに発生させないかが重要**
   - 組み込み関数のpanicを呼び出すと発生する
 
 - リカバー
@@ -339,3 +339,41 @@ func main() {
 	fmt.Println(validID2.MatchString("adam[23]")) // 出力される箇所
 }
 ```
+
+#### 7-2-4. 名前付き戻り値とパニック
+パニックで渡された値を戻り値として返す
+```go:
+package main
+
+import (
+	"errors"
+	"fmt"
+	"log"
+)
+
+func f() (rerr error) {
+	defer func() {
+		/* 発生したパニックを r に入れている */
+		/* rerrが戻り値として返っている */
+		if r := recover(); r != nil {
+			if err, isErr := r.(error); isErr {
+				rerr = err
+			} else {
+				rerr = fmt.Errorf("%v", r)
+			}
+		}
+	}()
+	panic(errors.New("error"))
+	return nil
+}
+
+func main() {
+	if err := f(); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+[log.Fatalはメッセージ出力後に終了ステータス1としてプログラムを終了しようとする](https://qiita.com/neko_the_shadow/items/70642e57723d42b8514c)
+これを見ると、`log.Fatal`はメッセージ出力後に`os.Exit(1)`を発行し、プロセスを終了しようとするようです。
+気軽に使おうとしない方が良い。
+
