@@ -213,4 +213,25 @@ fmt.Println(err)                // bar: foo
 fmt.Println(errors.Unwrap(err)) // foo
 ```
 
-  
+#### 7-1-14. 振る舞いでエラーを処理する
+エラー処理は具象型に依存させない
+
+参考: [Golangのエラー処理とpkg/errors](https://deeeet.com/writing/2016/04/25/go-pkg-errors/)
+> fmt.Errorf()はerrorを別のstringに結合して別のerrorを作り出す。
+> 原因となったエラーが特定の型を持っていた場合にそれを隠蔽してしまう。
+
+ここの所でなんとなく言いたい事がわかった。
+```go:
+// 一時的なエラーかどうかを判定する関数
+/* err error -> error型であることが重要 */
+func IsTemporary(err error) bool {
+  te, ok := err.(interface {
+      Temporary() bool
+  })
+  return ok && te.Temporary()
+}
+```
+- エラーの種類で処理を分けたい場合がある
+- インタフェースを使い、振る舞いで処理する
+
+
