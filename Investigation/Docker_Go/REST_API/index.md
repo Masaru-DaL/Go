@@ -68,7 +68,7 @@ REST APIとは、リソースが持つURIの適切な処理・運用が重要な
 - 1024の次の素数
 
 ### 3-2. URI
-![](2022-09-06-05-28-58.png)
+[引用: URI image](https://ferret.akamaized.net/images/579073cb69702d514a0a0000/large.jpeg?1469084618)
 ざっくり、URI ≒ URL, URI ≒ URNと捉えておきます。
 
 リソースは少なくとも1つのURIを持っていなければならない。なぜならリソースはURIを通じて提唱されるから。

@@ -65,7 +65,7 @@ hello
 チャネルを利用することで、ゴルーチン間でデータの送受信が実行できる。
 
 - Channelsイメージ
-![](2022-09-04-06-39-33.png)
+[引用: Channels image](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.ap-northeast-1.amazonaws.com%2F0%2F154845%2F61dd65b2-6c97-9dae-23a5-d3eefdd2a0f9.png?ixlib=rb-4.0.0&auto=format&gif-q=60&q=75&w=1400&fit=max&s=8f2237df50fc0c94ba20d83c040ddcf4)
 
 チャネルというトンネル、というよりバッファのイメージですね。(チャネルは一時的に記憶する場所: バッファとして使える)
 
