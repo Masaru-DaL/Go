@@ -6,7 +6,7 @@
 ## 2. マルチステージングビルド
 主参考: [マルチステージビルドの利用](https://matsuand.github.io/docs.docker.jp.onthefly/develop/develop-images/multistage-build/)
 
-![](2022-09-05-16-45-13.png)
+[引用: マルチステージビルド image](https://miro.medium.com/max/875/1*aTJT_LcNdbF3IVCAvLWuTA.png)
 
 #### 2-1. マルチステージングビルドとは
 Multi-Staging Build(Multi-Stage Build)
