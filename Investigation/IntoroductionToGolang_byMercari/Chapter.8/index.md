@@ -74,6 +74,20 @@ func TestHello(t *testing.T) {
 3. `TestHello(t *testing.T)`という関数名
 ルールに則っている。
 
-- testingパッケージ
-  - テストを行うための機能を提供するパッケージ
+#### 8-1-3. testingパッケージ
+テストを行うための機能を提供するパッケージ
+- testingパッケージで出来ること
+  - 失敗理由を出力してテストを失敗させること
+    - テスト関数を継続: t.Error, t.Errorf
+    - テスト関数を終了. t.Fatal, t.Fatalf
+  - テストの並列実行
+    - t.Parallel(テスト関数の先頭で呼び出す)
+    - go testの-parallelオプションで**並列数を指定**
+  - ベンチマーク
+    - *testing.B型を使う
+  - ブラックボックステスト
+    - **あまり積極的には使わない**
+    - testing/quickパッケージ
+
+#### 8-1-4. テストの後処理
 
