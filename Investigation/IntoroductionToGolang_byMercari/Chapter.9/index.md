@@ -383,3 +383,46 @@ makeでチャネルを作成したものと、変数での初期値が違う。
 */
 ```
 
+#### 9-2-7. ファーストクラスオブジェクト
+[第一級オブジェクト](https://ja.wikipedia.org/wiki/%E7%AC%AC%E4%B8%80%E7%B4%9A%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88)
+- チャネルは...
+  - 変数へ代入可能
+  - 引数に渡す
+  - 戻り値で返す
+  - チャネルのチャネル -> `chan chan int`など
+
+- timeパッケージ
+[func After](http://golang.org/pkg/time/#After)
+> Afterは持続時間の経過を待ち、返されたチャネルで現在の時刻を送信する。
+
+```go:
+/* 5分経ったら現在時刻が送られてくる"チャネルを返す" */
+<-time.After(5 * time.Minute) // 5分待つ
+```
+
+#### 9-2-8. チャネルを引数や戻り値にする
+```go:
+package main
+
+import "fmt"
+
+/* 戻り値でチャネルを返す(int型, 容量0) */
+func makeCh() chan int {
+	return make(chan int)
+}
+
+/* 引数の型 = チャネル, 引数にチャネルを入れたらそのチャネルが戻り値になる */
+func recvCh(recv chan int) int {
+	return <-recv
+}
+
+func main() {
+	ch := makeCh() 			// ch = チャネル
+	go func() { ch <- 100 }()	// chに100を格納
+	/* 引数にチャネルを指定 */
+	fmt.Println(recvCh(ch))
+}
+
+/* 実行結果 */
+// 100
+```
