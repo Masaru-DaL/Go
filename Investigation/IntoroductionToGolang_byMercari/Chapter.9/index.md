@@ -426,3 +426,30 @@ func main() {
 /* 実行結果 */
 // 100
 ```
+
+#### 9-2-9. 双方向チャネル
+```go:
+package main
+
+import "fmt"
+
+func makeCh() chan int {
+	return make(chan int)
+}
+
+func recvCh(recv chan int) int {
+	go func() { recv <- 200 }()
+	return <-recv
+}
+
+func main() {
+	ch := makeCh()
+	go func() { ch <- 100 }()
+	fmt.Println(recvCh(ch))
+
+/* 実行結果 */
+// 200
+
+/* main関数の中でチャネルに値を入れているが、recvCh関数内で戻り値に200の固定値を入れてしまっている。この値が出力されている。
+間違った使い方ができる、ということは意図しない使い方ができてしまっている。 */
+```
