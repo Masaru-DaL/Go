@@ -266,36 +266,91 @@ func main() {
 普通にチャネルを通して100という値が`v`に入り出力されています。
 容量とブロックの関係を整理する必要があります。
 
-バッファ無しチャネルとバッファ有りチャネルでも動作の違いがありそう。
-参考:
-[【Go言語】「バッファなしチャネル（channel）」を理解したいんじゃ！！ - フリエン生活](https://free-engineer.life/golang-channel/)
-[【Go言語】「バッファありチャネル（channel）」を理解したいんじゃ！！ - フリエン生活](https://free-engineer.life/golang-buffer-channel/)
+ゴールーチンを使わずに検証してみた。
+何となくイメージは掴めた。
+```go:
+package main
 
-いまいち何とも言えないので、複数の方を見てみた方がいいかもしれない。
+import (
+	"fmt"
+)
+
+func main() {
+	messages := make(chan string, 2) // 容量を2に指定
+
+	messages <- "Hello"
+	messages <- "World"
+
+	fmt.Println(<-messages)
+	fmt.Println(<-messages)
+}
+
+/* 実行結果 */
+// Hello
+// World
+```
+
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	messages := make(chan string) // 容量が0
+
+	messages <- "Hello"
+	messages <- "World"
+
+	fmt.Println(<-messages)
+	fmt.Println(<-messages)
+}
+/* 実行結果 */
+/*
+fatal error: all goroutines are asleep - deadlock!
+
+goroutine 1 [chan send]:
+main.main()
+	/tmp/sandbox1713984673/prog.go:10 +0x37
+*/
+```
+
 
 #### 9-2-6. 複数のチャネルから同時に受信
 select-caseを用いる
 ```go:
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
 	ch1 := make(chan int)
 	ch2 := make(chan string)
-	go func() { ch1 <- 100 }()
-	go func() { ch2 <- "hi" }()
+	go func() {
+		time.Sleep(2 * time.Second)
+		ch1 <- 100
+	}()
+
+	go func() {
+		time.Sleep(3 * time.Second)
+		ch2 <- "hi"
+	}()
 
 	select {
-	case v1 := <-ch1:
-		fmt.Println(v1)
-	case v2 := <-ch2:
+	case v2 := <-ch1:
 		fmt.Println(v2)
+	case v1 := <-ch2:
+		fmt.Println(v1)
 	}
 }
-
-/* 実行結果 */
-//100
 ```
-これはまぁそうだろうなぁと。
+select-caseの検証
+1. 先に処理が終わった方が出力される
+2. 同時に処理が終わった場合、caseで先に合致した時点で終了
+
+- nilチャネル
 
