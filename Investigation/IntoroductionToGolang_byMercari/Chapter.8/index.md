@@ -218,4 +218,20 @@ func (db getTestDB) Get(key string) string {...}
   - テストデータ以外のファイルにアクセスしない
 
 #### 8-2-6. 非公開な機能を使ったテスト
+- `export_test.go`という名前でファイルを作る
+`_test`を付けるとテストのときにしかビルドされない
 
+- テスト対象のパッケージと同じにする
+```go:
+// mypkg.go
+package mypkg
+
+const maxValue = 100
+/* ↓     ↓     ↓     ↓     ↓     ↓ */
+
+// export_test.go
+package mypkg // テスト対象と同じパッケージ
+/* ExportMaxValue -> テストの時だけ参照できる関数 */
+const ExportMaxValue = maxValue
+```
+参考: [Go Fridayこぼれ話：非公開（unexported）な機能を使ったテスト #golang](https://engineering.mercari.com/blog/entry/2018-08-08-080000/)
