@@ -513,4 +513,35 @@ func main() {
 [アトミック](https://www.wdic.org/w/TECH/%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF)
 
 #### 9-3-2. ロック
+`sync.Mutex`
+Lockメソッドを呼ぶとUnlockメソッドが呼ばれるまでLockメソッドの呼び出しでブロックする。
+コード自体は分かりやすい感じがする。
+
+```go:
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+	var m sync.Mutex // ゼロ値で使える
+	m.Lock()
+	go func() {
+		time.Sleep(3 * time.Second)
+		m.Unlock()		// 2
+		fmt.Println("unlock 1")
+	}()
+
+	m.Lock()　			// 1(ここでブロック)
+	m.Unlock()			// 2で呼ばれてunlock
+	fmt.Println("unlock 2")
+}
+
+/* 実行結果 */
+// unlock 1
+// unlock 2
+```
 
