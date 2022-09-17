@@ -266,3 +266,36 @@ func main() {
 普通にチャネルを通して100という値が`v`に入り出力されています。
 容量とブロックの関係を整理する必要があります。
 
+バッファ無しチャネルとバッファ有りチャネルでも動作の違いがありそう。
+参考:
+[【Go言語】「バッファなしチャネル（channel）」を理解したいんじゃ！！ - フリエン生活](https://free-engineer.life/golang-channel/)
+[【Go言語】「バッファありチャネル（channel）」を理解したいんじゃ！！ - フリエン生活](https://free-engineer.life/golang-buffer-channel/)
+
+いまいち何とも言えないので、複数の方を見てみた方がいいかもしれない。
+
+#### 9-2-6. 複数のチャネルから同時に受信
+select-caseを用いる
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	ch1 := make(chan int)
+	ch2 := make(chan string)
+	go func() { ch1 <- 100 }()
+	go func() { ch2 <- "hi" }()
+
+	select {
+	case v1 := <-ch1:
+		fmt.Println(v1)
+	case v2 := <-ch2:
+		fmt.Println(v2)
+	}
+}
+
+/* 実行結果 */
+//100
+```
+これはまぁそうだろうなぁと。
+
