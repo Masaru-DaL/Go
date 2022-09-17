@@ -545,3 +545,36 @@ func main() {
 // unlock 2
 ```
 
+#### 9-3-3. 書き込み・読み込みロック
+`sync.RWMutex`
+Mutexに読み込み用のRLockとRUnlockが入ったもの
+```go:
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+	var m sync.RWMutex
+	m.RLock()
+	go func() {
+		time.Sleep(3 * time.Second)
+		m.RUnlock()
+		fmt.Println("unlock 1")
+	}()
+	m.RLock()										// 読み込みロックだけではブロックしない
+	m.RUnlock()
+	fmt.Println("unlock 2")
+}
+
+/* 実行結果 */
+// unlock 2
+```
+いまいち動作がよく分からなかったので調べてみます。
+参考: [sync.RWMutexを使おう](https://qiita.com/y_matsuwitter/items/36565a3a53ac52732cae)
+何となく理解したが言語化は難しい。
+
+#### 9-3-4. 複数のゴールーチンの待機
