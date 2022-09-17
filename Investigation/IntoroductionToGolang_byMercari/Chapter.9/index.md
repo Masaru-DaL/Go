@@ -454,7 +454,35 @@ func main() {
 間違った使い方ができる、ということは意図しない使い方ができてしまっている。
 双方向チャネルという点からすると、
 正: 100 -> ch, ch -> recv, return recv
-誤: 100 -> ch, ch -> recv, 200 -> recv, return recv
+誤: 100 -> ch, ch -> recv, 200 -> recv(チャネルを通さずに値を入れている), return recv
 */
 ```
 
+#### 9-2-10. 単方向チャネル
+```go:
+package main
+
+import "fmt"
+
+func makeCh() chan int {
+	return make(chan int)
+}
+
+/* <-chan int: 受信専用のチャネル */
+func recvCh(recv <-chan int) int {
+	return <-recv
+}
+
+func main() {
+	ch := makeCh()
+
+	/* chan<- int: 送信専用チャネル */
+	go func(ch chan<- int) { ch <- 100 }(ch)
+	fmt.Println(recvCh(ch))
+}
+
+/* 実行結果 */
+// 100
+
+/* こっちの方が分かりやすい */
+```
