@@ -31,7 +31,8 @@
 			- [9-5-1. コンテキスト](#9-5-1-コンテキスト)
 			- [9-5-2. コンテキストの歴史](#9-5-2-コンテキストの歴史)
 			- [9-5-3. コンテキストの分岐](#9-5-3-コンテキストの分岐)
-			- [9-5-4. コンテキストとキャンセル処理](#9-5-4-コンテキストとキャンセル処理)
+			- [9-5-4. Contextの関数](#9-5-4-contextの関数)
+			- [9-5-5. Contextの注意点](#9-5-5-contextの注意点)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 9. ゴールーチンとチャネル
 ## 9-1. 並行処理
@@ -848,4 +849,47 @@ Go標準のコンテキスト
   - [contextの親子関係 image](https://future-architect.github.io/images/20210629a/d3199f99-d617-d616-6cb4-9f95910f44f3.png)
     - 親コンテキストがキャンセルされると子コンテキストもキャンセルされる。
 
-#### 9-5-4. コンテキストとキャンセル処理
+#### 9-5-4. Contextの関数
+1. `func WithCancel`
+`func WithCancel(parent Context ) (ctx Context , cancel CancelFunc )`
+新しい`Done`チャネルを持った子Context(親Contextのコピー)と、`CancelFunc`を返します。
+この子Contextの`Done`チャネルが閉じられるのは、`CancelFunc`が呼び出されたときか、親Contextの`Done`チャネルが閉じられた時です。
+
+2. `func WithDeadline`
+`func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)`
+`d`以内を起源とした子Context(親Contextのコピー)と`CancelFunc`を返します。
+もし親Contextの期限が`d`よりも早ければ親Contextと同じになります。
+- 返された子Contextの`Done`チャネルが閉じられるパターン
+  - 期限を過ぎた場合
+  - `CancelFunc`が呼び出された場合
+  - 親Contextの`Done`チャネルが閉じられた場合
+
+3. `func WithTimeout`
+`WithTimeout`は`WithDeadline`のエイリアスみたいなものです。
+== `WithDeadline(parent, time.Now()Add(timeout))`
+
+4. `func Background`, `func TODO`
+どちらも空のContextを生成します。
+`Background`が通常使用されます。
+一般的にメイン関数や初期化などでトップレベルのContextを生成するために使用します。
+- `TODO`
+> TODO returns a non-nil, empty Context. Code should use context.TODO when it's unclear which Context to use or it is not yet available (because the surrounding function has not yet been extended to accept a Context parameter).
+どのContextを使うべきか不明な場合や、Contextがまだ利用できない場合に`TODO`を使用する必要があります。
+引用: [Go context](https://pkg.go.dev/context)
+
+5. `type CancelFunc`
+`type Cancel = context.CancelFunc`
+Contextをキャンセルします。
+
+#### 9-5-5. Contextの注意点
+- 構造体のフィールドなどに保存しない
+  - コンテキストはラップされるので、値が変わる可能性がある
+
+- リクエスト起因のデータのみ保存する
+  - なんでも保存するとただのグローバル変数になってしまう
+
+- Valueとして保存する場合のキーは外に公開しない
+  - 型を作って**エクスポート**しない
+  - 値を取得するための関数を作る
+
+
