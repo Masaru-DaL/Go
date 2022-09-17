@@ -347,10 +347,39 @@ func main() {
 		fmt.Println(v1)
 	}
 }
-```
-select-caseの検証
+
+/*
+select-caseの検証(同時終了、time.Sleepの遅延)
 1. 先に処理が終わった方が出力される
 2. 同時に処理が終わった場合、caseで先に合致した時点で終了
+*/
+```
 
 - nilチャネル
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	ch1 := make(chan int)
+	// var ch2 chan string
+	ch2 := make(chan string)
+
+	go func() { ch1 <- 100 }()
+	go func() { ch2 <- "hi" }()
+
+	select {
+	case v2 := <-ch2:
+		fmt.Println(v2)
+	case v1 := <-ch1:
+		fmt.Println(v1)
+	}
+}
+
+/*
+makeでチャネルを作成したものと、変数での初期値が違う。
+変数はゼロ値がnilのため、`ch2 <- "hi"`で値を入れて先に処理をしようとしても**無視された**。
+*/
+```
 
