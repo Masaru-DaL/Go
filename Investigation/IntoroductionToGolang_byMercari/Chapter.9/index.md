@@ -578,3 +578,94 @@ func main() {
 何となく理解したが言語化は難しい。
 
 #### 9-3-4. 複数のゴールーチンの待機
+`sync.WaitGroup`
+- Addメソッドに渡した数の合計の回数だけDoneメソッドを呼ぶ
+- Waitメソッドで処理をブロックして待機する
+
+```go:
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(2 * time.Second)
+		fmt.Println("done1")
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println("done2")
+	}()
+
+	wg.Wait() // ここで処理をブロックして待機する
+	fmt.Println("done all")
+}
+
+/* 実行結果 */
+/*
+done2
+done1
+done all
+*/
+
+```
+
+```go:
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		time.Sleep(2 * time.Second)
+		fmt.Println("done1")
+
+		defer wg.Done()
+		time.Sleep(2 * time.Second)
+		fmt.Println("done1")
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println("done2")
+	}()
+
+	wg.Wait()
+	fmt.Println("done all")
+}
+
+/* 実行結果 */
+/*
+done2
+done1
+done1
+done all
+*/
+```
+`Add(<値>)`で何回も呼び出せるのかと思ったらデッドロックになったので、調べてみました。
+参考: [Addの引数の値](https://golangstart.com/sync_waitgroup/#toc2:~:text=//%20goroutine%E3%81%AE%E5%87%A6%E7%90%86%E3%81%8C1%E3%81%A4%E3%81%82%E3%82%8B%E3%81%A8%E5%AE%9A%E7%BE%A9)
+> goroutineの処理が1つあると定義
+`Add(<値>)`は1つのゴールーチンを呼び出す回数ではなく、いくつのゴールーチンを呼び出すか、ということでした。(厳密にはメソッドかも)
+ゴールーチン内に呼び出すメソッドが2つあるのにAddで指定する数が1だとpanicが起こりました。
+ここらへんはメソッド数と呼び出す回数を合わせる必要があるようです。
+
+
