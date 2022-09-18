@@ -22,6 +22,8 @@
       - [10-2-8. リクエストヘッダー](#10-2-8-リクエストヘッダー)
       - [10-2-9. TRY リクエストパラメタの使用](#10-2-9-try-リクエストパラメタの使用)
       - [10-2-10. テンプレートエンジンの使用](#10-2-10-テンプレートエンジンの使用)
+      - [10-2-11. TRY テンプレートエンジンの使用](#10-2-11-try-テンプレートエンジンの使用)
+      - [10-2-12. リダイレクト](#10-2-12-リダイレクト)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -356,4 +358,46 @@ template.Must(template.New("sign").Parse("<html><body>{{.}}</body></html>"))
 tmpl.Execute(w, r.FormValue("content"))
 // w -> io.Writer
 // r.FormValue("content") -> リクエストから貰った値を埋め込む
+```
+
+```go: sample
+var tmpl = template.Must(template.New("msg").
+	Parse("<html><body>{{.}}さん こんにちは</body></html>"))
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	tmpl.Execute(w, r.FormValue("p"))
+}
+```
+
+#### 10-2-11. TRY テンプレートエンジンの使用
+```go:
+package main
+
+import (
+	"net/http"
+	"html/template"
+)
+
+func main() {
+	http.HandleFunc("/", Gopher)
+	http.ListenAndServe(":8080", nil)
+}
+
+var tmpl = template.Must(template.New("msg").
+	Parse("<html><body>{{.}}さんの運勢は「大吉」です！</body></html>"))
+
+func Gopher(w http.ResponseWriter, r *http.Request) {
+	tmpl.Execute(w, r.FormValue("p"))
+}
+```
+
+#### 10-2-12. リダイレクト
+http.Redirect関数を使う
+```go:
+func handler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+/* 第3引数 -> 遷移したいパス
+    第4引数 -> 3xx系のステータスコード(レスポンス)*/
 ```
