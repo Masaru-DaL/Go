@@ -302,4 +302,15 @@ fmt.Println(p)
 io.Readerを実装している
 
 #### 10-2-8. リクエストヘッダー
-[引用: リクエストヘッダー image](https://itsakura.com/wp-content/uploads/2017/11/http-request-post1.svg)
+[引用: リクエストヘッダー(Get) image](https://itsakura.com/wp-content/uploads/2017/11/http-request-get1.svg)
+```go:
+func handler(w http.ResponseWriter, req *http.Request) {
+	contentType := req.Header.Get("Content-Type")
+	fmt.Fprintln(w, contentType)
+}
+```
+`req.Header.Get("Content-Type")`
+-> (*http.Request).Header.Get(<ヘッダー名>)
+Getメソッドを使うとヘッダー名を指定して取得できる
+
+
