@@ -6,6 +6,10 @@
       - [10-1-3. TRY Hello, HTTPサーバ](#10-1-3-try-hello-httpサーバ)
       - [10-1-4. HTTPハンドラ](#10-1-4-httpハンドラ)
       - [10-1-5. http.Handleでハンドラを登録](#10-1-5-httphandleでハンドラを登録)
+      - [10-1-6. http.HandleFuncでハンドラを登録](#10-1-6-httphandlefuncでハンドラを登録)
+      - [10-1-7. http.HandlerFuncとは](#10-1-7-httphandlerfuncとは)
+      - [10-1-8. Handler と Handle](#10-1-8-handler-と-handle)
+      - [](#)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -94,6 +98,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 ス
 #### 10-1-5. http.Handleでハンドラを登録
 [http.Handle](https://qiita.com/nirasan/items/2160be0a1d1c7ccb5e65#httphandle-%E3%81%A8%E3%81%AF) -> 表示するURLと、URLに対応する`http.Handler`を`DefaultServeMux`に登録する関数
+
 **パターン**と**http.Handler**を指定して登録する
 - 第1引数 -> パターンを指定する
 - 第2引数 -> http.Handlerを指定する
@@ -111,3 +116,37 @@ anyHandler := &AnyHandler{}
 http.Handle("/any/", anyHandler)
 http.ListenAndServe(":8080", nil)
 ```
+
+#### 10-1-6. http.HandleFuncでハンドラを登録
+[http.HandleFunc](https://qiita.com/nirasan/items/2160be0a1d1c7ccb5e65#httphandlefunc-%E3%81%A8%E3%81%AF) -> URLと`func(ResponseWriter, *Request)`を渡して`DefaultServeMux`に登録する関数
+内部で`func(ResponseWriter, *Request)`から`http.HandleFunc`へのキャストが行われている。
+
+**パターン**と**関数**を指定して登録する
+- 第1引数としてパターンを指定する
+- 第2引数として関数を指定する
+- 結果 -> http.DefaultServeMuxに登録される
+`func HandleFunc(pattern string, handler func(ResponseWriter, *Request))`
+"handler func(ResponseWriter, *Request)" -> http.HandlerのServeHTTPメソッドと同じ引数の関数
+
+#### 10-1-7. http.HandlerFuncとは
+[http.HandlerFunc](https://qiita.com/nirasan/items/2160be0a1d1c7ccb5e65#httphandlerfunc-%E3%81%A8%E3%81%AF)
+- `func(ResponseWriter, *Request)`の別名の型
+- `ServeHTTP`関数を持つ
+関数を定義して`http.HandlerFunc`にキャストするだけで構造体を宣言することなく`http.Handler`を用意することができる。
+
+```go:
+type HandlerFunc func(ResponseWriter, *Request)
+
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+	f(w, r)
+}
+```
+
+#### 10-1-8. Handler と Handle
+- Handler
+  - **登録されるもの**
+
+- Handle
+  - **登録するもの**
+
+#### 
