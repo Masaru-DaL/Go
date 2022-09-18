@@ -15,6 +15,7 @@
       - [10-2-1. http.ResponseWriterについて](#10-2-1-httpresponsewriterについて)
       - [10-2-2. エラーを返す](#10-2-2-エラーを返す)
       - [10-2-3. JSONを返す](#10-2-3-jsonを返す)
+      - [10-2-4. JSONデコード](#10-2-4-jsonデコード)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -204,3 +205,48 @@ graph LR
   A -->|レスポンス|E[クライアント]
   E -->|リクエスト|A
 ```
+
+#### 10-2-4. JSONデコード
+json.Decoder型を使う
+
+```go:
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"log"
+)
+
+func main() {
+	type Person struct {
+		Name string `json:"name"`
+		Age  int    `json:"age"`
+	}
+
+	p := &Person{Name: "tenntenn", Age: 31}
+
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf) // jsonに変換
+	if err := enc.Encode(p); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(buf.String())
+
+	var p2 Person
+	dec := json.NewDecoder(&buf) // jsonから変換
+	if err := dec.Decode(&p2); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(p2)
+}
+
+/* 実行結果 */
+/*
+{"name":"tenntenn","age":31}
+
+{tenntenn 31}
+*/
+```
+
