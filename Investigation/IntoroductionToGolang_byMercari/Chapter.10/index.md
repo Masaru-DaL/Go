@@ -20,6 +20,8 @@
       - [10-2-6. リクエストパラメタの取得](#10-2-6-リクエストパラメタの取得)
       - [10-2-7. リクエストボディの取得](#10-2-7-リクエストボディの取得)
       - [10-2-8. リクエストヘッダー](#10-2-8-リクエストヘッダー)
+      - [10-2-9. TRY リクエストパラメタの使用](#10-2-9-try-リクエストパラメタの使用)
+      - [10-2-10. テンプレートエンジンの使用](#10-2-10-テンプレートエンジンの使用)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -287,7 +289,7 @@ http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 `http://localhost:8080?a=100&b=200`
 
 #### 10-2-7. リクエストボディの取得
-[引用: リクエストボディ image](https://itsakura.com/wp-content/uploads/2017/11/http-request-post1.svg)
+  [引用: リクエストボディ image](https://itsakura.com/wp-content/uploads/2017/11/http-request-post1.svg)
 ```go:
 http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 var p Person
@@ -313,4 +315,45 @@ func handler(w http.ResponseWriter, req *http.Request) {
 -> (*http.Request).Header.Get(<ヘッダー名>)
 Getメソッドを使うとヘッダー名を指定して取得できる
 
+#### 10-2-9. TRY リクエストパラメタの使用
+```go:
+package main
 
+import (
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	http.HandleFunc("/", Gopher)
+	http.ListenAndServe(":8080", nil)
+}
+
+// Gopherハンドラ
+func Gopher(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println(r.FormValue("p"), "さんの運勢は「大吉」です！")
+	fmt.Fprint(w, r.FormValue("p"), "さんの運勢は「大吉」です！")
+}
+
+/* 実行結果 */
+// fmt.Println -> 標準出力に出力
+// fmt.Fprint -> レスポンスへの書き込み(ブラウザ表示)
+```
+
+#### 10-2-10. テンプレートエンジンの使用
+html/templateを使う
+- Go標準のテンプレートエンジン
+- text/templateのHTML特化版
+[template](https://pkg.go.dev/html/template)
+
+```go:
+/* テンプレートの生成 */
+// sign -> テンプレート名
+template.Must(template.New("sign").Parse("<html><body>{{.}}</body></html>"))
+
+/* ------------------------------- */
+/* テンプレートに埋め込む */
+tmpl.Execute(w, r.FormValue("content"))
+// w -> io.Writer
+// r.FormValue("content") -> リクエストから貰った値を埋め込む
+```
