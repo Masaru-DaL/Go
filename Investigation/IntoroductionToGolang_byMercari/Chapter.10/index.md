@@ -16,6 +16,8 @@
       - [10-2-2. エラーを返す](#10-2-2-エラーを返す)
       - [10-2-3. JSONを返す](#10-2-3-jsonを返す)
       - [10-2-4. JSONデコード](#10-2-4-jsonデコード)
+      - [10-2-5. レスポンスヘッダーを設定する](#10-2-5-レスポンスヘッダーを設定する)
+      - [10-2-6. リクエストパラメタの取得](#10-2-6-リクエストパラメタの取得)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -249,4 +251,26 @@ func main() {
 {tenntenn 31}
 */
 ```
+
+#### 10-2-5. レスポンスヘッダーを設定する
+[引用: レスポンスヘッダー image](https://itsakura.com/wp-content/uploads/2017/11/http-response1.svg)
+ResponseWriterのHeaderメソッドを使う
+- WriteやWriteHeaderを呼び出した後に設定しても効果がない
+
+```go:
+func handler(w http.ResponseWriter, req *http.Request) {
+  /* 設定 */
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	v := struct {
+		Msg string `json:"msg"`
+	}{
+		Msg: "hello",
+	}
+	if err := json.NewEncoder(w).Encode(v); err != nil {
+		log.Println("Error:", err)
+	}
+}
+```
+
+#### 10-2-6. リクエストパラメタの取得
 
