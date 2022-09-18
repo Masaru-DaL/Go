@@ -18,6 +18,7 @@
       - [10-2-4. JSONデコード](#10-2-4-jsonデコード)
       - [10-2-5. レスポンスヘッダーを設定する](#10-2-5-レスポンスヘッダーを設定する)
       - [10-2-6. リクエストパラメタの取得](#10-2-6-リクエストパラメタの取得)
+      - [10-2-7. リクエストボディの取得](#10-2-7-リクエストボディの取得)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -273,4 +274,16 @@ func handler(w http.ResponseWriter, req *http.Request) {
 ```
 
 #### 10-2-6. リクエストパラメタの取得
+```go:
+http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "hello", r.FormValue("msg"))
+})
+```
+`r.FromValue("msg")` r = `*http.Request`
+(*http.Request).FormValueから名前を指定して取得する。
+-> `http://localhost:8080?msg=Gophers`のようにパラメタを指定する。
+複数ある場合は`&`でつなぐ。
+`http://localhost:8080?a=100&b=200`
+
+#### 10-2-7. リクエストボディの取得
 
