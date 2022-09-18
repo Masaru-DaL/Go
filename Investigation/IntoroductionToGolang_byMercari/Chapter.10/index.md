@@ -9,7 +9,8 @@
       - [10-1-6. http.HandleFuncでハンドラを登録](#10-1-6-httphandlefuncでハンドラを登録)
       - [10-1-7. http.HandlerFuncとは](#10-1-7-httphandlerfuncとは)
       - [10-1-8. Handler と Handle](#10-1-8-handler-と-handle)
-      - [](#)
+      - [10-1-9. http.ServeMux](#10-1-9-httpservemux)
+      - [10-1-10. HTTPサーバの起動](#10-1-10-httpサーバの起動)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -149,4 +150,10 @@ func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
 - Handle
   - **登録するもの**
 
-#### 
+#### 10-1-9. http.ServeMux
+- 複数のハンドラをまとめる(登録されたものをまとめる)
+- パス(URL)によって使うハンドラを切り替える
+- 自信もhttp.Handlerを実装している
+- http.Handleとhttp.HandleFuncはデフォルトのhttp.ServeMuxであるhttp.DefaultServeMuxを使用している
+
+#### 10-1-10. HTTPサーバの起動
