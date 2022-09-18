@@ -5,6 +5,7 @@
       - [10-1-2. HTTPサーバの作成の流れ](#10-1-2-httpサーバの作成の流れ)
       - [10-1-3. TRY Hello, HTTPサーバ](#10-1-3-try-hello-httpサーバ)
       - [10-1-4. HTTPハンドラ](#10-1-4-httpハンドラ)
+      - [10-1-5. http.Handleでハンドラを登録](#10-1-5-httphandleでハンドラを登録)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -90,4 +91,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 - 変数wに`http.ResponseWriter`を指定
 ここに書き込まれた内容はネットワークを通じてレスポンスへの書き込みとなる。
 -> `Fprint`で書き込み先(w)を指定している。
+ス
+#### 10-1-5. http.Handleでハンドラを登録
+[http.Handle](https://qiita.com/nirasan/items/2160be0a1d1c7ccb5e65#httphandle-%E3%81%A8%E3%81%AF) -> 表示するURLと、URLに対応する`http.Handler`を`DefaultServeMux`に登録する関数
+**パターン**と**http.Handler**を指定して登録する
+- 第1引数 -> パターンを指定する
+- 第2引数 -> http.Handlerを指定する
+- 結果 -> http.DefaultServeMuxに登録される
+`func Handle(pattern string, <handler Handler>)`
+<handler Handler>にはServeHTTPメソッドを持つ型の具体的な値がくる。-> **ServeHTTPメソッドを持つ型がハンドラとして扱われる**
 
+- 具体例
+```go:
+type AnyHandler struct {}
+func (a *AnyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {}
+anyHandler := &AnyHandler{}
+
+/* http.Handleの引数の具体例 */
+http.Handle("/any/", anyHandler)
+http.ListenAndServe(":8080", nil)
+```
