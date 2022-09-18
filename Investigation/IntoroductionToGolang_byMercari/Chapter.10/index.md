@@ -19,6 +19,7 @@
       - [10-2-5. レスポンスヘッダーを設定する](#10-2-5-レスポンスヘッダーを設定する)
       - [10-2-6. リクエストパラメタの取得](#10-2-6-リクエストパラメタの取得)
       - [10-2-7. リクエストボディの取得](#10-2-7-リクエストボディの取得)
+      - [10-2-8. リクエストヘッダー](#10-2-8-リクエストヘッダー)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -286,4 +287,19 @@ http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 `http://localhost:8080?a=100&b=200`
 
 #### 10-2-7. リクエストボディの取得
+[引用: リクエストボディ image](https://itsakura.com/wp-content/uploads/2017/11/http-request-post1.svg)
+```go:
+http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+var p Person
+dec := json.NewDecoder(r.Body)
+if err := dec.Decode(&p); err != nil {
+	// ... エラー処理 …
+}
+fmt.Println(p)
+})
+```
+`r.Body` -> (*http.Request).Body
+io.Readerを実装している
 
+#### 10-2-8. リクエストヘッダー
+[引用: リクエストヘッダー image](https://itsakura.com/wp-content/uploads/2017/11/http-request-post1.svg)
