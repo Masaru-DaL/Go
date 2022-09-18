@@ -11,6 +11,9 @@
       - [10-1-8. Handler と Handle](#10-1-8-handler-と-handle)
       - [10-1-9. http.ServeMux](#10-1-9-httpservemux)
       - [10-1-10. HTTPサーバの起動](#10-1-10-httpサーバの起動)
+  - [10-2. レスポンスとリクエスト](#10-2-レスポンスとリクエスト)
+      - [10-2-1. http.ResponseWriterについて](#10-2-1-httpresponsewriterについて)
+      - [10-2-2. エラーを返す](#10-2-2-エラーを返す)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -157,3 +160,32 @@ func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
 - http.Handleとhttp.HandleFuncはデフォルトのhttp.ServeMuxであるhttp.DefaultServeMuxを使用している
 
 #### 10-1-10. HTTPサーバの起動
+http.ListenAndServeを使う
+`http.ListenAndServe(":8080", nil)`
+- 第1引数 -> ホスト名とポート番号を指定
+  - ホスト名を省略した場合localhost
+- 第2引数でHTTPハンドラを指定
+  - nilで省略した場合はhttp.HandleFuncなどで登録したハンドラが使用される
+
+## 10-2. レスポンスとリクエスト
+#### 10-2-1. http.ResponseWriterについて
+- io.Writerと同じWriteメソッドを持つ
+  - ResponseWriterを満たすとio.Writerを満たす
+- io.Writerとしても振る舞える
+  - fmt.Fprint*の引数に取れる
+  - json.NewEncoderの引数に取れる
+
+**インタフェースなのでモックも作りやすい = テストが簡単**
+
+#### 10-2-2. エラーを返す
+http.Error関数を使う
+`func Error(w ResponseWriter, error string, code int) {}`
+
+[func Error](https://pkg.go.dev/net/http#Error:~:text=application/octet%2Dstream%22.-,func%20Error%20%C2%B6,-func%20Error(w)
+> Errorは指定されたエラーメッセージとHTTPコードでリクエストに応答する。
+
+error string -> エラーメッセージの指定
+code int -> ステータスコードの指定
+ステータスコードは定義済み定数を使用する。
+
+
