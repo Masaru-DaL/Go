@@ -91,4 +91,28 @@ true <nil>
 する場合は最初からstrconv.ParseInt型を用いる
 [gosec](https://securego.io/) -> セキュリティ上の欠陥について、golangの静的コード分析を実行する。
 
+```go:
+package main
 
+import (
+	"fmt"
+	"math"
+	"strconv"
+)
+
+func main() {
+	// int16より大きな値:"32768"
+	s := strconv.FormatInt(math.MaxInt16+1, 10)
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	if int16(n) < 0 { // オーバーフロー
+		fmt.Println(n)
+	}
+}
+
+/* int16 -> 正の最大値は32767まで。
+	最大値を超えるとラップアラウンド(0に戻る) */
+// 32768
+```
