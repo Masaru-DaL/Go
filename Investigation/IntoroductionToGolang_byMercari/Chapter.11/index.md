@@ -15,6 +15,7 @@
       - [11-2-1. トランザクション](#11-2-1-トランザクション)
       - [11-2-2. トランザクションの開始](#11-2-2-トランザクションの開始)
       - [11-2-3. トランザクションに対する処理](#11-2-3-トランザクションに対する処理)
+      - [11-2-4. トランザクションを使った例](#11-2-4-トランザクションを使った例)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 11. データベース
 ## 11-1. データベースへの接続とSQLの実行
@@ -222,5 +223,27 @@ func (tx *Tx) Commit() error
 
 // ロールバック
 func (tx *Tx) Rollback() error
+```
 
+#### 11-2-4. トランザクションを使った例
+```go:
+/* トランザクションの開始 */
+tx, err := db.Begin()
+if err != nil { /* エラー処理 */ }
+/* 1つのレコードを取得(idが1のレコード) */
+row := tx.QueryRow("SELECT * FROM user WHERE id = 1")
+var u User
+/* レコードを取得 */
+if err := row.Scan(&u.ID, &u.Name, &u.Age); err != nil {
+	tx.Rollback()
+	/* エラー処理 */
+}
+/* UPDATE */
+const updateSQL = "UPDATE user SET age = ? WHERE id = 1"
+if _, err = tx.Exec(updateSQL, u.Age+1, u.ID); err != nil {
+	tx.Rollback()
+	/* エラー処理 */
+}
+/* コミット */
+if err := tx.Commit(); err != nil { /* エラー処理 */ }
 ```
