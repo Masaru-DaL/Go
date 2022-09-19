@@ -207,4 +207,20 @@ Contextを渡してトランザクションを開始する
 
 #### 11-2-3. トランザクションに対する処理
 *sql.Txのメソッドを使用
+```go:
+// INSERTやDELETEなど
+func (tx *Tx) Exec(query string, args ...interface{}) (Result, error)
 
+// SELECTなどで複数レコードを取得する場合
+func (tx *Tx) Query(query string, args ...interface{}) (*Rows, error)
+
+// SELECTなどで1つのレコードを取得する場合
+func (tx *Tx) QueryRow(query string, args ...interface{}) *Row
+
+// コミット
+func (tx *Tx) Commit() error
+
+// ロールバック
+func (tx *Tx) Rollback() error
+
+```
