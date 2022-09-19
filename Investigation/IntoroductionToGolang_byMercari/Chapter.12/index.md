@@ -43,10 +43,44 @@ type SplitFunc func(data []byte, atEOF bool) (
 
 /* ------------------------------- */
 scanner := bufio.NewScanner(os.Stdin)
+/* 標準入力から読み込んだものを分割処理 */
  scanner.Split(bufio.ScanBytes) // 1バイトごと
  scanner.Split(bufio.ScanLines) // 1行ごと（デフォルト）
  scanner.Split(bufio.ScanRunes) // コードポイントごと
  scanner.Split(bufio.ScanWords) // 1単語ごと
 ```
 
-#### 12-1-4. 
+#### 12-1-4. strconvパッケージ
+[strconv](https://pkg.go.dev/strconv)
+文字列と他の型の変換を行うパッケージ
+```go:
+package main
+
+import (
+	"fmt"
+	"strconv" // strconvをインポートする
+)
+
+func main() {
+	// 文字列をint型に変換: 100 <nil>
+	fmt.Println(strconv.Atoi("100"))
+
+	// int型を文字列に変換: 100円
+	fmt.Println(strconv.Itoa(100) + "円")
+
+	// 100を16進数で文字列にする: 64
+	fmt.Println(strconv.FormatInt(100, 16))
+
+	// 文字列をbool型にする: true <nil>
+	fmt.Println(strconv.ParseBool("true"))
+}
+
+/* 実行結果 */
+/*
+100 <nil>
+100円
+64
+true <nil>
+*/
+```
+
