@@ -24,6 +24,9 @@
       - [10-2-10. テンプレートエンジンの使用](#10-2-10-テンプレートエンジンの使用)
       - [10-2-11. TRY テンプレートエンジンの使用](#10-2-11-try-テンプレートエンジンの使用)
       - [10-2-12. リダイレクト](#10-2-12-リダイレクト)
+      - [10-2-13. ミドルウェアを作る](#10-2-13-ミドルウェアを作る)
+  - [10-3. HTTPハンドラのテスト](#10-3-httpハンドラのテスト)
+      - [10-3-1. ハンドラのテストの例](#10-3-1-ハンドラのテストの例)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -400,4 +403,44 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 /* 第3引数 -> 遷移したいパス
     第4引数 -> 3xx系のステータスコード(レスポンス)*/
+```
+
+#### 10-2-13. ミドルウェアを作る
+ハンドラより前に行う共通処理
+ライブラリを使ってもOK
+参考: [Goで始めるMiddleware - Qiita](https://qiita.com/giraffate/items/ea962f1cdad21c2f68aa)
+
+## 10-3. HTTPハンドラのテスト
+net/http/httptestを使う
+- ハンドラのテストのための機能などを提供
+- httptest.ResponseRecorder
+  - http.ResponseWriterインタフェースを実装
+- NewRequestメソッド(Go1.7以上)
+  - 簡単にテスト用のリクエストが作れる
+
+#### 10-3-1. ハンドラのテストの例
+```go:
+/* テスト対象 */
+func handler(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprint(w, "Hello, net/http!")
+}
+
+/* テストコード */
+func TestSample(t *testing.T) {
+
+  /* ここから */
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest("GET", "/", nil)
+	handler(w, r)
+	res := w.Result()
+  /* ここまで */
+	defer res.Body.Close()
+
+  /* テスト結果によって処理を行う */
+	if res.StatusCode != http.StatusOK { t.Fatal("unexpected status code") }
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil { t.Fatal("unexpected error") }
+	const expected = "Hello, net/http!"
+	if s := string(b); s != expected { t.Fatalf("unexpected response: %s", s) }
+}
 ```
