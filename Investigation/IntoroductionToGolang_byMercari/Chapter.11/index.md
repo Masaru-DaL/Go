@@ -8,6 +8,7 @@
       - [11-1-5. データベースのオープン](#11-1-5-データベースのオープン)
       - [11-1-6. SQLの実行](#11-1-6-sqlの実行)
       - [11-1-7. テーブルの作成](#11-1-7-テーブルの作成)
+      - [11-1-8. レコードの挿入](#11-1-8-レコードの挿入)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 11. データベース
 ## 11-1. データベースへの接続とSQLの実行
@@ -106,3 +107,26 @@ if _, err := db.Exec(sql); err != nil {
 	// エラー処理
 }
 ```
+
+#### 11-1-8. レコードの挿入
+AUTOINCREMENTのIDは、*sql.Resultから取得できる
+```go:
+type User struct {
+	ID   int64
+	Name string
+	Age  int64
+}
+users := []*User{{Name: "tenntenn", Age: 32}, {Name: "Gopher", Age: 10}}
+for i := range users {
+	const sql = "INSERT INTO user(name, age) values (?,?)"
+
+  /* レコードの挿入 */
+	r, err := db.Exec(sql, users[i].Name, users[i].Age)
+	if err != nil { /* エラー処理 */ }
+	id, err := r.LastInsertId()
+	if err != nil { /* エラー処理 */ }
+	users[i].ID = id
+	fmt.Println("INSERT", users[i])
+}
+```
+
