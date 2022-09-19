@@ -6,6 +6,8 @@
       - [11-1-3. ドライバの登録](#11-1-3-ドライバの登録)
       - [11-1-4. SQLite](#11-1-4-sqlite)
       - [11-1-5. データベースのオープン](#11-1-5-データベースのオープン)
+      - [11-1-6. SQLの実行](#11-1-6-sqlの実行)
+      - [11-1-7. テーブルの作成](#11-1-7-テーブルの作成)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 11. データベース
 ## 11-1. データベースへの接続とSQLの実行
@@ -55,9 +57,12 @@ RDB(リレーショナルデータベース)にアクセスするためのパッ
 
 #### 11-1-5. データベースのオープン
 [Open関数](https://pkg.go.dev/database/sql#Open:~:text=%E5%88%B6%E5%BE%A1%E3%81%A7%E3%81%8D%E3%81%BE%E3%81%99%E3%80%82-,%E9%96%A2%E6%95%B0%E3%82%92%E9%96%8B%E3%81%8F%20%C2%B6,-func%20Open(driverName)を使用する
+データベースハンドルを作成するために使用される。
 ```go:
-/* Open(<ドライバ名>, <後続文字列>) */
+/* Open(<driver>, <dataSourceName>) */
 db, err := sql.Open("sqlite", "database.db")
+/* driver -> データベースドライバーを指定
+  dataSourceName -> データベース名や認証資格情報などのデータベース固有の接続情報を指定する */
 ```
 
 - *sql.DBの特徴
@@ -65,3 +70,39 @@ db, err := sql.Open("sqlite", "database.db")
   - コネクションプール機能
   - 一度開いたら使い回す
   - Closeは滅多にしない
+
+#### 11-1-6. SQLの実行
+*sql.DBのメソッドを使用
+https://pkg.go.dev/database/sql#DB.Query
+```go:
+// INSERTやDELETEなど
+/* 行を返すことなく、クエリを実行する */
+func (db *DB) Exec(query string, args ...interface{}) (Result, error)
+
+// SELECTなどで複数レコードを取得する場合
+/* 行を返す。 */
+func (db *DB) Query(query string, args ...interface{}) (*Rows, error)
+
+// SELECTなどで1つのレコードを取得する場合
+/* 最大で1行を返すと予想されるクエリを実行する。
+  常にnil以外の値を返す。
+  エラーは、RowのScanメソッドが呼び出されるまで保留される。 */
+func (db *DB) QueryRow(query string, args ...interface{}) *Row
+```
+
+#### 11-1-7. テーブルの作成
+(*sql.DB).Execを使う
+```go:
+/* sqlに` ~ `までが代入されていて、それがdb.Execの引数に指定されている */
+/* 代入しない場合はdb.Exec(CREATE TABLE...)となる。 */
+const sql = `
+CREATE TABLE IF NOT EXISTS user (
+	id   INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	age  INTEGER NOT NULL
+);
+`
+if _, err := db.Exec(sql); err != nil {
+	// エラー処理
+}
+```
