@@ -27,6 +27,10 @@
       - [10-2-13. ミドルウェアを作る](#10-2-13-ミドルウェアを作る)
   - [10-3. HTTPハンドラのテスト](#10-3-httpハンドラのテスト)
       - [10-3-1. ハンドラのテストの例](#10-3-1-ハンドラのテストの例)
+  - [10-4. HTTPクライアント](#10-4-httpクライアント)
+      - [10-4-1. HTTPリクエストを送る](#10-4-1-httpリクエストを送る)
+      - [10-4-2. レスポンスを読み取る](#10-4-2-レスポンスを読み取る)
+      - [10-4-3. リクエストを指定する](#10-4-3-リクエストを指定する)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -444,3 +448,30 @@ func TestSample(t *testing.T) {
 	if s := string(b); s != expected { t.Fatalf("unexpected response: %s", s) }
 }
 ```
+
+## 10-4. HTTPクライアント
+参考: [Goでnet/httpを使う時のこまごまとした注意](https://qiita.com/ono_matope/items/60e96c01b43c64ed1d18)
+#### 10-4-1. HTTPリクエストを送る
+http.DefaultClientを用いる
+http.DefaultClientはゼロ値。
+http.Getやhttp.Postはhttp.DefaultClientのラッパーになる。
+参考: [How to issue HTTP request](https://tutuz-tech.hatenablog.com/entry/2020/03/22/160529#How-to-issue-HTTP-request:~:text=%E5%8F%82%E8%80%83-,How%20to%20issue%20HTTP%20request,-%E3%82%AF%E3%83%A9%E3%82%A4%E3%82%A2%E3%83%B3%E3%83%88%E3%81%AE%E5%AE%9F%E8%A3%85)
+
+#### 10-4-2. レスポンスを読み取る
+(*http.Response).Bodyを使う
+```go:
+func main() {
+resp, err := http.Get("http://example.com/")
+if err != nil { /* エラー処理 */ }
+defer resp.Body.Close() // 必ずcloseメソッドを呼ぶ
+var p Person
+dec := json.NewDecoder(resp.Body)
+if err := dec.Decode(&p); err != nil {
+	// ... エラー処理 …
+}
+fmt.Println(p)
+}
+```
+
+#### 10-4-3. リクエストを指定する
+http.Client.Doを用いる
