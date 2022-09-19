@@ -31,6 +31,10 @@
       - [10-4-1. HTTPリクエストを送る](#10-4-1-httpリクエストを送る)
       - [10-4-2. レスポンスを読み取る](#10-4-2-レスポンスを読み取る)
       - [10-4-3. リクエストを指定する](#10-4-3-リクエストを指定する)
+      - [10-4-4. リクエストとコンテキスト](#10-4-4-リクエストとコンテキスト)
+      - [10-4-5. http.Clientとhttp.Transport](#10-4-5-httpclientとhttptransport)
+      - [10-4-6. http.DefaultTransport](#10-4-6-httpdefaulttransport)
+      - [10-4-7. http.RoundTripperを実装する場合のTIPS](#10-4-7-httproundtripperを実装する場合のtips)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 10. HTTPサーバとクライアント
 ## 10-1. HTTPサーバを立てる
@@ -475,3 +479,63 @@ fmt.Println(p)
 
 #### 10-4-3. リクエストを指定する
 http.Client.Doを用いる
+```go:
+req, err := http.NewRequest("GET", "http://example.com", nil)
+req.Header.Add("If-None-Match", `W/"wyzzy"`)
+resp, err := client.Do(req) // req -> *http.Request
+```
+
+#### 10-4-4. リクエストとコンテキスト
+- *http.Requestから取得する(サーバ)
+`ctx := req.Context()`
+
+- Contextを更新する(クライアント)
+  - 新しい*http.Requestが生成される
+`req = req.WithContext(ctx)`
+
+#### 10-4-5. http.Clientとhttp.Transport
+https://pkg.go.dev/net/http
+> クライアントとトランスポートは、複数のゴールーチンによる同時使用に対して安全であり、効率のために一度だけ作成して再利用する必要がある。
+
+- http.Transport型
+  - [http.RoundTripper](https://pkg.go.dev/net/http#RoundTripper:~:text=%E3%82%BF%E3%82%A4%E3%83%97RoundTripper%20%C2%B6,-type%20RoundTripper%20interface)を実装した型
+    - https://pkg.go.dev/net/http#RoundTripper
+    - > リクエストに対してレスポンスを返す
+    - > レスポンスを解釈しない
+    - > レスポンスのHTTPステータスコードに関係なく、`err == nil`を返す必要がある
+  - [http.Transport](https://pkg.go.dev/net/http#Transport:~:text=%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%0A%7D-,Transport,-%E3%81%AF%E3%80%81HTTP%E3%80%81HTTPS)
+    - > Transport は、HTTP、HTTPS、および HTTP プロキシ (HTTP または CONNECT を使用した HTTPS のいずれか) をサポートする RoundTripper の実装です。
+    - HTTP/HTTPS/HTTPプロキシに対応している
+    - コネクションのキャッシュを行う
+
+#### 10-4-6. http.DefaultTransport
+http.ClientのTransportフィールドがnilの時に使われる
+-> Clientへ明示的にRoundTripperが指定されなければ、デフォルトとして以下の[DefaultTransport](https://pkg.go.dev/net/http#RoundTripper:~:text=%E7%AC%AC%E4%BA%8C%E3%81%AB%E3%80%81%0A%7D-,DefaultTransport,-%E3%81%AF%20Transport%20%E3%81%AE)が使われる。
+```go:
+var DefaultTransport RoundTripper = &Transport{
+	Proxy: ProxyFromEnvironment,
+	DialContext: (&net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}).DialContext,
+	ForceAttemptHTTP2:     true,
+	MaxIdleConns:          100,
+	IdleConnTimeout:       90 * time.Second,
+	TLSHandshakeTimeout:   10 * time.Second,
+	ExpectContinueTimeout: 1 * time.Second,
+}
+```
+
+#### 10-4-7. http.RoundTripperを実装する場合のTIPS
+https://journal.lampetty.net/entry/mocking-http-access-in-golang
+- 注意点
+  - レスポンスを返す場合、エラーはnilにすること
+  - リクエストは変更しない
+  - リクエストは他のゴールーチンから参照される可能性があることを考慮する
+
+- TIPS
+  - 元になるhttp.RoundTripperをラップしておく
+    - フィールドで設定できるようにしておく
+    - HTTP通信の部分は親のRoundTripメソッドを呼ぶ
+    - フィールドがnilの場合はhttp.DefaultTransportを使う
+
