@@ -143,3 +143,32 @@ func main() {
 	fmt.Println(strings.HasPrefix("hoge_fuga", "hoge"))
 }
 ```
+
+#### 12-1-7. 文字列の置換
+strings.Replace関数を使う
+`strings.Replace(<置換対象の文字列>, <置換したい文字列>, <置換する文字列>, <置換回数>)`
+
+```go:
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	s1 := strings.Replace("郷に入っては郷に従え", "郷", "Go", 1) // 1回置換する
+	// Goに入っては郷に従え
+	fmt.Println(s1)
+
+	s2 := strings.Replace("郷に入っては郷に従え", "郷", "Go", -1)
+	// Goに入ってはGoに従え
+	fmt.Println(s2)
+
+	s3 := strings.ReplaceAll("郷に入っては郷に従え", "郷", "Go")
+	// Goに入ってはGoに従え
+	fmt.Println(s3)
+}
+
+/* Replace(-1)とReplaceAllは同じ -> 全て置換する */
+```
