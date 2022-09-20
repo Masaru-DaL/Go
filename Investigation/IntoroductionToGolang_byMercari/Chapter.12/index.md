@@ -283,3 +283,35 @@ io.Readerとio.Writer
 参考: [ioパッケージによる抽象化](https://zenn.dev/hsaki/books/golang-io-package/viewer/io#io.reader%E3%81%AE%E5%AE%9A%E7%BE%A9)
 
 #### 12-2-2. コピー
+ioReaderから呼んだデータを、io.Writerに書き込む
+戻り値 -> 書き込めたバイト数, エラー
+読み込む最大バイト数を指定したい場合はio.CopyN関数を使う
+
+```go:
+package main
+
+import (
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	r1 := strings.NewReader("Hello, 世界")
+	if _, err := io.Copy(os.Stdout, r1); err != nil {
+		panic(err)
+	}
+	fmt.Println()
+	r2 := strings.NewReader("Hello, 世界")
+	// 5バイトだけ標準出力する
+	if _, err := io.CopyN(os.Stdout, r2, 5); err != nil {
+		panic(err)
+	}
+}
+
+// Hello, 世界
+// Hello
+```
+
+#### 12-2-3. io.Seekerインタフェース
