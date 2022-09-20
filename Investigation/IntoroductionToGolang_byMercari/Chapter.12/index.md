@@ -147,6 +147,7 @@ func main() {
 #### 12-1-7. 文字列の置換
 strings.Replace関数を使う
 `strings.Replace(<置換対象の文字列>, <置換したい文字列>, <置換する文字列>, <置換回数>)`
+置換回数を`-1`にすると全て置換となる。
 
 ```go:
 package main
@@ -171,4 +172,39 @@ func main() {
 }
 
 /* Replace(-1)とReplaceAllは同じ -> 全て置換する */
+```
+
+#### 12-1-8. 複数文字列の置換
+strings.Replacer型を使う
+
+```go:
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	// 郷 → Go、入れば → 入っては
+	/* 第1, 第2引数、第3, 第4引数といったように文字列のペアで指定する
+		第1引数を第2引数に置換する。といった内容を変数rに代入している */
+	r := strings.NewReplacer("郷", "Go", "入れば", "入っては")
+
+	// Goに入ってはGoに従え
+	/* 置換する内容にヒットした内容部分を置換する */
+	s := r.Replace("郷に入れば郷に従え") // 実際に置換するのはReplaceメソッド
+	fmt.Println(s)
+
+	// Goに入ってはGoに従え
+	_, err := r.WriteString(os.Stdout, "郷に入れば郷に従え")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
+	}
+}
+
+// Replacerだけで行おうとする場合
+// fmt.Println(strings.NewReplacer("郷", "Go", "入れば", "入っては").Replace("郷に入れば郷に従え"))
 ```
