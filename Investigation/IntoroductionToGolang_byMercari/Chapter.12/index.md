@@ -454,3 +454,33 @@ func main() {
 	io.Copy(os.Stdout, r)
 }
 ```
+
+#### 12-2-8. io.TeeReader関数
+読み込みと同時に書き込むio.Readerを作る
+参考: [図解 io.TeeReader(Golang)](https://qiita.com/MasatoraAtarashi/items/42ed48729992eab292c3)
+[io.TeeReader](https://christina04.hatenablog.com/entry/golang-io-package-diagrams)
+引数のio.Readerのベースに読み込まれると同時に、引数のio.Writerに書き込む
+
+```go:
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	var buf bytes.Buffer
+	r := strings.NewReader("Hello, 世界\n")
+	tee := io.TeeReader(r, &buf) // TeeReaderに読み込ませ、同時に指定先に書き込む -> 出力
+	// Hello, 世界
+	io.Copy(os.Stdout, tee) // bufにも書き込まれる
+	// Hello, 世界
+	fmt.Print(buf.String())
+}
+```
+
+
