@@ -483,4 +483,115 @@ func main() {
 }
 ```
 
+## 12-3. 正規表現
+[regexp](https://pkg.go.dev/regexp)
 
+#### 12-3-1. 正規表現のコンパイル
+regexp.Compile関数を用いる
+Compileは正規表現を解析し、成功すればテキストと整合性を確認できるRegexpオブジェクト(*regexp.Regexp型)を返す。
+パッケージ変数で1度しか行わない場合はMustCompile関数を使う。
+使えるシンタックス: https://github.com/google/re2/wiki/Syntax
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+// パッケージの初期化時に行う
+var validID = regexp.MustCompile(`^[a-z]+\[[0-9]+\]$`)
+
+func main() {
+	fmt.Println(validID.MatchString("adam[23]"))
+
+	// 関数内で行う場合はエラー処理をする
+	validID2, err := regexp.Compile(`^[a-z]+\[[0-9]+\]$`)
+	if err != nil { /* エラー処理 */
+	}
+	fmt.Println(validID2.MatchString("adam[23]"))
+}
+
+/* 実行結果はtrueかfalseで返る */
+// true
+// true
+```
+
+#### 12-3-2. 正規表現のマッチ
+指定した文字列などが正規表現にマッチするかどうか
+Matchメソッドや、MatchStringメソッドを使う
+
+```go:
+package main
+
+import (
+	"fmt"
+	"io"
+	"regexp"
+	"strings"
+)
+
+func main() {
+	re, err := regexp.Compile(`(\d+)年(\d+)月(\d+)日`)
+	if err != nil {
+		panic(err)
+	}
+	// バイト列（[]byte型）がマッチするか
+	fmt.Println(re.Match([]byte("1986年01月12日")))
+
+	// 文字列がマッチするか
+	fmt.Println(re.MatchString("1986年01月12日"))
+
+	// io.RuneReaderがマッチするか
+	var r io.RuneReader = strings.NewReader("1986年01月12日")
+	fmt.Println(re.MatchReader(r))
+}
+
+/* 実行結果はtrueかfalseで返る */
+// true
+// true
+// true
+```
+
+#### 12-3-3. マッチした部分を返す
+正規表現にマッチする文字列などを探す
+- FindメソッドやFindStringメソッドを用いる
+- FindAllメソッドやFindStringAllメソッドは個数を指定できる
+  - "-1"はマッチする全てを取得する
+
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	re, err := regexp.Compile(`\d+`) // \d+(-> 数字列)とマッチするかどうか
+	if err != nil {
+		panic(err)
+	}
+	// 最初にマッチするバイト列を取得
+	fmt.Printf("%q\n", re.Find([]byte("1986年01月12日")))
+
+	// すべてのマッチするバイト列を取得
+	fmt.Printf("%q\n", re.FindAll([]byte("1986年01月12日"), -1))
+
+	// 最初にマッチする文字列を取得
+	fmt.Printf("%q\n", re.FindString("1986年01月12日"))
+
+	// すべてのマッチする文字列を取得
+	fmt.Printf("%q\n", re.FindAllString("1986年01月12日", -1))
+}
+
+/* 実行結果 */
+/*
+"1986"
+["1986" "01" "12"]
+"1986"
+["1986" "01" "12"]
+*/
+```
