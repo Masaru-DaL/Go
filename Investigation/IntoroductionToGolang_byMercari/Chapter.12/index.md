@@ -116,3 +116,30 @@ func main() {
 	最大値を超えるとラップアラウンド(0に戻る) */
 // 32768
 ```
+
+#### 12-1-6. stringsパッケージ
+[strings](https://pkg.go.dev/strings)
+-> 文字列関連の処理を行うパッケージ
+
+```go:
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// スペースで分割してスライスにする: [a b c]
+	fmt.Println(strings.Split("a b c", " "))
+
+	// スライスを","で結合する: a,b,c
+	fmt.Println(strings.Join([]string{"a", "b", "c"}, ","))
+
+	// 繰り返す: hogehoge
+	fmt.Println(strings.Repeat("hoge", 2))
+
+	// プリフィックスを持つかどうか: true
+	fmt.Println(strings.HasPrefix("hoge_fuga", "hoge"))
+}
+```
