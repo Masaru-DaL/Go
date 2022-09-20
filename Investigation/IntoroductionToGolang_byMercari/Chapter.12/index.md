@@ -661,3 +661,39 @@ func main() {
 "%q"で自然文字列に変換され、1986と返る。 */
 ```
 
+#### 12-3-6. キャプチャした部分の展開
+キャプチャした部分をテンプレートに展開する
+ExpandメソッドやExpandStringメソッドを使う
+例題コードはExpandStingなので以下に。
+`func (re *Regexp) ExpandString(dst []byte, template string, src string, match []int) []byte`
+引数を4つ指定する。
+テンプレートをdstに追加し、その結果を返す。
+src -> 置換対象
+match -> 置換するindexを指定
+FindAllStringSubmatchIndexメソッドなどでインデックスを取得する。
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	// (?P<var_name>regexp)で名前をつけてキャプチャする
+	re, err := regexp.Compile(`(?P<Y>\d+)年(?P<M>\d+)月(?P<D>\d+)日`)
+	if err != nil {
+		panic(err)
+	}
+	content := "1986年01月12日\n2020年03月24日"
+	template := "$Y/$M/$D\n" // "${1}/${2}/${3}"でも可
+	var result []byte
+	for _, submatches := range re.FindAllStringSubmatchIndex(content, -1) {
+		result = re.ExpandString(result, template, content, submatches)
+	}
+
+	// "1986/01/12\n2020/03/24\n"
+	fmt.Printf("%q", result)
+}
+```
