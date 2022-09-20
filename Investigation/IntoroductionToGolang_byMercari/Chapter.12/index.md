@@ -668,6 +668,8 @@ ExpandメソッドやExpandStringメソッドを使う
 `func (re *Regexp) ExpandString(dst []byte, template string, src string, match []int) []byte`
 引数を4つ指定する。
 テンプレートをdstに追加し、その結果を返す。
+テンプレートでは、変数は`$name`または`${name}`という形式の部分文字列で示される。
+`$1`, `${1}`のような純粋に数字だけの名前は、対応するインデックスを持つサブマッチを参照する。
 src -> 置換対象
 match -> 置換するindexを指定
 FindAllStringSubmatchIndexメソッドなどでインデックスを取得する。
@@ -699,7 +701,7 @@ func main() {
 ```
 
 #### 12-3-7. マッチした部分を置換する
-キャプチャした部分を展開して置換する
+キャプチャした部分を**展開して**置換する
 ReplaceAllStringメソッドを用いる
 []byte型にはReplaceAllメソッドを用いる
 
@@ -720,6 +722,31 @@ func main() {
 	// $1, $2はマッチした順番を表す
 	s := re.ReplaceAllString("1986年01月12日", "${2}/${3} ${1}")
 	// 01/12 1986
+	fmt.Println(s)
+}
+```
+
+#### 12-3-8. マッチした部分を置換する
+キャプチャした部分を**展開せずに**置換する
+ReplaceAllLiteralStringメソッドを用いる
+[]byte型にはReplaceAllLiteralメソッドを用いる
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	re, err := regexp.Compile(`(\d+)年(\d+)月(\d+)日`)
+	if err != nil {
+		panic(err)
+	}
+	// テンプレートを展開しない
+	s := re.ReplaceAllLiteralString("1986年01月12日", "${2}/${3} ${1}")
+	// ${2}/${3} ${1}
 	fmt.Println(s)
 }
 ```
