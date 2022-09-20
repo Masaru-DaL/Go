@@ -315,3 +315,44 @@ func main() {
 ```
 
 #### 12-2-3. io.Seekerインタフェース
+io.Readerやio.Writerのオフセットを設定する
+参考:
+[Seek を試す](https://tokizuoh.dev/posts/lgddm8djtvqm9hlc/)]
+[Goでファイルの特定位置から読む](https://reiki4040.hatenablog.com/entry/2018/08/13/080000)
+offset -> 配列やデータ構造オブジェクト内の、先頭から所定の要素までの距離を示す整数
+公式を見ても分からなかったが、参考にさせて頂いた内容を元に整理すると理解出来た。
+`whence`にはオフセットを指定する。
+- `whence`の基準
+  - <位置> -> <指定値> = <実際の値>
+  - 先頭 -> Seekstart = (0)
+  - 現在のoffset -> SeekCurrent = (1)
+  - 終端 -> SeekEnd = (2)
+SeekCurrentの意味が分からなかったが、(0)または(2)で設定したものを指す意味で使われると思って良いと思う。
+
+```go:
+package main
+
+import (
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	r := strings.NewReader("Hello, 世界")
+	r.Seek(2, io.SeekStart) // 先頭から2の位置に設定
+	io.CopyN(os.Stdout, r, 2) // "llo, 世界"から2文字出力
+	fmt.Println()							// ll
+
+	/* コピー後にoffsetが移動する？ */
+	r.Seek(-4, io.SeekCurrent) // "Hell<current>o, 世界"から-4 -> "<current>Hello, 世界"
+	io.CopyN(os.Stdout, r, 7)	//
+	fmt.Println()							// Hello,  -> Hello,+空白
+
+	r.Seek(-6, io.SeekEnd)
+	io.Copy(os.Stdout, r)
+}
+```
+
+分かるようで分からない...
