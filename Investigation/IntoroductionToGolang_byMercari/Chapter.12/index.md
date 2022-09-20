@@ -274,3 +274,12 @@ func main() {
 
 // moo moo moo
 ```
+
+## 12-2. ioパッケージ
+[io](https://pkg.go.dev/io)
+
+#### 12-2-1. 入出力の抽象化
+io.Readerとio.Writer
+参考: [ioパッケージによる抽象化](https://zenn.dev/hsaki/books/golang-io-package/viewer/io#io.reader%E3%81%AE%E5%AE%9A%E7%BE%A9)
+
+#### 12-2-2. コピー
