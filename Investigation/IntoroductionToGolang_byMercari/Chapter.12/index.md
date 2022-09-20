@@ -208,3 +208,43 @@ func main() {
 // Replacerだけで行おうとする場合
 // fmt.Println(strings.NewReplacer("郷", "Go", "入れば", "入っては").Replace("郷に入れば郷に従え"))
 ```
+
+#### 12-1-9. コードポイント(rune)ごとの置換
+参考: [Goのruneを理解するためのUnicode知識](https://qiita.com/seihmd/items/4a878e7fa340d7963fee)
+strings.Map関数を使う
+- **第1引数にrune型単位で置換する関数**
+  - 引数には関数を指定することに注意
+- 第2引数に置換したい文字列
+
+```go:
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	// 小文字を大文字に変換する関数
+	// + rune形に変換している
+	toUpper := func(r rune) rune {
+		if 'a' <= r && r <= 'z' {
+			return r - ('a' - 'A')
+		}
+		return r
+	}
+
+	// HELLO, WORLD
+	s := strings.Map(toUpper, "Hello, World")
+	fmt.Println(s)
+}
+```
+
+#### 12-1-10. 大文字・小文字の変換
+[unicode](https://pkg.go.dev/unicode)
+unicode.ToUpper関数 / unicode.ToLower関数
+-> **rune**単位で大文字/小文字に変換する関数
+
+[strings](https://pkg.go.dev/strings)
+strings.ToUpper / strings.ToLower関数
+-> **文字列**単位で大文字/小文字に変換する関数
