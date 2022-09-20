@@ -248,3 +248,29 @@ unicode.ToUpper関数 / unicode.ToLower関数
 [strings](https://pkg.go.dev/strings)
 strings.ToUpper / strings.ToLower関数
 -> **文字列**単位で大文字/小文字に変換する関数
+
+#### 12-1-11. bytesパッケージ
+[bytes](https://pkg.go.dev/bytes)
+byte型 -> unit8, 8bit=1バイト分の表現が可能
+10進数では0~255を表現できる。
+byte型からstring型へのキャストが省ける
+
+```go:
+package main
+
+import (
+	"bytes"
+	"fmt"
+)
+
+func main() {
+	// olink -> moo
+	src := []byte("olink olink olink")
+	b := bytes.ReplaceAll(src, []byte("olink"), []byte("moo"))
+	fmt.Printf("%s\n", b)
+
+	// fmt.Printf("%s\n", bytes.ReplaceAll([]byte("oink oink oink"), []byte("oink"), []byte("moo")))
+}
+
+// moo moo moo
+```
