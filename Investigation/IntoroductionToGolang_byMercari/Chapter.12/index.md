@@ -595,3 +595,31 @@ func main() {
 ["1986" "01" "12"]
 */
 ```
+
+#### 12-3-4. マッチした部分のインデックスを返す
+正規表現にマッチする部分のインデックスを返す
+- Find*Indexメソッドを用いる
+返す内容: [0 4](スライスを返すのでindex4の1個前まで) -> [index0, index3]
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	re, err := regexp.Compile(`\d+`)
+	if err != nil { /* エラー処理 */
+	}
+	// [0 4]
+	fmt.Println(re.FindIndex([]byte("1986年01月12日")))
+	// [[0 4] [7 9] [12 14]]
+	fmt.Println(re.FindAllIndex([]byte("1986年01月12日"), -1))
+	// [0 4]
+	fmt.Println(re.FindStringIndex("1986年01月12日"))
+	// [[0 4] [7 9] [12 14]]
+	fmt.Println(re.FindAllStringIndex("1986年01月12日", -1))
+}
+```
