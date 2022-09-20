@@ -623,3 +623,41 @@ func main() {
 	fmt.Println(re.FindAllStringIndex("1986年01月12日", -1))
 }
 ```
+
+#### 12-3-5. キャプチャされた部分を取得
+Find* Submatch*メソッドを使う
+`func (re *Regexp) FindSubmatch(b []byte) [][]byte`
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	re, err := regexp.Compile(`\d+`)
+	if err != nil {
+		panic(err)
+	}
+	// ["1986"]
+	fmt.Printf("%q\n", re.FindSubmatch([]byte("1986年01月12日")))
+	fmt.Printf("%q\n", re.FindStringSubmatch("1986年01月12日"))
+	// [["1986"] ["01"] ["12"]]
+	fmt.Printf("%q\n", re.FindAllSubmatch([]byte("1986年01月12日"), -1))
+	fmt.Printf("%q\n", re.FindAllStringSubmatch("1986年01月12日", -1))
+	// [0 4]
+	fmt.Println(re.FindSubmatchIndex([]byte("1986年01月12日")))
+	fmt.Println(re.FindStringSubmatchIndex("1986年01月12日"))
+	// [[0 4] [7 9] [12 14]]
+	fmt.Println(re.FindAllSubmatchIndex([]byte("1986年01月12日"), -1))
+	fmt.Println(re.FindAllStringSubmatchIndex("1986年01月12日", -1))
+
+}
+
+/* fmt.Println(re.FindSubmatch([]byte("1986年01月12日")))とすると、
+[[49 57 56 54]]が返る。これはバイト文字列。49->1, 57->9...
+"%q"で自然文字列に変換され、1986と返る。 */
+```
+
