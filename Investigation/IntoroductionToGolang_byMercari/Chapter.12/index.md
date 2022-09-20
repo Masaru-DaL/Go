@@ -356,3 +356,26 @@ func main() {
 ```
 
 分かるようで分からない...
+
+#### 12-2-4. io.Pipe関数
+パイプのように接続されたReaderとWriterを作る
+参考: [Go言語のio.Pipeでファイルを効率よくアップロードする方法. io.Pipeと非同期処理を活かし、ファイルアップロードのメモリ使用量を減らす | by James Kirk | Eureka Engineering | Medium](https://medium.com/eureka-engineering/file-uploads-in-go-with-io-pipe-75519dfa647b)
+
+```go:
+package main
+
+import (
+	"fmt"
+	"io"
+	"os"
+)
+
+func main() {
+	r, w := io.Pipe()
+	go func() {
+		fmt.Fprint(w, "Hello, 世界\n")
+		w.Close()
+	}()
+	io.Copy(os.Stdout, r)
+}
+```
