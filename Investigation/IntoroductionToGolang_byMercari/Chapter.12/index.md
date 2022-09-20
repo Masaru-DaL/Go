@@ -373,9 +373,84 @@ import (
 func main() {
 	r, w := io.Pipe()
 	go func() {
-		fmt.Fprint(w, "Hello, 世界\n")
-		w.Close()
-	}()
+		fmt.Fprint(w, "Hello, 世界\n")	// 2. wにデータを書き込む -> rと同期する
+		w.Close()												// 3. クローズ
+	}()																// 1. 関数の実行
+	io.Copy(os.Stdout, r)							// 4. rをコピーして出力
+}
+```
+
+#### 12-2-5. 読み込みバイト数を制限する
+io.LimitedReader型を用いる
+Rフィールド -> 元のio.Readerを設定する
+Nフィールド -> 読み込むバイト数を設定する
+
+```go:
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	r := &io.LimitedReader{
+		R: strings.NewReader("Hello, 世界"),
+		N: 5,
+	}
+	// Hello
+	io.Copy(os.Stdout, r)
+}
+```
+
+#### 12-2-6. 複数のio.Writerに書き込む
+io.MultiWriter関数を用いる
+同じ内容が複数のio.Writerに書き込まれる
+
+```go:
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+)
+
+func main() {
+	var buf1, buf2 bytes.Buffer
+	w := io.MultiWriter(&buf1, &buf2) // wに&buf1, &buf2が設定される
+	fmt.Fprint(w, "Hello, 世界")
+	// buf1: Hello, 世界
+	fmt.Println("buf1:", buf1.String())
+	// buf2: Hello, 世界
+	fmt.Println("buf2:", buf2.String())
+}
+```
+
+#### 12-2-7. 複数のio.Readerから読み込む
+io.MultiReader関数を用いる
+- 複数のio.Readerを直列につなげたようなio.Readerを生成
+- 分割された複数のファイルから読み込む場合などに一度にメモリに載せなくて済む
+- すでに読み込んだ部分を先頭に詰めるなどに応用できる
+
+
+```go:
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	r1 := strings.NewReader("Hello, ")
+	r2 := strings.NewReader("世界\n")
+
+	/* MultiReaderの引数に、読み込み対象を複数指定する */
+	r := io.MultiReader(r1, r2)
+	// Hello, 世界 -> 読み込んだ部分を先頭詰めしている。
 	io.Copy(os.Stdout, r)
 }
 ```
