@@ -697,3 +697,29 @@ func main() {
 	fmt.Printf("%q", result)
 }
 ```
+
+#### 12-3-7. マッチした部分を置換する
+キャプチャした部分を展開して置換する
+ReplaceAllStringメソッドを用いる
+[]byte型にはReplaceAllメソッドを用いる
+
+```go:
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	re, err := regexp.Compile(`(\d+)年(\d+)月(\d+)日`)
+	if err != nil {
+		panic(err)
+	}
+
+	// $1, $2はマッチした順番を表す
+	s := re.ReplaceAllString("1986年01月12日", "${2}/${3} ${1}")
+	// 01/12 1986
+	fmt.Println(s)
+}
+```
