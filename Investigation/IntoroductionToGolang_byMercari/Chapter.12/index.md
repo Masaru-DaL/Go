@@ -1103,3 +1103,64 @@ rune	Wide	Narrow	Folded	Kind
  α	 	  	  	EastAsianAmbiguous
 */
 ```
+
+#### 12-5-7. 半角・全角の変換
+width.Fold/Narrow/Widen変数を用いる
+- transform.Transformerインタフェースを実装している
+- *width.Properties型のそれぞれFolded/Narrow/Widthメソッドが0以外を返す場合はその値に変換する
+
+```go:
+package main
+
+import (
+	"fmt"
+
+	"golang.org/x/text/width"
+)
+
+func main() {
+	/* 半角 -> 全角, 全角 -> 半角, 変換できなければそのまま */
+	fmt.Println("--- width.Fold ---")
+	for _, r := range width.Fold.String("５ｱアAα") {
+		p := width.LookupRune(r)
+		fmt.Printf("%c: %s\n", r, p.Kind())
+	}
+	/* 半角に変換, 変換できなければそのまま */
+	fmt.Println("--- width.Narrow ---")
+	for _, r := range width.Narrow.String("５ｱアAα") {
+		p := width.LookupRune(r)
+		fmt.Printf("%c: %s\n", r, p.Kind())
+	}
+
+	/* 全角に変換, 変換できなければそのまま */
+	fmt.Println("--- width.Widen ---")
+	for _, r := range width.Widen.String("５ｱアAα") {
+		p := width.LookupRune(r)
+		fmt.Printf("%c: %s\n", r, p.Kind())
+	}
+}
+
+/* 実行結果 */
+/*
+--- width.Fold ---
+5: EastAsianNarrow
+ア: EastAsianWide
+ア: EastAsianWide
+A: EastAsianNarrow
+α: EastAsianAmbiguous
+--- width.Narrow ---
+5: EastAsianNarrow
+ｱ: EastAsianHalfwidth
+ｱ: EastAsianHalfwidth
+A: EastAsianNarrow
+α: EastAsianAmbiguous
+--- width.Widen ---
+５: EastAsianFullwidth
+ア: EastAsianWide
+ア: EastAsianWide
+Ａ: EastAsianFullwidth
+α: EastAsianAmbiguous
+
+αは0を返している。
+*/
+```
