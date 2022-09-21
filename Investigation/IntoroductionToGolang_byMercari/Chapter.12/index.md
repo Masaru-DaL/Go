@@ -796,7 +796,6 @@ fmt.Println(s)
 rune型を用いることで、文字列を1文字ずつ扱うことができる。
 以下、stringの扱い方をやってみる。
 参考: [Goのruneを理解するためのUnicode知識](https://qiita.com/seihmd/items/4a878e7fa340d7963fee)
-要件: "あ"という文字列を"あ"と出力したい。
 
 ```go:
 package main
@@ -864,4 +863,32 @@ func main() {
 		fmt.Println(r)
 	}
 }
+
+// 12354
 ```
+この時出力された"12354"という値は、**Unicodeの番号を10進数に変換したもの**です。
+[変換ツール](https://www.marbacka.net/msearch/tool.php#chr2enc:~:text=%E3%81%95%E3%82%8C%E3%81%BE%E3%81%99%E3%80%82-,%EF%BC%91%E6%96%87%E5%AD%97%E5%85%A5%E5%8A%9B%E3%81%97%E3%81%A6%E8%AA%BF%E3%81%B9%E3%82%8B,-%E8%AA%BF%E3%81%B9%E3%81%9F%E3%81%84%E6%96%87%E5%AD%97)で確認します。
+1. "あ"と入力して、調べるボタンを押す
+2. Unicode文字番号 -> U+3042
+3. (HTML数値)文字参照(10進数表記) -> (&w**12354**)
+
+つまり、"あ"という文字列を得るにはもう一段階必要です。
+手段としては簡単で、`string()`を使うだけです。
+
+```go:
+package main
+
+import "fmt"
+
+func main() {
+	s := "あ"
+	/* ループの回数(=i)を棄却し、要素の中身(byte)だけ取り出す */
+	for _, r := range s {
+		// rune
+		fmt.Println(string(r)) // string()を使用するだけ
+	}
+}
+
+// あ
+```
+無事"あ"と出力することができました！
