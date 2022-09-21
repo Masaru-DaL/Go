@@ -977,7 +977,10 @@ func main() {
 変換を行うためのインタフェース
 - golang.org/x/text/transformパッケージで提供されている
 - io.Readerやio.Writerのまま変換できる
-Goの内部の文字列がUTF-8で保持しているため、他の文字コードに変換したい時がある。そういった時に使用する。`golang.org/x/text/encoding`もあるが、Transformer型インタフェースの結合や、Reader、Writerへの変換ができる特徴がある。
+Goの内部の文字列がUTF-8で保持しているため、他の文字コードに変換したい時がある。そういった時に使用する。Transformer型インタフェースの結合や、Reader、Writerへの変換ができる特徴がある。
+
+`transform` -> 変換
+`encoding` -> エンコード
 
 #### 12-5-2. *transform.Readerを生成する
 io.Readerを実装した型
@@ -1054,3 +1057,12 @@ transform.Chan関数を用いる
   - 結合することによって、直列に実行するより効率的になる
 
 #### 12-5-5. 文字コードの変換
+Encodingインタフェースを用いる
+golang.org/x/text/encodingパッケージで提供されている
+
+- 日本語文字コードへの変換
+golang.org/x/text/encoding/japaneseパッケージで提供
+Shift_JISやEUC-JPの文字コードが扱える
+
+#### 12-5-6. widthパッケージ
+
