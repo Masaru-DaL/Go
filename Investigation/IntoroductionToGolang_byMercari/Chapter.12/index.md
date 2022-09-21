@@ -900,3 +900,38 @@ fmt.Printf("%U\n", []rune("世界"))
 fmt.Println(string([]rune{0x4e16, 0x754c}))
 
 #### 12-4-3. Goの文字列とUTF-8
+Goの文字列はUTF-8でエンコードされている。
+unicode/utf8パッケージを用いてエンコード/デコードできる
+
+#### 12-4-4. 書記素クラスタへの分割
+- 書記素クラスタとは
+自然に見える1文字(éなのとか、絵文字とか)はUnicodeのコードポイントで見た時に複数のコードポイントで構成されている場合がある。が、自然に見える文字は1文字として扱うということを書記素クラスタと呼ぶ。
+
+- 書記素クラスタへの分割
+  - github.com/rivo/unisegパッケージを用いる
+
+```go:
+package main
+
+import (
+	"fmt"
+
+	"github.com/rivo/uniseg"
+)
+
+func main() {
+	gr := uniseg.NewGraphemes("Cafe\u0301")
+	// C [43]　a [61]　f [66]　é [65 301]
+	for gr.Next() {
+		fmt.Printf("%s %x　", gr.Str(), gr.Runes())
+	}
+}
+
+/* 実行結果 */
+// C [43]　a [61]　f [66]　é [65 301]　
+```
+
+参考: [正規化とは何か](https://www.ymotongpoo.com/works/goblog-ja/post/normalization/#:~:text=%E3%82%92%E5%BD%93%E3%81%A6%E3%81%BE%E3%81%99%E3%80%82-,%E6%AD%A3%E8%A6%8F%E5%8C%96%E3%81%A8%E3%81%AF%E4%BD%95%E3%81%8B,-%E5%90%8C%E3%81%98%E6%96%87%E5%AD%97%E5%88%97)
+é -> は"e\u0301"という文字列で表現され、書記素クラスタで表現すると"65"と"301"という2つ(複数)のコードポイントを1つの[65 301]として扱っていることがわかります。
+
+
