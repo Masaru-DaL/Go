@@ -752,3 +752,22 @@ func main() {
 ```
 
 #### 12-3-9. 関数を指定して置換
+マッチした部分を置換する関数を指定する
+- ReplaceAllStringFuncメソッドを用いる
+- []byte型にはReplaceAllFuncメソッドを用いる
+
+```go:
+re, err := regexp.Compile(`(^|_)[a-zA-Z]`)
+if err != nil { /* エラー処理 */ }
+s := re.ReplaceAllStringFunc("hello_world", func(s string) string {
+	return strings.ToUpper(strings.TrimLeft(s, "_"))
+})
+// HelloWorld
+fmt.Println(s)
+
+/* TrimLeft -> sの先頭からcutsetに含まれるUnicodeコードポイントを除いた文字列を返す */
+/* Trimした結果、hello worldに別れてそれぞれの1文字が大文字に置換しているのかな */
+```
+
+## 12-4. UnicodeとURF8
+#### 12-4-1. Unicodeとrune型
