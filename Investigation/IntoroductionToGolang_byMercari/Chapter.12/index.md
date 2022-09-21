@@ -1215,4 +1215,8 @@ Unicodeの正規化手段の基礎が"合成"と"分解"。
 **合成**は、基底文字と結合文字を組み合わせ単独のギ、つまり"U+30AE"として表現する形に変換すること。
 **分解**は、事前合成形の"U+30AE"を、結合文字列"U+30AD + U+3099"に変換することを言う。
 
+- Golangでは[norm package - golang.org/x/text/unicode/norm - Go Packages](https://pkg.go.dev/golang.org/x/text/unicode/norm)のパッケージを使用する
+このパッケージは変数norm.NFC, norm.NFKC, norm.NFD, norm.NFKDを提供している。
+このNFC, NFKCというのは**正規化形式**の種類の名前で、合成と分解をどういった形式(正準等価性、互換等価性)で行うかを指しています。
+
 
