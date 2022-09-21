@@ -1055,6 +1055,8 @@ transform.Chan関数を用いる
 - 複数のTransformerインタフェースを結合して1つのTrasformerインタフェースにすることができる
   - 結合した結果は、Transformerインターフェース型の値として返される
   - 結合することによって、直列に実行するより効率的になる
+例: transform.Nopとtransform.Dicardを結合
+`t := transform.Chain(transform.Nop, transform.Dicard)`
 
 #### 12-5-5. 文字コードの変換
 Encodingインタフェースを用いる
@@ -1067,6 +1069,7 @@ Shift_JISやEUC-JPの文字コードが扱える
 #### 12-5-6. widthパッケージ
 [golang.org/x/text/width](golang.org/x/text/width)パッケージ
 [東アジアの文字幅](https://ja.wikipedia.org/wiki/%E6%9D%B1%E3%82%A2%E3%82%B8%E3%82%A2%E3%81%AE%E6%96%87%E5%AD%97%E5%B9%85)
+[UAX#11](https://www.unicode.org/reports/tr11/)
 使い所: 半角、全角などの東アジアの文字幅を取得したい時？
 文字種類を取得して処理を行う時？
 
@@ -1164,3 +1167,35 @@ A: EastAsianNarrow
 αは0を返している。
 */
 ```
+
+#### 12-5-8. Shift_JISファイルの半角・全角変換
+```go:
+// Shift_JISのファイルの全角英数などは半角に、半角カナなどは全角にする
+func foldShiftJISFile(filename string) error {
+  // ファイルを開け、操作後にクローズ処理
+	f, err := os.Open(filename)
+	if err != nil { return err }
+	defer f.Close()
+
+	// Shift_JISからUTF-8にしてから
+	// 全角英数などは半角に、半角カナなどは全角にする
+	dec := japanese.ShiftJIS.NewDecoder() // UTF-8にする処理？
+	t := transform.Chain(dec, width.Fold) // ここいまいちわからない。処理することと結合？
+	r := transform.NewReader(f, t)
+	s := bufio.NewScanner(r)
+	for s.Scan() { fmt.Println(s.Text()) }
+	if err := s.Err(); err != nil { return err }
+	return nil
+}
+```
+ファイル操作のイメージがこうやるのかぁと何となくわかる。
+
+#### 12-5-9. Unicodeの等価性
+- 文字の等価性
+見た目が同じでもコードポイントが違う可能性がある。
+参考: [2羽のペンギン](https://text.baldanders.info/golang/unicode-normalization/)
+ギという文字は、"U+30AE"で表される。
+ギには濁点が付いていて、キ+濁点という二つの要素で出来ているため、キ(U+30AD)+濁点(U+3099)というコードポイントでも表される。
+つまり、ギは"U+30AE" == "U+30AD" + "U+3099"ということになり、これを文字の等価性と言う。
+
+- 
