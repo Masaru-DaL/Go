@@ -51,7 +51,7 @@
       - [12-5-11. 正準等価性](#12-5-11-正準等価性)
       - [12-5-12. 互換等価性による正規化](#12-5-12-互換等価性による正規化)
       - [12-5-12. コードポイントの集合単位の変換](#12-5-12-コードポイントの集合単位の変換)
-      - [12-5-13.](#12-5-13)
+      - [12-5-13. カタカナを全角にする](#12-5-13-カタカナを全角にする)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 12. テキスト処理
 ## 12-1. 簡単なテキスト処理
@@ -1334,6 +1334,29 @@ func main() {
 仕様通りに変換を返すようなので、それぞれの扱い方を理解する必要がある。
 
 #### 12-5-12. コードポイントの集合単位の変換
-[runes](https://pkg.go.dev/golang.org/x/text/runes)
+[runes](https://pkg.go.dev/golang.org/x/text/runes)パッケージを用いる。
 
-#### 12-5-13.
+#### 12-5-13. カタカナを全角にする
+runes.If関数を用いる
+`runes.If(<変換前の値>, <変換後の値>, <マッチ可否の処理>)`
+```go:
+package main
+
+import (
+	"fmt"
+	"unicode"
+
+	"golang.org/x/text/runes"
+	"golang.org/x/text/width"
+)
+
+func main() {
+  // runes.In(unicode.Katakana) -> カタカナ
+  // width.Widen -> 全角に変換することを表す
+  // nil -> マッチしない場合は何もしない(変換しない)ことを意味する
+	// カタカナであれば全角にする(変換)
+	t := runes.If(runes.In(unicode.Katakana), width.Widen, nil)
+	// ５アアAα
+	fmt.Println(t.String("５ｱアAα"))
+}
+```
