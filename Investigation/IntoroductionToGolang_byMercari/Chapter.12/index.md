@@ -1065,4 +1065,41 @@ golang.org/x/text/encoding/japaneseパッケージで提供
 Shift_JISやEUC-JPの文字コードが扱える
 
 #### 12-5-6. widthパッケージ
+[golang.org/x/text/width](golang.org/x/text/width)パッケージ
+[東アジアの文字幅](https://ja.wikipedia.org/wiki/%E6%9D%B1%E3%82%A2%E3%82%B8%E3%82%A2%E3%81%AE%E6%96%87%E5%AD%97%E5%B9%85)
+使い所: 半角、全角などの東アジアの文字幅を取得したい時？
+文字種類を取得して処理を行う時？
 
+```go:
+package main
+
+import (
+	"fmt"
+
+	"golang.org/x/text/width"
+)
+
+func main() {
+	// 全角の5、半角のア、全角のア、半角のA、ギリシア文字のアルファ
+	rs := []rune{'５', 'ｱ', 'ア', 'A', 'α'}
+	fmt.Println("rune\tWide\tNarrow\tFolded\tKind")
+	fmt.Println("--------------------------------------------------")
+	for _, r := range rs {
+		p := width.LookupRune(r)
+		w, n, f, k := p.Wide(), p.Narrow(), p.Folded(), p.Kind()
+		fmt.Printf("%2c\t%2c\t%3c\t%3c\t%s\n", r, w, n, f, k)
+	}
+
+}
+
+/* 実行結果 */
+/*
+rune	Wide	Narrow	Folded	Kind
+--------------------------------------------------
+ ５	 	  5	  5	EastAsianFullwidth
+ ｱ	 ア	  	  ア	EastAsianHalfwidth
+ ア	 	  ｱ	  	EastAsianWide
+ A	 Ａ	  	  	EastAsianNarrow
+ α	 	  	  	EastAsianAmbiguous
+*/
+```
