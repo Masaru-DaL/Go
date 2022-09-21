@@ -970,3 +970,80 @@ func main() {
 ```
 `s := "👨‍👩‍👦👨‍👩‍👧‍👧"`でsには絵文字が2つあり、これを書記素クラスタにした結果が最初の出力。
 `uniseg.NewGraphemes()`の引数に渡すと、文字単位に切り出してくれるようです。
+
+## 12-5. テキスト変換
+#### 12-5-1. Transformerインタフェース
+[Transformer](https://pkg.go.dev/golang.org/x/text/transform)
+変換を行うためのインタフェース
+- golang.org/x/text/transformパッケージで提供されている
+- io.Readerやio.Writerのまま変換できる
+
+#### 12-5-2. *transform.Readerを生成する
+io.Readerを実装した型
+- transform.NewReader関数で生成する
+- 読み込みごとにTransformerインタフェースによって変換される
+
+```go:
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+
+	"golang.org/x/text/transform"
+)
+
+func main() {
+	// 変数rはio.Readerインタフェースを実装した型
+	r := strings.NewReader("Hello, World")
+
+	// transform.Nop変数は何も変換を行わないtransform.Transformer
+	tr := transform.NewReader(r, transform.Nop) // io.Readerのまま出力される
+
+	// 変数trは*transform.Reader型
+	_, err := io.Copy(os.Stdout, tr)
+	if err != nil { /* エラー処理 */
+	}
+
+}
+
+// Hello, World
+```
+
+#### 12-5-3. *transform.Writerを生成する
+io.Writerを実装した型
+- transform.NewWriter関数で生成する
+- 書き込みごとにTransformerインタフェースによって変換される
+
+```go:
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+
+	"golang.org/x/text/transform"
+)
+
+func main() {
+	// 変数rはio.Readerインタフェースを実装した型
+	r := strings.NewReader("Hello, World")
+
+	// transform.Nop変数は何も変換を行わないtransform.Transformer
+	tw := transform.NewWriter(os.Stdout, transform.Nop) // io.Writerのまま出力される
+
+	// 変数twは*transform.Writer型
+	_, err := io.Copy(tw, r)
+	if err != nil { /* エラー処理 */
+	}
+
+}
+
+// Hello, World
+```
+
+いまいちわからん...
+
+#### 12-5-4. Transformerインタフェースの結合
