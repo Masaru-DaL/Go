@@ -771,3 +771,15 @@ fmt.Println(s)
 
 ## 12-4. UnicodeとURF8
 #### 12-4-1. Unicodeとrune型
+[Unicode](https://ja.wikipedia.org/wiki/Unicode)
+- 全世界共通で使えるようにする定めた文字コードの業界規格。
+- 世界中の文字を収録し、**通し番号**を割り当て、同じコード体系で使えるようにしたもの。
+  - **文字に数値を割り当てたものの集まり**
+- "符号化文字集合"と呼ばれるものの1つ。
+  - コンピュータ上で「どのような文字や記号を扱うのか」ということを定義したもの。
+  - "変換対象となる文字の一覧"が書いてある表
+- 16ビットで表せられる
+  - [Unicode一覧 0000-0FFF](https://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF)
+
+
+参考: [Unicode -> UTF* への文字変換 image](https://cdn-ak.f.st-hatena.com/images/fotolife/s/shiba_yu36/20150913/20150913141538.jpg)
