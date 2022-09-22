@@ -21,6 +21,8 @@
   - [13-3. 構造体のリフレクション](#13-3-構造体のリフレクション)
       - [13-3-1. フィールド情報を値から取得](#13-3-1-フィールド情報を値から取得)
       - [13-3-2. フィールドに値を設定](#13-3-2-フィールドに値を設定)
+      - [13-3-3. 非公開フィールドに値を設定](#13-3-3-非公開フィールドに値を設定)
+      - [13-3-4. フィールド情報を型から取得](#13-3-4-フィールド情報を型から取得)
 # 13. リフレクション
 ## 13-1. リフレクションとは
 #### 13-1-1. Goにおけるリフレクションとは
@@ -403,4 +405,57 @@ func main() {
 値を抜き出すというよりは、構造体のフィールドにアクセスして参照しているイメージ。
 ポインタ経由だと参照がカギかもしれぬ。
 
+#### 13-3-3. 非公開フィールドに値を設定
+unsafe.Pointerとreflect.NewAtを使う
+テスト以外での使用はおすすめしない
 
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+	"unsafe"
+)
+
+func main() {
+	/* 非公開フィールドに値を設定できない */
+	a := struct{ n int }{n: 100}
+	v := reflect.ValueOf(&a)
+	fv1 := v.Elem().Field(0)
+	fmt.Println(fv1.CanSet()) // false
+
+	/* このやり方だと設定できる */
+	ptr := unsafe.Pointer(fv1.UnsafeAddr())
+	fv2 := reflect.NewAt(fv1.Type(), ptr)
+	if fv2.Elem().CanSet() {
+		fv2.Elem().SetInt(200)
+	}
+	fmt.Println(a) // {200}
+}
+```
+
+#### 13-3-4. フィールド情報を型から取得
+Type型のField*系のメソッドを用いる
+構造体タグの情報も取得できる
+
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	type Person struct {
+		Name string `json:"name"`
+		Age  int    `json:"age"`
+	}
+	p := Person{Name: "Gopher", Age: 11}
+	t := reflect.TypeOf(p)
+	f, _ := t.FieldByName("Name")　// フィールド名を指定
+	fmt.Println(f.Tag.Get("json")) // name -> 返す値がタグ情報
+
+}
+```
