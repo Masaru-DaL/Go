@@ -280,3 +280,44 @@ fmt.Println(t2) // string
 ```
 
 #### 13-2-9. Type型からValue型を生成する
+- reflect.New関数
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	// new(int)と同じようにポインタになる
+	v := reflect.New(reflect.TypeOf(0))
+	// ptr int 0
+	fmt.Println(v.Kind(), v.Elem().Kind(), v.Elem())
+}
+
+/* "0"(int型)がポインタ型になっている。 */
+```
+
+- reflect.NewAt関数
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+	"unsafe"
+)
+
+func main() {
+	var n int
+
+	/* reflect.NewAt( */
+	v := reflect.NewAt(reflect.TypeOf(0), unsafe.Pointer(&n))
+	v.Elem().SetInt(100)
+	fmt.Println(n) // 100
+}
+```
+いまいちよくわかってないが、指定した型+ポインタを指定して操作できる感じか。
+
+
