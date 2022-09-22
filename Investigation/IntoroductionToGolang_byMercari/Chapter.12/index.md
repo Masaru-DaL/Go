@@ -52,6 +52,7 @@
       - [12-5-12. 互換等価性による正規化](#12-5-12-互換等価性による正規化)
       - [12-5-12. コードポイントの集合単位の変換](#12-5-12-コードポイントの集合単位の変換)
       - [12-5-13. カタカナを全角にする](#12-5-13-カタカナを全角にする)
+      - [12-5-14. コードポイントの削除](#12-5-14-コードポイントの削除)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 12. テキスト処理
 ## 12-1. 簡単なテキスト処理
@@ -1360,3 +1361,39 @@ func main() {
 	fmt.Println(t.String("５ｱアAα"))
 }
 ```
+
+#### 12-5-14. コードポイントの削除
+runes.Remove関数を用いる
+```go:
+package main
+
+import (
+	"fmt"
+	"unicode"
+
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
+)
+
+func main() {
+  /* unicode.Mn -> 結合文字を意味する -> 結合文字を削除するという意味 */
+	// 前進を伴わないような結合文字を削除するTransformer
+	removeMn := runes.Remove(runes.In(unicode.Mn))
+
+	// 一度、分解し結合文字と分け、削除後、再度合成する
+  /* transform.Chain -> 結合 */
+	t := transform.Chain(norm.NFD, removeMn, norm.NFC)
+
+	// "résumé" -> "resume"
+	s, _, err := transform.String(t, "résumé")
+	if err != nil {
+		panic(err)
+	}
+
+	// resume
+	fmt.Println(s)
+
+}
+```
+
