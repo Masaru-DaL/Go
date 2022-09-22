@@ -5,6 +5,10 @@
       - [13-1-3. 構造体タグの取得](#13-1-3-構造体タグの取得)
       - [13-1-4. encoding/jsonパッケージでの利用](#13-1-4-encodingjsonパッケージでの利用)
       - [13-1-5. templateパッケージでの利用](#13-1-5-templateパッケージでの利用)
+  - [13-2. Value型とType型](#13-2-value型とtype型)
+      - [13-2-1. Value型](#13-2-1-value型)
+      - [13-2-2. 値の種類によって分岐する](#13-2-2-値の種類によって分岐する)
+      - [13-2-3. Kind型](#13-2-3-kind型)
 # 13. リフレクション
 ## 13-1. リフレクションとは
 #### 13-1-1. Goにおけるリフレクションとは
@@ -101,4 +105,51 @@ html/templateパッケージとtext/templateパッケージを使用
 
 分かりにくそうではある...
 
+## 13-2. Value型とType型
+#### 13-2-1. Value型
+任意の値を表す型
+
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect" // 値を全てValue型で表す
+)
+
+func main() {
+	v := reflect.ValueOf(100) //
+	// int 100
+	fmt.Println(v.Kind(), v.Int())
+
+}
+```
+
+#### 13-2-2. 値の種類によって分岐する
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	// 100を"hello"やtrueに変えてみよう
+	v := reflect.ValueOf(true)
+	switch v.Kind() {
+	case reflect.Int:
+		fmt.Println(v.Int())
+	case reflect.String:
+		fmt.Println(v.String())
+	case reflect.Bool:
+		fmt.Println(v.Bool())
+	}
+}
+```
+動的に変わる値を取得して処理をするなどに利用できそう。
+
+#### 13-2-3. Kind型
+値の種類を表す型
+参照: https://docs.google.com/presentation/d/1QLDxUq5Ne_GnlZzVmINUMjGgwn9QmxUKqaBj3mi944I/edit#slide=id.g8503300ad1_0_100
 
