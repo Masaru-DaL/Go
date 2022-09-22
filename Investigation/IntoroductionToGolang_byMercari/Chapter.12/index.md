@@ -58,6 +58,7 @@
       - [12-6-1. Transformerインタフェース](#12-6-1-transformerインタフェース)
       - [12-6-2. NopResster型](#12-6-2-nopresster型)
       - [12-6-3. Transformメソッドの実装](#12-6-3-transformメソッドの実装)
+      - [12-6-4. 出力先が足りない場合の処理](#12-6-4-出力先が足りない場合の処理)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 12. テキスト処理
 ## 12-1. 簡単なテキスト処理
@@ -1478,3 +1479,20 @@ arEOF -> 末尾かどうかを表す値
 nDst -> 出力したバイト数
 nSrc -> 処理した入力のバイト数
 err -> エラー
+
+#### 12-6-4. 出力先が足りない場合の処理
+引数dstの長さが不十分な場合
+-> エラーとしてtransform.ErrShortDst変数の値を返す
+**条件分岐処理を行う**
+
+```go:
+func (Upper) Transform(dst, src []byte, atEOF bool) (
+						  nDst, nSrc int, err error) {
+	// 末尾ではないのにdstが足りない場合はErrShortDstを返す
+	if len(dst) == 0 && !atEOF {
+		err = transform.ErrShortDst // 名前付き戻り値としてreturn
+		return
+	}
+	// ...(略)...
+}
+```
