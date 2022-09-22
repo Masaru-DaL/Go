@@ -60,6 +60,7 @@
       - [12-6-3. Transformメソッドの実装](#12-6-3-transformメソッドの実装)
       - [12-6-4. 出力先が足りない場合の処理](#12-6-4-出力先が足りない場合の処理)
       - [12-6-5. 小文字から大文字への変換](#12-6-5-小文字から大文字への変換)
+      - [12-6-6. 変換元が長さ0の場合](#12-6-6-変換元が長さ0の場合)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 12. テキスト処理
 ## 12-1. 簡単なテキスト処理
@@ -1515,6 +1516,26 @@ func (Upper) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) 
 		}
 		// 処理したバイト数分だけ進める
 		nSrc++; nDst++
+	}
+}
+```
+
+#### 12-6-6. 変換元が長さ0の場合
+そのまま引数src(変換前の値が入るスライス)をdst(変換後の値が入るスライス)にコピーする
+
+```go:
+type Replacer struct {
+	transform.NopResetter
+	old, new []byte
+}
+func (r *Replacer) Transform(dst, src []byte, atEOF bool) (
+								nDst, nSrc int, err error) {
+	// r.oldが空であれば、そのままコピー
+	if len(r.old) == 0 {
+    // copy(変換後, 変換前)
+		n := copy(dst[nDst:], src)
+		nDst += n;	nSrc += n
+		return
 	}
 }
 ```
