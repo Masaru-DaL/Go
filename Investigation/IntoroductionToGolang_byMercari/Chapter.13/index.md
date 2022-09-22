@@ -9,6 +9,7 @@
       - [13-2-1. Value型](#13-2-1-value型)
       - [13-2-2. 値の種類によって分岐する](#13-2-2-値の種類によって分岐する)
       - [13-2-3. Kind型](#13-2-3-kind型)
+      - [13-2-4. 任意の値のリフレクション](#13-2-4-任意の値のリフレクション)
 # 13. リフレクション
 ## 13-1. リフレクションとは
 #### 13-1-1. Goにおけるリフレクションとは
@@ -152,4 +153,35 @@ func main() {
 #### 13-2-3. Kind型
 値の種類を表す型
 参照: https://docs.google.com/presentation/d/1QLDxUq5Ne_GnlZzVmINUMjGgwn9QmxUKqaBj3mi944I/edit#slide=id.g8503300ad1_0_100
+
+#### 13-2-4. 任意の値のリフレクション
+interface{}型の値をリフレクションする
+interface{}型 -> **任意の型が実装していることになるインタフェース**
+- リフレクションするとは？
+  - Value型を取得するという意味合いかなと
+
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	// 100を"hello"やtrueに変えてみよう
+	// 空のインタフェースに値を入れる(100を入れるとint型として実装していることになる)
+
+	var data interface{} = 100
+	v := reflect.ValueOf(data)
+	switch v.Kind() {
+	case reflect.Int:
+		fmt.Println(v.Int())
+	case reflect.String:
+		fmt.Println(v.String())
+	case reflect.Bool:
+		fmt.Println(v.Bool())
+	}
+}
+```
 
