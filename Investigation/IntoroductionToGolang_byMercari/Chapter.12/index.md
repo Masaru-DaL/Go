@@ -61,6 +61,7 @@
       - [12-6-4. 出力先が足りない場合の処理](#12-6-4-出力先が足りない場合の処理)
       - [12-6-5. 小文字から大文字への変換](#12-6-5-小文字から大文字への変換)
       - [12-6-6. 変換元が長さ0の場合](#12-6-6-変換元が長さ0の場合)
+      - [12-6-7. 検索して、見つけたら置換する](#12-6-7-検索して見つけたら置換する)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 12. テキスト処理
 ## 12-1. 簡単なテキスト処理
@@ -1536,6 +1537,30 @@ func (r *Replacer) Transform(dst, src []byte, atEOF bool) (
 		n := copy(dst[nDst:], src)
 		nDst += n;	nSrc += n
 		return
+	}
+}
+```
+
+#### 12-6-7. 検索して、見つけたら置換する
+bytes.Index関数を用いて検索する
+`bytes.Index(<検索したい値: src(変換前のスライス)[何番目からか: nSrc(処理した入力バイト数目から)], 検索したい値>)`
+
+```go:
+func (r *Replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
+	// ...(略)...
+	for {
+		// srcのnSrc番目からr.oldを探す
+		i := bytes.Index(src[nSrc:], r.old)
+		// 見つからなかった場合
+		if i == -1 { /* ...(略)... */ return }
+		// 見つけたところまでをコピーして書き込む
+		n := copy(dst[nDst:], src[nSrc:nSrc+i])
+		nDst += n; nSrc += n
+		if n < i { err = transform.ErrShortDst; return }
+		// 置換する文字をコピーして書き込む
+		n = copy(dst[nDst:], r.new)
+		nDst += n
+		nSrc += len(r.old)
 	}
 }
 ```
