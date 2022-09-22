@@ -11,6 +11,7 @@
       - [13-2-3. Kind型](#13-2-3-kind型)
       - [13-2-4. 任意の値のリフレクション](#13-2-4-任意の値のリフレクション)
       - [13-2-5. 変数への値のセット](#13-2-5-変数への値のセット)
+      - [13-2-6. reflect.Indirect関数](#13-2-6-reflectindirect関数)
 # 13. リフレクション
 ## 13-1. リフレクションとは
 #### 13-1-1. Goにおけるリフレクションとは
@@ -193,6 +194,7 @@ func main() {
 セット-> 変数から変数に値を入れる事、という意味で良さそう
 ある変数からリフレクションして新たな変数に代入しようとすることはできない。
 ポインタを経由というのはポインタを参照すると言う方がしっくりくる。
+[そのイメージ](https://docs.google.com/presentation/d/1QLDxUq5Ne_GnlZzVmINUMjGgwn9QmxUKqaBj3mi944I/edit#slide=id.g873b6bd538_0_6)
 ポインタ経由でセットする際には**Elem()メソッド**を呼び出す。
 
 ```go:
@@ -221,4 +223,34 @@ func main() {
 	fmt.Println(n)
 }
 ```
+
+#### 13-2-6. reflect.Indirect関数
+デリファンスを行う
+デリファンス？ヒットしない...
+参考: [Indirect](https://zenn.dev/lken/articles/36073ec89ff0ca#(value)-indirect(reflect.value)-reflect.value:~:text=(Value)%20Indirect(reflect.Value)%20reflect.Value)
+
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	var n int = 100
+
+	v1 := reflect.ValueOf(n)
+	fmt.Println(reflect.Indirect(v1)) // 100
+
+	np := &n
+	v2 := reflect.ValueOf(np)
+	fmt.Println(reflect.Indirect(v2)) // 100
+}
+```
+値をセットせずに、実態を参照している。
+ポインタで経由せずに出力が可能のようだ。
+ポインタを参照する場合はElemメソッドの結果、それ以外の場合は引数をそのまま返す。
+
+Elemメソッドは要素型(配列、チャネルなど)を取得するメソッドだが、Value型に対しても使用することが出来る。Value型の場合の返却値は値。要素型でもValue型でもない場合はpanicを引き起こす。
 
