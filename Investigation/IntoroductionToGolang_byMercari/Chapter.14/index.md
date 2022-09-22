@@ -111,5 +111,9 @@ https://docs.google.com/presentation/d/1I4pHnzV2dFOMbRcpA-XD0TaLcX6PBKpls6WxGHoM
   - 共通部分は自動で行われる
     - 構文解析->型チェックまでは自動で行われる
     - パッケージ名からソースコード群を見つけるなども自動
-  - モジュールかされているので使い回しができる
+  - モジュール化されているので使い回しができる
+
+- go/analysisの構成要素
+  - analysis.Analyzer
+    - go/analysisの静的解析の1つの単位を表す構造体
   - 
