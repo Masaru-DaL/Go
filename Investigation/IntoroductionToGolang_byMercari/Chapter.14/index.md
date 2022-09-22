@@ -116,4 +116,13 @@ https://docs.google.com/presentation/d/1I4pHnzV2dFOMbRcpA-XD0TaLcX6PBKpls6WxGHoM
 - go/analysisの構成要素
   - analysis.Analyzer
     - go/analysisの静的解析の1つの単位を表す構造体
-  - 
+      - Runフィールドに処理の本体を書く
+      - Requiresに依存するAnalyzerを書く
+  - analysis.Pass
+    - 静的解析に使う情報の入った構造体
+      - Analyzer.Runフィールドの引数で用いられる
+  - analysis.Diagnostic
+    - token.Pos(位置)に関連付けられた静的解析結果
+      - 任意の位置へのエラーを表現するために使う
+        - 例: n行目に、hogeというエラーがあります。
+
