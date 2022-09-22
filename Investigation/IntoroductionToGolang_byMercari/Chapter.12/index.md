@@ -1543,7 +1543,7 @@ func (r *Replacer) Transform(dst, src []byte, atEOF bool) (
 
 #### 12-6-7. 検索して、見つけたら置換する
 bytes.Index関数を用いて検索する
-`bytes.Index(<検索したい値: src(変換前のスライス)[何番目からか: nSrc(処理した入力バイト数目から)], 検索したい値>)`
+`bytes.Index(<検索したい値: src(変換前のスライス)[何番目からか: nSrc(処理した入力バイト数目から)], 検索したい値.old>)`
 
 ```go:
 func (r *Replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
@@ -1564,3 +1564,4 @@ func (r *Replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 	}
 }
 ```
+
