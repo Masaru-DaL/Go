@@ -18,6 +18,7 @@
       - [13-2-10. Type型の定義](#13-2-10-type型の定義)
       - [13-2-11. Typeインタフェースの実装](#13-2-11-typeインタフェースの実装)
       - [13-2-12. パニックが頻繁に発生する場合](#13-2-12-パニックが頻繁に発生する場合)
+  - [13-3. 構造体のリフレクション](#13-3-構造体のリフレクション)
 # 13. リフレクション
 ## 13-1. リフレクションとは
 #### 13-1-1. Goにおけるリフレクションとは
@@ -345,4 +346,35 @@ CanSetなど
 予想しない型の値が渡される可能性がある
 interface{}型で渡される場合は、全てのKindの値でテストする
 
+## 13-3. 構造体のリフレクション
+Value型のField*系のメソッドを用いる
+※構造体の定義の順番やフィールド名が変わることがある。
+アクセス仕方(指定するメソッド)によって引数の指定の仕方も変わる。
+
+```go:
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	type A struct{ n int }
+	type B struct {
+		s string
+		a A
+	}
+	v := reflect.ValueOf(B{s: "hoge", a: A{n: 100}})
+
+	// .s
+	fmt.Println(v.Field(0)) // hoge
+
+	// .a.n
+	fmt.Println(v.FieldByIndex([]int{1, 0})) // 100
+
+	// .s
+	fmt.Println(v.FieldByName("s")) // hoge
+}
+```
 
