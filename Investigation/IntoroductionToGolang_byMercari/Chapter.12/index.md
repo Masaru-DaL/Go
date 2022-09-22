@@ -59,6 +59,7 @@
       - [12-6-2. NopResster型](#12-6-2-nopresster型)
       - [12-6-3. Transformメソッドの実装](#12-6-3-transformメソッドの実装)
       - [12-6-4. 出力先が足りない場合の処理](#12-6-4-出力先が足りない場合の処理)
+      - [12-6-5. 小文字から大文字への変換](#12-6-5-小文字から大文字への変換)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 12. テキスト処理
 ## 12-1. 簡単なテキスト処理
@@ -1494,5 +1495,26 @@ func (Upper) Transform(dst, src []byte, atEOF bool) (
 		return
 	}
 	// ...(略)...
+}
+```
+
+#### 12-6-5. 小文字から大文字への変換
+forで繰り返しながら1バイトずつ変換する
+
+```go:
+func (Upper) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
+	// ...(略)...
+	for {
+		// srcをすべて処理し終えた、またはdstが足りなくなった場合
+		if len(src) <= nSrc || len(dst) <= nDst { return }
+		// 小文字から大文字への変換
+		if 'a' <= src[nSrc] && src[nSrc] <= 'z' {
+			dst[nDst] = src[nSrc] - ('a' - 'A') // 小文字 -> 大文字
+		} else {
+			dst[nDst] = src[nSrc] // 変換しない
+		}
+		// 処理したバイト数分だけ進める
+		nSrc++; nDst++
+	}
 }
 ```
