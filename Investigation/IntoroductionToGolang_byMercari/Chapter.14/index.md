@@ -192,3 +192,42 @@ const NoPos Pos = 0
   - parser.ParseExprFrom関数
 
 - ファイル単位の構文解析
+  - parser.ParseFile関数
+
+- ディレクトリ単位の構文解析
+  - parser.ParseDir関数
+
+- 抽象構文木の走査
+  - ast.Inspect関数
+`v + 1`の1つずつの型名が出力できる。(ノード探索順？)
+```go:
+package main
+
+import (
+	"fmt"
+	"go/ast"
+	"go/parser"
+)
+
+func main() {
+	n, err := parser.ParseExpr(`v + 1`)
+	if err != nil { /* エラー処理 */
+	}
+	ast.Inspect(n, func(n ast.Node) bool {
+		if n != nil {
+			// 型名を出力
+			fmt.Printf("%T\n", n)
+		}
+		// falseを返すと子ノードの探索をしない
+		return true
+	})
+}
+
+/* 実行結果 */
+/*
+*ast.BinaryExpr
+*ast.Ident
+*ast.BasicLit
+*/
+```
+
