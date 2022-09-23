@@ -231,3 +231,21 @@ func main() {
 */
 ```
 
+- 抽象構文木の走査
+  - 探索アルゴリズムの切り替え
+    - ast.Walk
+  - フィルターをかけて探索
+    - x/tools/go/ast/inspectorパッケージ -> Preorder
+  - 探索のゆき・かえりのハンドリング
+    - x/tools/go/ast/inspectorパッケージ -> Nodes
+  - 親ノードの取得
+    - x/tools/go/ast/inspectorパッケージ -> WithStack
+
+- ノードの置換や挿入
+  - x/tools/go/ast/astutil.Apply関数 -> astutil.Cursor(置換)
+- ノードのある行数などを取得
+  - (*token.FileSet).Positionメソッド -> token.Position型の値の取得
+- ノードに対応するコメントの取得
+  - ast.CommentMap型
+
+- 
