@@ -1,3 +1,8 @@
+- [メルカリ作のプログラミング言語Go完全入門 読破](#メルカリ作のプログラミング言語go完全入門-読破)
+- [14. 静的解析とコード生成](#14-静的解析とコード生成)
+  - [14-1. 静的解析を行う理由](#14-1-静的解析を行う理由)
+  - [14-2. 静的解析クイックスタート](#14-2-静的解析クイックスタート)
+  - [14-3. 構文解析](#14-3-構文解析)
 # メルカリ作のプログラミング言語Go完全入門 読破
 # 14. 静的解析とコード生成
 ## 14-1. 静的解析を行う理由
@@ -128,3 +133,40 @@ https://docs.google.com/presentation/d/1I4pHnzV2dFOMbRcpA-XD0TaLcX6PBKpls6WxGHoM
 
 - analysistestパッケージ
   - Analyzerのテストを簡単に行うためのパッケージ
+
+- skelton
+  - go/analysis用のスケルトンコードジェネレータ
+  - https://github.com/gostaticanalysis/skeleton
+  - 簡単に静的解析ツールを始めることができる
+    - 思い立ったらすぐ作れる
+    - 簡単なら1時間で！
+
+- skeltonを使った開発の流れ
+  - テスト駆動開発で作れる
+
+```mermaid
+flowchart TD
+  A[雛形を作る]
+  B[テストデータを作る]
+  C[テストを動かす]
+  D[Analyzerを修正]
+  A --> B
+  B --> C
+  C --> D
+  D --> C
+```
+
+- skeltonのインストール
+  - `$ go get -u github.com/gostaticanalysis/skeleton/v2`
+  - Go1.16以上
+    - `$ go install github.com/gostaticanalysis/skeleton/v2@latest`
+
+- Goの静的解析に関するリポジトリを集めたもの
+  - https://github.com/gostaticanalysis
+
+## 14-3. 構文解析
+抽象構文木を扱うためにはGoの構文に詳しくなる必要がある。
+https://go.dev/ref/spec
+
+抽象構文木の取得にはgo/parserパッケージを用いる
+go/analysisパッケージが自動で行う
