@@ -126,3 +126,5 @@ https://docs.google.com/presentation/d/1I4pHnzV2dFOMbRcpA-XD0TaLcX6PBKpls6WxGHoM
       - 任意の位置へのエラーを表現するために使う
         - 例: n行目に、hogeというエラーがあります。
 
+- analysistestパッケージ
+  - Analyzerのテストを簡単に行うためのパッケージ
