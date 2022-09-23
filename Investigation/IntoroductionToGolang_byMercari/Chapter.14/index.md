@@ -170,3 +170,16 @@ https://go.dev/ref/spec
 
 抽象構文木の取得にはgo/parserパッケージを用いる
 go/analysisパッケージが自動で行う
+
+- 手動で構文解析を行いたい時
+  - 式単位でパースしたい
+  - 1ファイルだけパースしたい
+  - コード生成やgo/analysisパッケージが使えない
+
+- token.Pos型
+  - ファイル上の位置を表す
+```go:
+// tokenパッケージにおける定義
+type Pos int
+const NoPos Pos = 0
+```
