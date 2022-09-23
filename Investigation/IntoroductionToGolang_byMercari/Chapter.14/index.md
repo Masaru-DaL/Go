@@ -183,3 +183,12 @@ go/analysisパッケージが自動で行う
 type Pos int
 const NoPos Pos = 0
 ```
+
+- token.Fileset型
+  - ファイル毎の位置情報を管理する
+
+- 式単位の構文解析
+  - parser.ParseExpr関数
+  - parser.ParseExprFrom関数
+
+- ファイル単位の構文解析
