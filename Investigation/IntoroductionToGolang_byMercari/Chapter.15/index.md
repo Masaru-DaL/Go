@@ -41,3 +41,34 @@ func SumIntOrFloat[T int64 | float64](a, b T) T {
   - Goが出た直後からジェネリクスの議論が出ている
 
 ## 15-2. 型パラメタを持つ関数の定義
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+func Print[T any](s []T) {
+	for _, v := range s {
+		fmt.Print(v)
+	}
+}
+
+func main() {
+	Print[string]([]string{"Hello, ", "playground\n"})
+	Print[int]([]int{10, 20})
+}
+```
+関数`Print`は"T"を`any`で定義している。
+`any`には、**任意の型**を指定できる。
+呼び出し時には`Print[<呼び出す型>]`で任意の型を指定している。
+"T"は、**型パラメタ**と呼ばれ、実際は型引数(<呼び出す型>)で指定した型として扱われる。
+
+- 型パラメタを持つ関数のインスタンス化
+  - 型引数を指定すると、インスタンス化することができる
+    - 変数への代入
+      - `var printStr func([]string) = Print[string]`
+    - インスタンス化しないと呼び出せない(=型パラメタのままでは呼び出せない)
+      - > "T"は、**型パラメタ**と呼ばれ、実際は型引数(<呼び出す型>)で指定した型として扱われる。
+
+- 型推論
