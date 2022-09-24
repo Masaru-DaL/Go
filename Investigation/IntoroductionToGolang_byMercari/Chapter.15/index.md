@@ -72,3 +72,22 @@ func main() {
       - > "T"は、**型パラメタ**と呼ばれ、実際は型引数(<呼び出す型>)で指定した型として扱われる。
 
 - 型推論
+  - 型推論により、型引数を省略する事が可能
+```go:
+package main
+
+import (
+	"fmt"
+)
+
+func Print[T any](s []T) {
+	for _, v := range s {
+		fmt.Print(v)
+	}
+}
+
+func main() {
+	Print([]string{"Hello, ", "playground\n"})
+	Print([]int{1, 2, 3})
+}
+```
