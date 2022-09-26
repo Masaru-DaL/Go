@@ -22,4 +22,14 @@ net/httpパッケージには、HTTPプロトコルに関する全ての機能�
 
 - ハンドラ関数
 `func (w http.ResponseWriter, r *http.Request)`
-ハンドラ関数は2つのパラメータ(引数)をとる。
+ハンドラ関数は2つのパラメータを受け取る。
+  - `http.ResponseWriter` -> レスポンスを受け取る内容を書き込む。textまたはhtmlで受け取れる。
+  - `*http.Request` -> HTTPリクエストに関する全ての情報を受け取る。例えばURLや、ヘッダーフィールドなど。
+
+- `/`(デフォルト)にアクセスした際のハンドラ
+
+```go:
+http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+  fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
+})
+```
