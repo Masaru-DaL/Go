@@ -1,6 +1,7 @@
 - [2. Hello World](#2-hello-world)
     - [2-1. Introduction](#2-1-introduction)
     - [2-2. リクエストハンドラの登録](#2-2-リクエストハンドラの登録)
+    - [2-3. サーバをリッスン状態にする](#2-3-サーバをリッスン状態にする)
 
 ### 1. 参考資料
 
@@ -33,3 +34,19 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
 })
 ```
+
+#### 2-3. サーバをリッスン状態にする
+リクエストハンドラだけではサーバは外部からのHTTP接続を一切受け付けません。
+そのためにサーバに**ポート番号**を指定し、そのポートへの接続を受け付ける状態にします。
+サーバに通信したいポート番号を登録して、サーバはそのポート番号に接続要求があると通知を受けて処理を行います。この動作の事を"**ポートをリッスンする**"と表現します。
+この節で、サーバにポート80を指定してリッスン状態にします。
+
+[ListenAndServe](https://cs.opensource.google/go/go/+/go1.19.1:src/net/http/server.go;l=3253)
+`func ListenAndServe(addr string, handler Handler) error`
+
+第1引数: ポート番号
+第2引数: ハンドラ
+※2目の引数にnilが渡された場合、デフォルトでDefaultServeMuxというServeMux型のハンドラが使用されます。
+基本的にはnilを渡すのが正解のようですので、nilを渡します。
+
+`http.ListenAndServe(":80", nil)`
