@@ -22,6 +22,7 @@
     - [5-2. ディレクトリ構造とファイル概要](#5-2-ディレクトリ構造とファイル概要)
     - [5-3. Gorilla/muxのインストール](#5-3-gorillamuxのインストール)
     - [5-4. grocery.go](#5-4-grocerygo)
+    - [5-5. main.go](#5-5-maingo)
 
 ### 1. 参考資料
 
@@ -322,3 +323,37 @@ type Grocery struct {
 
 grocery.goにはAPIのモデルを定義する。
 APIのモデルは食料品の名前を表すNameと、その数量を表すQuantityの2つのフィールドだけです。
+
+#### 5-5. main.go
+
+```go: main.go
+package main
+
+import (
+  "log"
+  "net/http"
+
+  "github.com/gorilla/mux"
+)
+
+func main() {
+
+  r := mux.NewRouter().StrictSlash(true)
+
+  r.HandleFunc("/allgroceries", AllGroceries)
+  r.HandleFunc("/groceries/{name}", SingleGrocery)
+  r.HandleFunc("/groceries", GroceriesToBuy).Methods("POST")
+  r.HandleFunc("/groceries/{name}", UpdateGrocery).Methods("PUT")
+  r.HandleFunc("/groceries/{name}", DeleteGrocery).Methods("DELETE")
+
+  log.Fatal(http.ListenAndServe(":10000", r))
+}
+```
+
+ルータを指定して各ハンドルを登録する。
+第1引数: URL path
+第2引数: 第1引数にアクセスされた際に処理する関数
+
+StrictSlashはデフォルトでfalseで、trueを指定すると、"/path/"とパス指定の場合に"/path"にアクセスすると前者にリダイレクトされる。逆の場合も同様。
+アプリケーションには常にルートで指定されたパスが表示される。
+
