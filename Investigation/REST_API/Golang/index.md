@@ -2,11 +2,13 @@
     - [2-1. Introduction](#2-1-introduction)
     - [2-2. Registering a Request Handler: リクエストハンドラの登録](#2-2-registering-a-request-handler-リクエストハンドラの登録)
     - [2-3. Listen for HTTP Connections: サーバをリッスン状態にする](#2-3-listen-for-http-connections-サーバをリッスン状態にする)
-    - [2-4. The Code (for copy/paste): Hello Worldの完成コード](#2-4-the-code-for-copypaste-hello-worldの完成コード)
+    - [2-4. The Code (for copy/paste):](#2-4-the-code-for-copypaste)
 - [3. HTTP Server](#3-http-server)
     - [3-1. Introduction](#3-1-introduction)
     - [3-2. Process dynamic requests: 動的リクエストの処理](#3-2-process-dynamic-requests-動的リクエストの処理)
     - [3-3. Serving static assets: 静的アセットの提供](#3-3-serving-static-assets-静的アセットの提供)
+    - [3-4. Accept connections: サーバをリッスン状態にする](#3-4-accept-connections-サーバをリッスン状態にする)
+    - [3-5. The Code(for copy/paste)](#3-5-the-codefor-copypaste)
 
 ### 1. 参考資料
 
@@ -57,7 +59,7 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 
 `http.ListenAndServe(":80", nil)`
 
-#### 2-4. The Code (for copy/paste): Hello Worldの完成コード
+#### 2-4. The Code (for copy/paste):
 
 ```go:
 package main
@@ -115,7 +117,8 @@ POSTパラメータ(HTMLフォームのフィールド): `r.FormValue("email")`
 
 #### 3-3. Serving static assets: 静的アセットの提供
 
-net/httpパッケージのhttp.FileServerを使用し、URLパスを指定する。
+1. net/httpパッケージのhttp.FileServerを使用し、URLパスを指定する。
+
 FileServerは以下のようになっている。
 `func FileServer(root FileSystem) Handler`
 引数にFileSystemを受け取る必要があり、戻り値はハンドラです。
@@ -127,3 +130,27 @@ FileServerは以下のようになっている。
 これはファイルシステムをDirメソッドを用いてstaticディレクトと定義している。
 Dirメソッドを使用するとOSのファイルシステム実装を使用できる。(OS内のディレクトリを指定できる。)
 
+2. ハンドラを登録するハンドルを登録する
+
+ハンドラは、DefaultServeMuxのパターンとしてハンドラを登録します。
+正しくファイルを提供するために、StripPrefixメソッドを使用してURLパスの一部を削除する必要がある。
+
+`http.Handle("/static/, http.StripPrefix("/static/), fs)`
+
+#### 3-4. Accept connections: サーバをリッスン状態にする
+
+`http.ListenAndServe(":80", nil)`
+
+#### 3-5. The Code(for copy/paste)
+
+```go:
+package main
+
+import (
+  "fmt"
+  "net/http"
+)
+
+func main() {
+  http.Handle
+}
