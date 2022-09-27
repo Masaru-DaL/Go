@@ -370,6 +370,8 @@ MethodsメソッドでHTTPメソッドを指定できる。
 
 #### 5-6. handler.go
 
+1. func AllGroceries
+
 ```go: handler.go
 package main
 
@@ -388,5 +390,28 @@ var groceries = []Grocery {
 }
 
 func AllGroceries(w http.ResponseWriter, r *http.Request) {
-  
+
+  fmt.Println("Endpoint hit: returnAllGroceries")
+  json.NewEncoder(w).Encode(groceries)
 }
+```
+今回はデータベースを使用しないので、変数groceriesを定義し、2つの食料品店の情報を含む配列を代入する。
+`AllGroceries`が呼び出されると、すべての食料品を含む配列がJSONとして返される。
+
+2. func SingleGrocery
+
+```go: handler.go
+func SingleGrocery(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+
+  name := vars["name"]
+
+  for _, grocery := range groceries {
+
+    if grocery.Name == name {
+      json.NewEncoder(w).Encode(grocery)
+    }
+  }
+}
+```
+
