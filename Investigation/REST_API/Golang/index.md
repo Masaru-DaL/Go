@@ -14,6 +14,7 @@
     - [4-2. Installing the gorilla/mux package](#4-2-installing-the-gorillamux-package)
     - [4-3. Create a new Router](#4-3-create-a-new-router)
     - [4-4. Registering a Request Handler](#4-4-registering-a-request-handler)
+    - [4-5. URL Parameters](#4-5-url-parameters)
 
 ### 1. 参考資料
 
@@ -206,3 +207,13 @@ Webアプリケーションを書く時の生産性を上げるための機能�
 
 `r.HandleFunc(...)`
 
+#### 4-5. URL Parameters
+
+gorilla/mux Routerの最大の強みは、リクエストURLからセグメント(下で説明)を抽出することが出来る点。
+
+`/books/go-programming-blueprint/page/10`
+このURLを元に理解します。
+このURLには2つのダイナミック(動的な)セグメントがある。
+
+1. go-programming-blueprint
+2. page(10)
