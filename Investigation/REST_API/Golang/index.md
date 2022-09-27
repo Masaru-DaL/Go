@@ -20,6 +20,7 @@
 - [5. Building a Simple REST API in Go With Gorilla/Mux](#5-building-a-simple-rest-api-in-go-with-gorillamux)
     - [5-1. 概要](#5-1-概要)
     - [5-2. ディレクトリ構造とファイル概要](#5-2-ディレクトリ構造とファイル概要)
+    - [5-3.](#5-3)
 
 ### 1. 参考資料
 
@@ -297,3 +298,9 @@ Groceries(食料品)APIの概要
 $ tree
 
 ```
+
+- grocery.go: APIのモデルを定義
+- handler.go: リクエストを管理する関数
+- main.go: URLのpath
+
+#### 5-3.
