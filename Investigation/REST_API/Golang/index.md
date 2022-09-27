@@ -11,6 +11,7 @@
     - [3-5. The Code(for copy/paste)](#3-5-the-codefor-copypaste)
 - [4. Routing(using gorilla/mux)](#4-routingusing-gorillamux)
     - [4-1. Introduction](#4-1-introduction)
+    - [4-2. Installing the gorilla/mux package](#4-2-installing-the-gorillamux-package)
 
 ### 1. 参考資料
 
@@ -171,4 +172,14 @@ gorilla/muxパッケージを使用し、RESTfulなサーバとのやり取り�
 
 #### 4-1. Introduction
 
+net/httpのあまり得意ではない事の1つが、リクエストURLをリクエスト内容によって分割するような複雑なリクエストルーティングである。(RESTの設計は得意ではない)
+そのため、gorilla/muxパッケージを使用する。
+
+この章では名前付きパラメータ、GET/POSTハンドラ、ドメイン制限のあるルートを作成する方法を学ぶ。
+
+#### 4-2. Installing the gorilla/mux package
+
+- gorilla/muxパッケージの概要
+net/httpパッケージのルーティングに適用できるパッケージ。
+Webアプリケーションを書く時の生産性を上げるための機能が多く備わっている。
 
