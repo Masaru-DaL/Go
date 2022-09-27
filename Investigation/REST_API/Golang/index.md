@@ -17,6 +17,7 @@
     - [4-5. URL Parameters](#4-5-url-parameters)
     - [4-6. Setting the HTTP server's router](#4-6-setting-the-http-servers-router)
     - [4-7. The Code (for copy/paste)](#4-7-the-code-for-copypaste)
+- [5. Building a Simple REST API in Go With Gorilla/Mux](#5-building-a-simple-rest-api-in-go-with-gorillamux)
 
 ### 1. 参考資料
 
@@ -276,3 +277,10 @@ func main() {
   http.ListenAndServe(":80", r)
 }
 ```
+
+## 5. Building a Simple REST API in Go With Gorilla/Mux
+[Building a Simple REST API in Go With Gorilla/Mux](https://betterprogramming.pub/building-a-simple-rest-api-in-go-with-gorilla-mux-892ceb128c6f)
+
+ここまででgolangにおけるサーバ構築の基礎を学べたので、上記のサイトを参考にREST APIのサーバを構築したいと思います。
+
+
