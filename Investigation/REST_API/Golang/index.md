@@ -13,6 +13,7 @@
     - [4-1. Introduction](#4-1-introduction)
     - [4-2. Installing the gorilla/mux package](#4-2-installing-the-gorillamux-package)
     - [4-3. Create a new Router](#4-3-create-a-new-router)
+    - [4-4. Registering a Request Handler](#4-4-registering-a-request-handler)
 
 ### 1. 参考資料
 
@@ -198,4 +199,10 @@ Webアプリケーションを書く時の生産性を上げるための機能�
 新しいルータの作成するには以下のコマンドを使用する。
 `r := mux.NewRouter`
 
+#### 4-4. Registering a Request Handler
+
+新しいルータを作成したら、通常と同じように(gorilla/muxを使用しなかった時と同じように)リクエストハンドラを登録する。
+違いは`http.HandleFunc(...)`のようにhttpメソッドを呼ぶ代わりに、作成したルータ上でHandleFuncを呼ぶ所です。
+
+`r.HandleFunc(...)`
 
