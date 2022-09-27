@@ -9,6 +9,8 @@
     - [3-3. Serving static assets: 静的アセットの提供](#3-3-serving-static-assets-静的アセットの提供)
     - [3-4. Accept connections: サーバをリッスン状態にする](#3-4-accept-connections-サーバをリッスン状態にする)
     - [3-5. The Code(for copy/paste)](#3-5-the-codefor-copypaste)
+- [4. Routing(using gorilla/mux)](#4-routingusing-gorillamux)
+    - [4-1. Introduction](#4-1-introduction)
 
 ### 1. 参考資料
 
@@ -162,3 +164,11 @@ func main() {
   http.ListenAndServe(":80", nil)
 }
 ```
+
+## 4. Routing(using gorilla/mux)
+
+gorilla/muxパッケージを使用し、RESTfulなサーバとのやり取りを学ぶ。
+
+#### 4-1. Introduction
+
+
