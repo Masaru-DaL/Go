@@ -12,6 +12,7 @@
 - [4. Routing(using gorilla/mux)](#4-routingusing-gorillamux)
     - [4-1. Introduction](#4-1-introduction)
     - [4-2. Installing the gorilla/mux package](#4-2-installing-the-gorillamux-package)
+    - [4-3. Create a new Router](#4-3-create-a-new-router)
 
 ### 1. 参考資料
 
@@ -181,10 +182,20 @@ net/httpのあまり得意ではない事の1つが、リクエストURLをリ�
 
 - gorilla/muxパッケージの概要
 net/httpパッケージのルーティングに適用できるパッケージ。
+**gorilla/muxはルーティング機能を提供する**
 Webアプリケーションを書く時の生産性を上げるための機能が多く備わっている。
 ミドルウェアなどの他のHTTPライブラリや既存のアプリケーションと混在させることが可能
 
 インストールするには以下のコマンドを使用する。
 `$ go get -u github.com/gorilla/mux`
 
-`
+#### 4-3. Create a new Router
+
+新しいリクエストルータを作成する。
+このルータは、ウェブアプリケーションのメインルータになる。
+全てのHTTP接続を受信し、登録したリクエストハンドラを介してサーバにパラメータとして渡される。
+
+新しいルータの作成するには以下のコマンドを使用する。
+`r := mux.NewRouter`
+
+
