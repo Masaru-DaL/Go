@@ -15,6 +15,8 @@
     - [4-3. Create a new Router](#4-3-create-a-new-router)
     - [4-4. Registering a Request Handler](#4-4-registering-a-request-handler)
     - [4-5. URL Parameters](#4-5-url-parameters)
+    - [4-6. Setting the HTTP server's router](#4-6-setting-the-http-servers-router)
+    - [4-7. The Code (for copy/paste)](#4-7-the-code-for-copypaste)
 
 ### 1. 参考資料
 
@@ -216,4 +218,61 @@ gorilla/mux Routerの最大の強みは、リクエストURLからセグメン�
 このURLには2つのダイナミック(動的な)セグメントがある。
 
 1. go-programming-blueprint
-2. page(10)
+bookから続き、本のタイトルを表すセグメント。
+
+2. page(**10**)
+本の何ページ目かを表すセグメント
+
+リクエストハンドラがこのような動的に変わるURLを処理するためには、ダイナミックセグメントをプレースホルダに設定して、次のようにリクエストハンドラを変更する。
+
+```go:
+r.HandleFunc("/books/{title}/page/{page}", func(w http.ResponseWriter, r *http.Request) {
+  // get the book
+  // navigate to the page
+})
+```
+
+セグメントからデータを取得するには、gorilla/muxパッケージに不随するmex.Vars(r)関数を使用する。(rは作成したルータ)
+これはhttp.Requestをパラメータとして受け取り、セグメントのマップを返す。
+
+```go:
+func(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  vars["title"] // the book title slug
+  vars["page"] // the page
+}
+```
+
+#### 4-6. Setting the HTTP server's router
+
+前述したが、`http.ListenAndServe(":80", nil)`のnilはデフォルトでnilで、nilの場合net/httpパッケージのデフォルトルータを使用する事を意味する。
+今回はgorilla/muxパッケージを用いてルータを作成しているので、作成したルータを指定する。
+
+`http.ListenAndServe(":80":, r)`
+
+#### 4-7. The Code (for copy/paste)
+
+```go:
+package main
+
+import (
+  "fmt"
+  "net/http"
+
+  "github.com/gorilla/mux"
+)
+
+func main() {
+  r := mux.NewRouter()
+
+  r.HandleFunc("/books/{title}/page/{page}", func(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    title := vars["title"]
+    page := vars["page"]
+
+    fmt.Fprintf(w, "You've requested the book: %s on page %s\n", title, page)
+  })
+
+  http.ListenAndServe(":80", r)
+}
+```
