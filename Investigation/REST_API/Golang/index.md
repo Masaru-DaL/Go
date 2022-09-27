@@ -18,6 +18,8 @@
     - [4-6. Setting the HTTP server's router](#4-6-setting-the-http-servers-router)
     - [4-7. The Code (for copy/paste)](#4-7-the-code-for-copypaste)
 - [5. Building a Simple REST API in Go With Gorilla/Mux](#5-building-a-simple-rest-api-in-go-with-gorillamux)
+    - [5-1. 概要](#5-1-概要)
+    - [5-2. ディレクトリ構造とファイル概要](#5-2-ディレクトリ構造とファイル概要)
 
 ### 1. 参考資料
 
@@ -283,4 +285,15 @@ func main() {
 
 ここまででgolangにおけるサーバ構築の基礎を学べたので、上記のサイトを参考にREST APIのサーバを構築したいと思います。
 
+#### 5-1. 概要
+Groceries(食料品)APIの概要
+1. 特定の食料品とその数量の取得
+2. 全ての食料品とその数量の取得
+3. 食料品を投稿してそれを更新する
 
+#### 5-2. ディレクトリ構造とファイル概要
+
+```shell:
+$ tree
+
+```
