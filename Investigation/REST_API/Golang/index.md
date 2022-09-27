@@ -415,3 +415,18 @@ func SingleGrocery(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
+この関数では、作成したルータから食料品の名前を取得する。
+スライスを繰り返し、要求された食料品だけを返す。
+
+3. func GroceriesToBuy
+
+```go: handler.go
+func GroceriesToBuy(w http.ResponseWriter, r *http.Request) {
+  reqBody, _ := ioutil.ReadAll(r.Body)
+  
+  var grocery Grocery
+  json.Unmarshal(reqBody, &grocery)
+  groceries = append(groceries, grocery)
+
+  json.NewEncoder(w).Encode(groceries)
+}
