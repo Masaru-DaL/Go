@@ -2,6 +2,7 @@
     - [2-1. Introduction](#2-1-introduction)
     - [2-2. リクエストハンドラの登録](#2-2-リクエストハンドラの登録)
     - [2-3. サーバをリッスン状態にする](#2-3-サーバをリッスン状態にする)
+    - [2-4. Hello Worldの完成コード](#2-4-hello-worldの完成コード)
 
 ### 1. 参考資料
 
@@ -50,3 +51,22 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 基本的にはnilを渡すのが正解のようですので、nilを渡します。
 
 `http.ListenAndServe(":80", nil)`
+
+#### 2-4. Hello Worldの完成コード
+
+```go:
+package main
+
+import (
+  "fmt"
+  "net/http"
+)
+
+func main() {
+  http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
+  })
+
+  http.ListenAndServe(":80", nil)
+}
+```
