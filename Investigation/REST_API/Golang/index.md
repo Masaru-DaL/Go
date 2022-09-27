@@ -76,7 +76,7 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 
 #### 2-4. The Code (for copy/paste):
 
-```go:
+```go: hello.go
 package main
 
 import (
@@ -92,6 +92,10 @@ func main() {
   http.ListenAndServe(":80", nil)
 }
 ```
+
+`$ go run hello.go`
+`http://localhost:80`
+Hello, you've requested: /
 
 ## 3. HTTP Server
 
@@ -423,7 +427,7 @@ func SingleGrocery(w http.ResponseWriter, r *http.Request) {
 ```go: handler.go
 func GroceriesToBuy(w http.ResponseWriter, r *http.Request) {
   reqBody, _ := ioutil.ReadAll(r.Body)
-  
+
   var grocery Grocery
   json.Unmarshal(reqBody, &grocery)
   groceries = append(groceries, grocery)
