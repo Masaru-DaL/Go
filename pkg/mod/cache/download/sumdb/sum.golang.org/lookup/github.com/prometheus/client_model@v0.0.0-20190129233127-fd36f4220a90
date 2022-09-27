@@ -3,7 +3,14 @@ github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90 h1:S/YWwWx
 github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 
 go.sum database tree
+<<<<<<< HEAD
 13309860
 AUib0bvRJNkN9ZyG7U0wVRPnkgTVDqPzjyl6QPOuVYM=
 
 — sum.golang.org Az3grmjUDmm+PlpFtihyWGkOEXhXrYxYxV+LkojNAkETV1+VwMDfKdz3Z0OSllwq7Tp1BYN1QfbF2eOum787XMqYrwo=
+=======
+13309855
+BPbvfj/3jfCz5XhfUvfDB6jUZ2AFaJP6wexSbmzUwn4=
+
+— sum.golang.org Az3grtmaO2qAghWALXJdNaD8lHXJ93jWWLhlFmiwIXrS6hIp7hkoxTMPGc3H9oivDUEm6yP0FX/rcsP7lmkHJc5UAgI=
+>>>>>>> golang_RESTAPI

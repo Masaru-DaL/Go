@@ -3,7 +3,14 @@ golang.org/x/lint v0.0.0-20190930215403-16217165b5de h1:5hukYrvBGR8/eNkX5mdUezrA
 golang.org/x/lint v0.0.0-20190930215403-16217165b5de/go.mod h1:6SW0HCj/g11FgYtHlgUYUwCkIfeOF89ocIRzGO/8vkc=
 
 go.sum database tree
+<<<<<<< HEAD
 13309761
 HWxV5hAI94TYomaKeCmqOaGtban28Hz4G/cn2IiHnHQ=
 
 — sum.golang.org Az3grtBZ+EEJbfNiO+GrOGgeZoUT4CeAyQ8xz1PuwBqOdpPibsGgpoU+BJW+KipvIS3SD+05exULFbaF3TLjyUDGnww=
+=======
+13309750
+MElVN6/0ScOX6cjKidmEwhIKHbgr7xcqo32w1VN/8Xk=
+
+— sum.golang.org Az3grpBATvdvdanjdV+6QYbenekiVQegdqReRF/R+dgtWRF/rTBUz86zAslEICeWiNx+T4A2etry8scX1vThAgSkbQw=
+>>>>>>> golang_RESTAPI

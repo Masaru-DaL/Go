@@ -3,7 +3,14 @@ github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515 h1:T+h1c/A9Gawja4Y9mFVWj
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
 
 go.sum database tree
+<<<<<<< HEAD
 13309860
 AUib0bvRJNkN9ZyG7U0wVRPnkgTVDqPzjyl6QPOuVYM=
 
 — sum.golang.org Az3grmjUDmm+PlpFtihyWGkOEXhXrYxYxV+LkojNAkETV1+VwMDfKdz3Z0OSllwq7Tp1BYN1QfbF2eOum787XMqYrwo=
+=======
+13309794
+ofBgRQU8uYrLKZ17yxt2XIb2s5F7MjdU2wyKWD15q/Y=
+
+— sum.golang.org Az3grvh1GUH/5ANzMzEqIjRtYTbNGXK2y7Ke6seNmPD954lv+ulAOBLDINhOV7AC+SBIi+zfrLqeVGoVlYgQBjtgmQo=
+>>>>>>> golang_RESTAPI

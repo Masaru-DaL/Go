@@ -3,7 +3,14 @@ github.com/hashicorp/go-uuid v1.0.0 h1:RS8zrF7PhGwyNPOtxSClXXj9HA8feRnJzgnI1RJCS
 github.com/hashicorp/go-uuid v1.0.0/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 
 go.sum database tree
+<<<<<<< HEAD
 13310050
 KT3+3RRvl1LpDW6FycW0f3KwKHdWBPMGZSTGHz8YzIE=
 
 — sum.golang.org Az3griQbDV8kbXNpjycPFZEd8eo8t6njxkTTO0ODCkWA3ZkMtlz1nZ6mYB9swtcpXKHivoLApD55oCiW2awIwNQhng0=
+=======
+13310003
+9XMKxyp5TxfjoPaLsVaa1SEayDwChKbPGGwhV+NcrQA=
+
+— sum.golang.org Az3grm3udC6z/HOeT5K6ulAAf0rE9SCG3zjsvukdaqJPOP0MUy+ofRtPVO10Miv6O5ndMADfjgaAQDGsQP8Lf/LoCAg=
+>>>>>>> golang_RESTAPI

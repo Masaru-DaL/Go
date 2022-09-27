@@ -3,7 +3,14 @@ github.com/google/go-cmp v0.3.0 h1:crn/baboCvb5fXaQ0IJ1SGTsTVrWpDsCWC8EGETZijY=
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 
 go.sum database tree
+<<<<<<< HEAD
 13309760
 hcgRl3jIUDeM848jHgh+MJmlnPvcb8EKA/R9FS1Sgec=
 
 — sum.golang.org Az3grke5Onwe/Iwgruq+/XqQTaVAWV7o3tARuT93mHDHSO8IA0nvsTBGOQwxkmuGIgt/c5f/pPoZOxz9HglpCOFwEwE=
+=======
+13309851
+g+iIKROV0iNT02Zwm6mw2x75//AFqhZFDvtXb1F5SkE=
+
+— sum.golang.org Az3grmWboB/0itSIPMv6bvLS3Rgmt1jTjzq9c0IK7TnJ2gtHlaO3itRIYyhsDq0JWGghiYkbFefKtgs5Yg5yexPStQY=
+>>>>>>> golang_RESTAPI

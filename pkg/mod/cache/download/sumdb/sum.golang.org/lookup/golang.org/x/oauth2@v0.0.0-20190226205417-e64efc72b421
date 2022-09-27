@@ -3,7 +3,14 @@ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421 h1:Wo7BWFiOk0QRFMLYMqJGFM
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
 
 go.sum database tree
+<<<<<<< HEAD
 13309761
 HWxV5hAI94TYomaKeCmqOaGtban28Hz4G/cn2IiHnHQ=
 
 — sum.golang.org Az3grtBZ+EEJbfNiO+GrOGgeZoUT4CeAyQ8xz1PuwBqOdpPibsGgpoU+BJW+KipvIS3SD+05exULFbaF3TLjyUDGnww=
+=======
+13309985
+X+vAKQeKxUncIm0oszUAYGJqiEP/nOzloXf1cqLCw/c=
+
+— sum.golang.org Az3grsvX2ihkkKLdz7eiwb5brTWxzseL7dEdnuwhukf6RxKTrid9qVQTHwqauLFwcyn8wRV+Wo64YQPMY/oiQAGR1QM=
+>>>>>>> golang_RESTAPI

@@ -3,7 +3,14 @@ github.com/rogpeppe/go-internal v1.3.0 h1:RR9dF3JtopPvtkroDZuVD7qquD0bnHlKSqaQhg
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 
 go.sum database tree
+<<<<<<< HEAD
 13309760
 hcgRl3jIUDeM848jHgh+MJmlnPvcb8EKA/R9FS1Sgec=
 
 — sum.golang.org Az3grke5Onwe/Iwgruq+/XqQTaVAWV7o3tARuT93mHDHSO8IA0nvsTBGOQwxkmuGIgt/c5f/pPoZOxz9HglpCOFwEwE=
+=======
+13309750
+MElVN6/0ScOX6cjKidmEwhIKHbgr7xcqo32w1VN/8Xk=
+
+— sum.golang.org Az3grpBATvdvdanjdV+6QYbenekiVQegdqReRF/R+dgtWRF/rTBUz86zAslEICeWiNx+T4A2etry8scX1vThAgSkbQw=
+>>>>>>> golang_RESTAPI

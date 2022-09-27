@@ -3,7 +3,14 @@ github.com/fatih/structtag v1.2.0 h1:/OdNE99OxoI/PqaW/SuSK9uxxT3f/tcSZgon/ssNSx4
 github.com/fatih/structtag v1.2.0/go.mod h1:mBJUNpUnHmRKrKlQQlmCrh5PuhftFbNv8Ys4/aAZl94=
 
 go.sum database tree
+<<<<<<< HEAD
 13310268
 wIWMCaey9ZSjjAtJWyFBKG5sdFyFPM/uhn4Bc/nNURQ=
 
 — sum.golang.org Az3grmwJYJZou1hFQQVP3c2LxFB6M8rY1Fyx4L5U/oZc2vHZqUOiqKxSGiAglY5T6VoUQsHuzB+osf4ZzMdr1W/hBww=
+=======
+13309123
+T5T+Rju7Anc87QOm8ifB9c9xo+I3zbzd1NDa5MnFdUA=
+
+— sum.golang.org Az3grvxeO0um9DozkiaicHgk9vaGfxEV7umBFjWfU5zlUul/YWj4ZB4GCGDyTMV+fwf0Aq/nRRh1dStkoDAs3fyuMg4=
+>>>>>>> golang_RESTAPI
