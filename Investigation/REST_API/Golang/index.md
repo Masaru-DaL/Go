@@ -5,6 +5,7 @@
     - [2-4. The Code (for copy/paste): Hello Worldの完成コード](#2-4-the-code-for-copypaste-hello-worldの完成コード)
 - [3. HTTP Server](#3-http-server)
     - [3-1. Introduction](#3-1-introduction)
+    - [3-2. Process dynamic requests: 動的リクエストの処理](#3-2-process-dynamic-requests-動的リクエストの処理)
 
 ### 1. 参考資料
 
@@ -93,3 +94,20 @@ HTTPサーバには、いくつかの重要な役割を担っている
 
 - クライアントからの接続を受け入れる
   - クライアントからリクエストを受け、レスポンスを返すためには特定のポートでリッスンする必要がある。
+
+#### 3-2. Process dynamic requests: 動的リクエストの処理
+
+リクエストを受け付け、処理するためのハンドラを登録する。登録するには"http.HandleFunc"関数を使用する。
+第1引数: path(URL)
+第2引数: 第1引数にアクセスした際に実行する関数
+
+```go:
+http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+  fmt.Fprint(w, "Welcome to my website!")
+})
+```
+
+`http.Request`に、リクエストとそのパラメータに関する全ての情報が含まれている。
+各パラメータの読み取りを行うには以下のように行う。
+GETパラメータ: `r.URL.Query().Get("token")`
+POSTパラメータ(HTMLフォームのフィールド): `r.FormValue("email")`
