@@ -20,7 +20,8 @@
 - [5. Building a Simple REST API in Go With Gorilla/Mux](#5-building-a-simple-rest-api-in-go-with-gorillamux)
     - [5-1. 概要](#5-1-概要)
     - [5-2. ディレクトリ構造とファイル概要](#5-2-ディレクトリ構造とファイル概要)
-    - [5-3.](#5-3)
+    - [5-3. Gorilla/muxのインストール](#5-3-gorillamuxのインストール)
+    - [5-4. grocery.go](#5-4-grocerygo)
 
 ### 1. 参考資料
 
@@ -303,4 +304,21 @@ $ tree
 - handler.go: リクエストを管理する関数
 - main.go: URLのpath
 
-#### 5-3.
+#### 5-3. Gorilla/muxのインストール
+
+`go get -u github.com/gorilla/mux`
+
+#### 5-4. grocery.go
+
+```go: grocery.go
+package main
+
+type Grocery struct {
+
+  Name string `json: "name"`
+  Quantity int `json: "quantity"`
+}
+```
+
+grocery.goにはAPIのモデルを定義する。
+APIのモデルは食料品の名前を表すNameと、その数量を表すQuantityの2つのフィールドだけです。
