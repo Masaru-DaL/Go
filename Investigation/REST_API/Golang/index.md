@@ -1,9 +1,10 @@
 - [2. Hello World](#2-hello-world)
     - [2-1. Introduction](#2-1-introduction)
-    - [2-2. リクエストハンドラの登録](#2-2-リクエストハンドラの登録)
-    - [2-3. サーバをリッスン状態にする](#2-3-サーバをリッスン状態にする)
-    - [2-4. Hello Worldの完成コード](#2-4-hello-worldの完成コード)
+    - [2-2. Registering a Request Handler: リクエストハンドラの登録](#2-2-registering-a-request-handler-リクエストハンドラの登録)
+    - [2-3. Listen for HTTP Connections: サーバをリッスン状態にする](#2-3-listen-for-http-connections-サーバをリッスン状態にする)
+    - [2-4. The Code (for copy/paste): Hello Worldの完成コード](#2-4-the-code-for-copypaste-hello-worldの完成コード)
 - [3. HTTP Server](#3-http-server)
+    - [3-1. Introduction](#3-1-introduction)
 
 ### 1. 参考資料
 
@@ -19,7 +20,7 @@ net/httpパッケージには、HTTPプロトコルに関する全ての機能�
 サーバクライアントモデルが含まれる(他にもあるが)
 この章で簡単にウェブサーバを作ることができる。
 
-#### 2-2. リクエストハンドラの登録
+#### 2-2. Registering a Request Handler: リクエストハンドラの登録
 
 まず、ブラウザ、HTTPクライアント(PC)、APIリクエストからのすべてのHTTP接続を受け取るハンドラを作成する。
 
@@ -37,7 +38,8 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 })
 ```
 
-#### 2-3. サーバをリッスン状態にする
+#### 2-3. Listen for HTTP Connections: サーバをリッスン状態にする
+
 リクエストハンドラだけではサーバは外部からのHTTP接続を一切受け付けません。
 そのためにサーバに**ポート番号**を指定し、そのポートへの接続を受け付ける状態にします。
 サーバに通信したいポート番号を登録して、サーバはそのポート番号に接続要求があると通知を受けて処理を行います。この動作の事を"**ポートをリッスンする**"と表現します。
@@ -53,7 +55,7 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 
 `http.ListenAndServe(":80", nil)`
 
-#### 2-4. Hello Worldの完成コード
+#### 2-4. The Code (for copy/paste): Hello Worldの完成コード
 
 ```go:
 package main
@@ -75,6 +77,19 @@ func main() {
 ## 3. HTTP Server
 
 Goでの基本的なHTTPサーバを作成する方法を学ぶ。
-2章と違う部分は静的アセットをを処理する部分。
+2章と違う部分は静的アセットを処理する項がある部分。
 静的アセット: 画像、CSS、JSなどのリクエストよって表示する内容が変わらないもの。
 
+#### 3-1. Introduction
+
+HTTPサーバには、いくつかの重要な役割を担っている
+- 動的なリクエストの処理(リクエストの内容はリクエストの度に違う)
+  - ウェブサイトを閲覧
+  - アカウントにログインする
+  - 画像を投稿したりするユーザからの受信リクエスト
+
+- 静的アセットの処理
+  - JavaScript, CSS, 画像などをクライアントに送り、ユーザにダイナミックな体験を提供する
+
+- クライアントからの接続を受け入れる
+  - クライアントからリクエストを受け、レスポンスを返すためには特定のポートでリッスンする必要がある。
