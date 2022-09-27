@@ -23,6 +23,7 @@
     - [5-3. Gorilla/muxのインストール](#5-3-gorillamuxのインストール)
     - [5-4. grocery.go](#5-4-grocerygo)
     - [5-5. main.go](#5-5-maingo)
+    - [5-6. handler.go](#5-6-handlergo)
 
 ### 1. 参考資料
 
@@ -350,14 +351,42 @@ func main() {
 }
 ```
 
+- mux.NewRouter()
 ルータを指定して各ハンドルを登録する。
 第1引数: URL path
 第2引数: 第1引数にアクセスされた際に処理する関数
 
+- StrictSlash()
 StrictSlashはデフォルトでfalseで、trueを指定すると、"/path/"とパス指定の場合に"/path"にアクセスすると前者にリダイレクトされる。逆の場合も同様。
 アプリケーションには常にルートで指定されたパスが表示される。
 
+- Methods
 MethodsメソッドでHTTPメソッドを指定できる。
 書かない場合はGET？
+※今回はデータベースを用意しない。
 
+- log.Fatal
+サーバのログを取得し、エラーが発生した場合はメッセージエラーが発生し、プログラムが停止する。
 
+#### 5-6. handler.go
+
+```go: handler.go
+package main
+
+import (
+  "encoding/json"
+  "fmt"
+  "io/ioutil"
+  "net/http"
+
+  "github.com/gorilla/mux"
+)
+
+var groceries = []Grocery {
+  {Name: "Almod Mild", Quantity: 2},
+  {Name: "Apple", Quantity: 6},
+}
+
+func AllGroceries(w http.ResponseWriter, r *http.Request) {
+  
+}
