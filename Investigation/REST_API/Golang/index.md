@@ -6,6 +6,7 @@
 - [3. HTTP Server](#3-http-server)
     - [3-1. Introduction](#3-1-introduction)
     - [3-2. Process dynamic requests: 動的リクエストの処理](#3-2-process-dynamic-requests-動的リクエストの処理)
+    - [3-3. Serving static assets: 静的アセットの提供](#3-3-serving-static-assets-静的アセットの提供)
 
 ### 1. 参考資料
 
@@ -111,3 +112,18 @@ http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
 各パラメータの読み取りを行うには以下のように行う。
 GETパラメータ: `r.URL.Query().Get("token")`
 POSTパラメータ(HTMLフォームのフィールド): `r.FormValue("email")`
+
+#### 3-3. Serving static assets: 静的アセットの提供
+
+net/httpパッケージのhttp.FileServerを使用し、URLパスを指定する。
+FileServerは以下のようになっている。
+`func FileServer(root FileSystem) Handler`
+引数にFileSystemを受け取る必要があり、戻り値はハンドラです。
+このハンドラは、ルートにあるファイルシステムの内容をHTTPリクエストに返す。
+
+以下のコードでファイルサーバを設置している。
+`fs := http.FileServer(http.Dir("static/"))`
+
+これはファイルシステムをDirメソッドを用いてstaticディレクトと定義している。
+Dirメソッドを使用するとOSのファイルシステム実装を使用できる。(OS内のディレクトリを指定できる。)
+
