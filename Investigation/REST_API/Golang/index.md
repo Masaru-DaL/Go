@@ -23,7 +23,12 @@
     - [5-3. Gorilla/mux のインストール](#5-3-gorillamux-のインストール)
     - [5-4. grocery.go](#5-4-grocerygo)
     - [5-5. main.go](#5-5-maingo)
-    - [5-6. handler.go](#5-6-handlergo)
+  - [5-6. handler.go](#5-6-handlergo)
+    - [5-6-1. func AllGroceries](#5-6-1-func-allgroceries)
+    - [5-6-2. func SingleGrocery](#5-6-2-func-singlegrocery)
+    - [5-6-3. func GroceriesToBuy](#5-6-3-func-groceriestobuy)
+    - [5-6-4. func DeleteGrocery](#5-6-4-func-deletegrocery)
+    - [5-6-5. func UpdateGrocery](#5-6-5-func-updategrocery)
 
 ### 1. 参考資料
 
@@ -410,9 +415,9 @@ func main() {
 * log.Fatal
   サーバのログを取得し、エラーが発生した場合はメッセージエラーが発生し、プログラムが停止する。
 
-#### 5-6. handler.go
+### 5-6. handler.go
 
-1. func AllGroceries
+#### 5-6-1. func AllGroceries
 
 ```go: handler.go
 package main
@@ -441,7 +446,7 @@ func AllGroceries(w http.ResponseWriter, r *http.Request) {
 今回はデータベースを使用しないので、変数 groceries を定義し、2 つの食料品店の情報を含む配列を代入する。
 `AllGroceries`が呼び出されると、すべての食料品を含む配列が JSON として返される。
 
-2. func SingleGrocery
+#### 5-6-2. func SingleGrocery
 
 ```go: handler.go
 func SingleGrocery(w http.ResponseWriter, r *http.Request) {
@@ -461,7 +466,7 @@ func SingleGrocery(w http.ResponseWriter, r *http.Request) {
 この関数では、作成したルータから食料品の名前を取得する。
 スライスを繰り返し、要求された食料品だけを返す。
 
-3. func GroceriesToBuy
+#### 5-6-3. func GroceriesToBuy
 
 ```go: handler.go
 func GroceriesToBuy(w http.ResponseWriter, r *http.Request) {
@@ -482,3 +487,47 @@ func GroceriesToBuy(w http.ResponseWriter, r *http.Request) {
 1. POSTリクエストを受け取ってreqBodyに代入している。(main 関数で methods を POST に指定済み)
 2. Groceryタイプとする変数 groceryを定義している。
 3. POST リクエストで受け取った jsonデータを変数 grocery に格納する(json.Unmarshalはjsonを構造体に変換する)
+4. groceriesに3を追加している。
+
+#### 5-6-4. func DeleteGrocery
+
+```go: handler.go
+func DeleteGrocery(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+
+  name := vars("name")
+
+  for index, grocery := range groceries {
+    if grocery.Name == name {
+      groceries = append(groceries[:index], groceries[index+1:]...)
+    }
+  }
+}
+```
+
+groceries(食料品全部)から取り出したgrocery(食料品)の名前が、groceriesの中のいずれかに一致する場合、そのgroceryを削除します。
+その後、スライスを更新します。
+
+#### 5-6-5. func UpdateGrocery
+
+```go: handler.go
+func UpdateGrocery(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+
+  name := vars["name"]
+
+  for index, grocery := range groceries {
+    if grocery.Name == name {
+      groceries = append(groceries[:index], groceries[index+1]...)
+
+      var updateGrocery Grocery
+
+      json.NewDecoder(r .Body).Decode(&updateGrocery)
+      groceries = append(groceries, updateGrocery)
+      fmt.Println("Endpoint hit: UpdateGroceries")
+      json.NewEncoder(w).Encode(updateGrocery)
+      return
+    }
+  }
+}
+```
