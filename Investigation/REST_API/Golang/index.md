@@ -29,6 +29,10 @@
     - [5-6-3. func GroceriesToBuy](#5-6-3-func-groceriestobuy)
     - [5-6-4. func DeleteGrocery](#5-6-4-func-deletegrocery)
     - [5-6-5. func UpdateGrocery](#5-6-5-func-updategrocery)
+  - [5-7. 完成コードと、URLを指定して試してみる](#5-7-完成コードとurlを指定して試してみる)
+    - [5-7-1. /allgroceries](#5-7-1-allgroceries)
+    - [5-7-2. /groceries/<name>](#5-7-2-groceriesname)
+    - [5-7-3. /groceries](#5-7-3-groceries)
 
 ### 1. 参考資料
 
@@ -338,7 +342,6 @@ Groceries(食料品)API の概要
 #### 5-2. ディレクトリ構造とファイル概要
 
 ProjectName -> groceries
-`go mod init groceries`
 
 ```shell:
 $ tree
@@ -536,3 +539,36 @@ func UpdateGrocery(w http.ResponseWriter, r *http.Request) {
 この関数を使用して一致した場合、食料品を更新します。
 
 これはmain関数でPUTメソッドに指定しているので、PUTリクエストを受け取り、デコードし、updateGrocery変数に格納し、groceriesに追加します。
+
+### 5-7. 完成コードと、URLを指定して試してみる
+
+完成コード: [groceriesApi](https://github.com/carlosm27/Go_projects/tree/main/groceriesApi)
+
+1. `.go`ファイル3つを完成させる。
+2. `$ go mod init groceries`
+3. `$ go get -u github.com/gorilla/mux`
+4. `$ go run .`
+
+サーバーが起動した状態になれば成功です。
+以降のURLは、`http://localhost:1000`までは固定です。
+
+#### 5-7-1. /allgroceries
+
+* 全ての食料品を取得
+  [{"Name":"Almod Milk","Quantity":2},{"Name":"Apple","Quantity":6}]
+
+#### 5-7-2. /groceries/<name>
+
+* name -> Almod Milk
+  {"Name":"Almod Milk","Quantity":2}
+
+
+* name -> Apple
+  {"Name":"Apple","Quantity":6}
+
+#### 5-7-3. /groceries
+
+POSTで新しいデータを送ります。
+`$ curl -X POST -d '{"Name":"Orange","Quantity":4}' http://localhost:10000/groceries`
+
+[{"Name":"Almod Milk","Quantity":2},{"Name":"Apple","Quantity":6},{"Name":"Orange","Quantity":4}]

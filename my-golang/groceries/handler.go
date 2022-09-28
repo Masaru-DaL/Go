@@ -54,6 +54,7 @@ func DeleteGrocery(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
 func UpdateGrocery(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
