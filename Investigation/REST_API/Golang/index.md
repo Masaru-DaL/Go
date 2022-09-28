@@ -33,6 +33,7 @@
     - [5-7-1. /allgroceries](#5-7-1-allgroceries)
     - [5-7-2. /groceries/<name>](#5-7-2-groceriesname)
     - [5-7-3. /groceries](#5-7-3-groceries)
+    - [5-7-4. まとめ](#5-7-4-まとめ)
 
 ### 1. 参考資料
 
@@ -572,3 +573,8 @@ POSTで新しいデータを送ります。
 `$ curl -X POST -d '{"Name":"Orange","Quantity":4}' http://localhost:10000/groceries`
 
 [{"Name":"Almod Milk","Quantity":2},{"Name":"Apple","Quantity":6},{"Name":"Orange","Quantity":4}]
+
+#### 5-7-4. まとめ
+
+PUTとDELETEは上手くいかなかったので、また理解を深めた後に試してみようと思います。
+REST APIの構成と扱いは試してみてある程度理解できました！
