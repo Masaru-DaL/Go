@@ -43,14 +43,14 @@ net/http パッケージには、HTTP プロトコルに関する全ての機能
 
 まず、ブラウザ、HTTP クライアント(PC)、API リクエストからのすべての HTTP 接続を受け取るハンドラを作成する。
 
-- ハンドラ関数
+* ハンドラ関数
   `func (w http.ResponseWriter, r *http.Request)`
   ハンドラ関数は 2 つのパラメータを受け取る。
 
-  - `http.ResponseWriter` -> レスポンスを受け取る内容を書き込む。text または html で受け取れる。
-  - `*http.Request` -> HTTP リクエストに関する全ての情報を受け取る。例えば URL や、ヘッダーフィールドなど。
+  * `http.ResponseWriter` -> レスポンスを受け取る内容を書き込む。text または html で受け取れる。
+  * `*http.Request` -> HTTP リクエストに関する全ての情報を受け取る。例えば URL や、ヘッダーフィールドなど。
 
-- `/`(デフォルト)にアクセスした際のハンドラ
+* `/`(デフォルト)にアクセスした際のハンドラ
 
 ```go:
 http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
@@ -108,18 +108,18 @@ Go での基本的な HTTP サーバを作成する方法を学ぶ。
 
 HTTP サーバには、いくつかの重要な役割を担っている
 
-- 動的なリクエストの処理(リクエストの内容はリクエストの度に違う)
+* 動的なリクエストの処理(リクエストの内容はリクエストの度に違う)
 
-  - ウェブサイトを閲覧
-  - アカウントにログインする
-  - 画像を投稿したりするユーザからの受信リクエスト
+  * ウェブサイトを閲覧
+  * アカウントにログインする
+  * 画像を投稿したりするユーザからの受信リクエスト
 
-- 静的アセットの処理
+* 静的アセットの処理
 
-  - JavaScript, CSS, 画像などをクライアントに送り、ユーザにダイナミックな体験を提供する
+  * JavaScript, CSS, 画像などをクライアントに送り、ユーザにダイナミックな体験を提供する
 
-- クライアントからの接続を受け入れる
-  - クライアントからリクエストを受け、レスポンスを返すためには特定のポートでリッスンする必要がある。
+* クライアントからの接続を受け入れる
+  * クライアントからリクエストを受け、レスポンスを返すためには特定のポートでリッスンする必要がある。
 
 #### 3-2. Process dynamic requests: 動的リクエストの処理
 
@@ -219,7 +219,7 @@ net/http のあまり得意ではない事の 1 つが、リクエスト URL を
 
 #### 4-2. Installing the gorilla/mux package
 
-- gorilla/mux パッケージの概要
+* gorilla/mux パッケージの概要
   net/http パッケージのルーティングに適用できるパッケージ。
   **gorilla/mux はルーティング機能を提供する**
   Web アプリケーションを書く時の生産性を上げるための機能が多く備わっている。
@@ -344,9 +344,9 @@ $ tree
 └── main.go
 ```
 
-- grocery.go: API のモデルを定義
-- handler.go: リクエストを管理する関数
-- main.go: URL の path
+* grocery.go: API のモデルを定義
+* handler.go: リクエストを管理する関数
+* main.go: URL の path
 
 #### 5-3. Gorilla/mux のインストール
 
@@ -393,21 +393,21 @@ func main() {
 }
 ```
 
-- mux.NewRouter()
+* mux.NewRouter()
   ルータを指定して各ハンドルを登録する。
   第 1 引数: URL path
   第 2 引数: 第 1 引数にアクセスされた際に処理する関数
 
-- StrictSlash()
+* StrictSlash()
   StrictSlash はデフォルトで false で、true を指定すると、"/path/"とパス指定の場合に"/path"にアクセスすると前者にリダイレクトされる。逆の場合も同様。
   アプリケーションには常にルートで指定されたパスが表示される。
 
-- Methods
+* Methods
   Methods メソッドで HTTP メソッドを指定できる。
   書かない場合は GET？
   ※今回はデータベースを用意しない。
 
-- log.Fatal
+* log.Fatal
   サーバのログを取得し、エラーが発生した場合はメッセージエラーが発生し、プログラムが停止する。
 
 #### 5-6. handler.go
@@ -476,7 +476,9 @@ func GroceriesToBuy(w http.ResponseWriter, r *http.Request) {
 ```
 
 ※ioutil パッケージは現在 io, os パッケージに別れて非推奨となっている。
-`ioutil.ReadAll()`は、1.16 以降は`io.ReadAll()`となっている。
+`ioutil.ReadAll()`は、1.16以降は`io.ReadAll()`となっている。
 `ioutil.ReadAll()`は一括読み込みする機能。
 
-この関数では、POST
+1. POSTリクエストを受け取ってreqBodyに代入している。(main 関数で methods を POST に指定済み)
+2. Groceryタイプとする変数 groceryを定義している。
+3. POST リクエストで受け取った jsonデータを変数 grocery に格納する(json.Unmarshalはjsonを構造体に変換する)
