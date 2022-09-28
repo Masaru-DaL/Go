@@ -3,14 +3,7 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 
 go.sum database tree
-<<<<<<< HEAD
-13309860
-AUib0bvRJNkN9ZyG7U0wVRPnkgTVDqPzjyl6QPOuVYM=
+13310969
+BrrcH1vbTjf+0Yj1HOhWFJnQXn/bOA/yCpaQPEirCfc=
 
-— sum.golang.org Az3grmjUDmm+PlpFtihyWGkOEXhXrYxYxV+LkojNAkETV1+VwMDfKdz3Z0OSllwq7Tp1BYN1QfbF2eOum787XMqYrwo=
-=======
-13309749
-10wsRaRN1R7Xm3ssoBu+etP+clXQspccJxy2kREagKI=
-
-— sum.golang.org Az3grqlA4mbVS9ER08pJm7KhPRhPht4SfN85qwvMFba7ua9jfkAvTaBdwypPNskZnLZD8CnB6AEx0nJlmGkUhBNgQQY=
->>>>>>> golang_RESTAPI
+— sum.golang.org Az3grpXZyDFJDV8aBiB4Qd9WC/1IthWrCNdLzKtjH5tNhvF8BCJ0SjnzkFfevZWb7vuCGJC7D7hlWaUMom8xTkmwagE=
