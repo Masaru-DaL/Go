@@ -531,3 +531,8 @@ func UpdateGrocery(w http.ResponseWriter, r *http.Request) {
   }
 }
 ```
+
+前項と同じように、名前が一致した場合に処理を行います。
+この関数を使用して一致した場合、食料品を更新します。
+
+これはmain関数でPUTメソッドに指定しているので、PUTリクエストを受け取り、デコードし、updateGrocery変数に格納し、groceriesに追加します。
