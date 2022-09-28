@@ -474,3 +474,9 @@ func GroceriesToBuy(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(groceries)
 }
 ```
+
+※ioutil パッケージは現在 io, os パッケージに別れて非推奨となっている。
+`ioutil.ReadAll()`は、1.16 以降は`io.ReadAll()`となっている。
+`ioutil.ReadAll()`は一括読み込みする機能。
+
+この関数では、POST
