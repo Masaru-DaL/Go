@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 type Person struct {
-	Name string
-	Sex string
-	Age int
+	Name   string
+	Sex    string
+	Age    int
 	Height int
 	Weight int
 }
