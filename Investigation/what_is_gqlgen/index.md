@@ -40,6 +40,8 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 
 概要は掴めたので、何はともあれ手を動かしてみる。
 
+#### 2-1. 作業ディレクトリの作成
+
 1. `mkdir gqlgen_tutorial && cd gqlgen_tutorial`
 2. `go mod init gqlgen_tutorial`
 3. `go get -u github.com/99designs/gqlgen@v0.17.5`
@@ -63,9 +65,12 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 │   ├── resolver.go
 │   ├── schema.graphqls
 │   └── schema.resolvers.go
-├── main.go
 └── server.go
 ```
+
+#### 2-2. graphフォルダの中身
+
+以下の3つのファイルをもって、スキーマを変更した後、`go run github.com/99designs/gqlgen generate`を実行することでコードが再生成される。
 
 * graph/generated/generated.go
   GraphQLサーバに対するリクストを解釈し、`graph/resolver.go`の適切なメソッドを呼ぶ役割を果たす。
@@ -74,4 +79,5 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
   スキーマで定義したものをgolangの構造体に変換したものが定義される。
   なんとなくイメージ ->  [GraphQLスキーマ設計](https://future-architect.github.io/articles/20200609/#:~:text=%E3%81%A7%E3%81%8A%E3%81%97%E3%81%BE%E3%81%84%E3%81%A7%E3%81%99%E3%80%82-,GraphQL%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E%E8%A8%AD%E8%A8%88,-%E3%81%93%E3%81%93%E3%81%8B%E3%82%89GraphQL)
 
-*
+* graph/schema.resolver.go
+  リクエストを元に実際の処理を実装する`resolver`ファイル
