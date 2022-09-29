@@ -24,6 +24,7 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 イメージとしてはREST APIと対を成すイメージ。
 
 * APIのためのクエリ言語
+  * APIに対してSQLのように命令をする？
 
 * URLは1つ
 
@@ -70,3 +71,7 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
   GraphQLサーバに対するリクストを解釈し、`graph/resolver.go`の適切なメソッドを呼ぶ役割を果たす。
 
 * graph/model/models_gen.go
+  スキーマで定義したものをgolangの構造体に変換したものが定義される。
+  なんとなくイメージ ->  [GraphQLスキーマ設計](https://future-architect.github.io/articles/20200609/#:~:text=%E3%81%A7%E3%81%8A%E3%81%97%E3%81%BE%E3%81%84%E3%81%A7%E3%81%99%E3%80%82-,GraphQL%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E%E8%A8%AD%E8%A8%88,-%E3%81%93%E3%81%93%E3%81%8B%E3%82%89GraphQL)
+
+*
