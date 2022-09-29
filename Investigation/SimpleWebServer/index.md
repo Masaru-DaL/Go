@@ -88,12 +88,15 @@ type Page struct { // テンプレート展開用のデータ構造
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	page := Page{"Hello World.", 1}                                       // テンプレート用のデータ
+	page := Page{"Hello World.", 1}                                       // テンプレート用のデータ(雛形)
+
+  /* template.new(<テンプレート名>).Parse(<文字列>) */
 	tmpl, err := template.New("new").Parse("{{.Title}} {{.Count}} count") // テンプレート文
 	if err != nil {
 		panic(err)
 	}
 
+  /* Execute(io.Writer(出力先), <データ>) */
 	err = tmpl.Execute(w, page)
 	if err != nil {
 		panic(err)
@@ -123,3 +126,12 @@ func main() {
 
 /* Hello World. 1 count */
 ```
+
+text/templateの使い方がいまいち分からなかったのでそこから。
+
+1. templateの雛形の作成
+2. template.Newメソッドでテンプレート名を指定
+3. template.Parseメソッドでテンプレート内容を読み込ませる
+4. template.Executeメソッドで出力するために、出力先と出力する値を指定する
+5. `{{.Title}} {{.Count}} count`このプレースホルダに1のテンプレートのTitleとCountが入ってくる
+6. 出力 -> Hello World. 1 count
