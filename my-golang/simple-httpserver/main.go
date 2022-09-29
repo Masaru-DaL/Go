@@ -12,8 +12,8 @@ type Page struct { // テンプレート展開用のデータ構造
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	page := Page{"Hello World.", 1}                                       // テンプレート用のデータ
-	tmpl, err := template.New("new").Parse("{{.Title}} {{.Count}} count") // テンプレート文
+	page := Page{"Hello World.", 1}                 // テンプレート用のデータ
+	tmpl, err := template.ParseFiles("layout.html") // ParseFilesを使う
 	if err != nil {
 		panic(err)
 	}

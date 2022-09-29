@@ -1,6 +1,9 @@
 # Golang: シンプルなWebサーバを立てる
 
 参考: [Go言語でhttpサーバーを立ち上げてHello Worldをする](https://qiita.com/taizo/items/bf1ec35a65ad5f608d45)
+`main.go`1つ用意してそこを拡張していく。
+プロジェクト(ディレクトリ)を作成し、
+`go mod init <プロジェクト名>`
 
 ## 1. Hello World
 
@@ -23,6 +26,8 @@ func main() {
 
 /* Hello, World */
 ```
+
+`http://localhost:8000`にアクセス
 
 ## 2. ServeHTTP
 
@@ -55,6 +60,8 @@ func main() {
 /* Hello World. */
 ```
 
+`http://localhost:8000`にアクセス
+
 `type String string`で型を定義し、これに対してServeHTTPメソッドを定義している。
    いまいちよくわからなかったので調べてみると、
 
@@ -73,7 +80,7 @@ ServeHTTPメソッドを持たせたString型は、Handleの第2引数に登録�
 必ずしも`ServeHTTP`を既存の型などに定義しなくても良い。
 `http.ResponseWriter`と、`*http.Request`を引数に取る関数を用意すれば**ハンドラとして登録することができる**。
 
-```go:
+```go: main.go
 package main
 
 import (
@@ -127,6 +134,8 @@ func main() {
 /* Hello World. 1 count */
 ```
 
+`http://localhost:8080/txt`にアクセス。
+
 text/templateの使い方がいまいち分からなかったのでそこから。
 
 1. templateの雛形の作成
@@ -135,3 +144,81 @@ text/templateの使い方がいまいち分からなかったのでそこから�
 4. template.Executeメソッドで出力するために、出力先と出力する値を指定する
 5. `{{.Title}} {{.Count}} count`このプレースホルダに1のテンプレートのTitleとCountが入ってくる
 6. 出力 -> Hello World. 1 count
+
+## 4. ファイルのテンプレートを使う
+
+```go: main.go
+package main
+
+import (
+	"fmt"
+	"html/template"
+	"net/http"
+)
+
+type Page struct { // テンプレート展開用のデータ構造
+	Title String
+	Count int
+}
+
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	page := Page{"Hello World.", 1}                 // テンプレート用のデータ
+	tmpl, err := template.ParseFiles("layout.html") // ParseFilesを使う
+	if err != nil {
+		panic(err)
+	}
+
+	err = tmpl.Execute(w, page)
+	if err != nil {
+		panic(err)
+	}
+}
+
+type String string
+
+func (s String) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, s)
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World")
+}
+
+func main() {
+	http.HandleFunc("/txt", viewHandler)
+	http.ListenAndServe(":8080", nil)
+
+	http.Handle("/", String("Hello World."))
+	http.ListenAndServe("localhost:8000", nil)
+
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+```html: layout.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+  </head>
+  <body>
+    {{.Title}} {{.Count}} count
+  </body>
+</html>
+```
+
+```shell:
+$ tree
+.
+├── go.mod
+├── layout.html
+└── main.go
+```
+
+1. `$ http://localhost:8080/txt`
+2. `$ open http://localhost:8080/txt` # Mac
+
+layout.htmlが開き、プレースホルダにテンプレートから文字列が入る。
+"Hello World. 1 count"
