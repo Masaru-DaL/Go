@@ -1,6 +1,6 @@
-# What is IntoroductionToGolang_byMercari ??
+# What is IntroductionToGolang_byMercari ??
 
-https://docs.google.com/presentation/d/1RVx8oeIMAWxbB7ZP2IcgZXnbZokjCmTUca-AbIpORGk/edit#slide=id.g740bbb3ef6e4759f_0
+<https://docs.google.com/presentation/d/1RVx8oeIMAWxbB7ZP2IcgZXnbZokjCmTUca-AbIpORGk/edit#slide=id.g740bbb3ef6e4759f_0>
 
 Summary of key points.
 
@@ -56,7 +56,7 @@ Summary of key points.
 
 [golang メソッドについてまとめてみた。 - Qiita](https://qiita.com/pei0804/items/2a3010df39623fadc3c6)
 
-[fmt.Printfなんかこわくない - Qiita](https://qiita.com/rock619/items/14eb2b32f189514b5c3c#x-1:~:text=%25-,X,-16%E9%80%B2%E6%95%B0%E3%81%A7%E3%81%AE%E8%A1%A8%E7%8F%BE\(A%2DF%E3%81%AF%E5%A4%A7%E6%96%87%E5%AD%97)
+[fmt.Printfなんかこわくない - Qiita](<https://qiita.com/rock619/items/14eb2b32f189514b5c3c#x-1:~:text=%25-,X,-16%E9%80%B2%E6%95%B0%E3%81%A7%E3%81%AE%E8%A1%A8%E7%8F%BE(A%2DF%E3%81%AF%E5%A4%A7%E6%96%87%E5%AD%97>)
 
 [【Go言語】パッケージ](https://yttm-work.jp/lang/go/go_0002.html)
 
