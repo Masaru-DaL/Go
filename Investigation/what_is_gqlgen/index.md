@@ -70,8 +70,6 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 
 #### 2-2. graphフォルダの中身
 
-以下の3つのファイルをもって、スキーマを変更した後、`go run github.com/99designs/gqlgen generate`を実行することでコードが再生成される。
-
 * graph/generated/generated.go
   GraphQLサーバに対するリクストを解釈し、`graph/resolver.go`の適切なメソッドを呼ぶ役割を果たす。
 
@@ -81,3 +79,14 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 
 * graph/schema.resolver.go
   リクエストを元に実際の処理を実装する`resolver`ファイル
+
+上記の3つのファイルをもって、スキーマを変更した後、`go run github.com/99designs/gqlgen generate`を実行することでコードが再生成される。
+
+* graph/resolver.go
+  ルートとなるresolver構造体が宣言される。再生成はされない。
+
+* graph/schema.graphqls
+  GraphQLスキーマを定義するファイル。このファイルをもとに他のファイルが再生成される。
+
+* gqlgen.yml
+  gqlgenの設定ファイル。schemaの分割などの設定もこのファイルで行われる。
