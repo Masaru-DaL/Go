@@ -4,22 +4,18 @@ package graph
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/Masaru-DaL/gqlgen-todos/graph/generated"
-	"github.com/Masaru-DaL/gqlgen-todos/graph/model"
 )
 
 // CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
-}
+// func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+// 	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// }
 
 // Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
-}
+// func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+// 	panic(fmt.Errorf("not implemented: Todos - todos"))
+// }
 
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
