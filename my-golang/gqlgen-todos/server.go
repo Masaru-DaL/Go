@@ -1,14 +1,14 @@
 package main
 
 import (
+	"gqlgen-todos/graph"
+	"gqlgen-todos/graph/generated"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/Masaru-DaL/gqlgen-todos/graph"
-	"github.com/Masaru-DaL/gqlgen-todos/graph/generated"
 )
 
 const defaultPort = "8080"

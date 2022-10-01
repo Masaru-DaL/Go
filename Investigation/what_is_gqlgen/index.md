@@ -42,12 +42,13 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 
 #### 2-1. 作業ディレクトリの作成
 
-1. `mkdir gqlgen_tutorial && cd gqlgen_tutorial`
-2. `go mod init gqlgen_tutorial`
-3. `go get -u github.com/99designs/gqlgen@v0.17.5`
-4. `go run github.com/99designs/gqlgen init`
-   このコマンドは初。
-   > gqlgenの設定を初期化し、モデルを生成
+1. `mkdir gqlgen_todos && cd gqlgen_todos`
+2. `go mod init gqlgen_todos`
+3. `touch tools.go`
+4. `printf '// +build tools\npackage tools\nimport (_ "github.com/99designs/gqlgen"\n _ "github.com/99designs/gqlgen/graphql/introspection")' | gofmt > tools.go`
+5. `go mod tidy`
+6. `go run github.com/99designs/gqlgen init`
+7. `go run server.go`
 
 * この時点でのフォルダ構成
 
@@ -65,7 +66,10 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 │   ├── resolver.go
 │   ├── schema.graphqls
 │   └── schema.resolvers.go
-└── server.go
+├── server.go
+└── tools.go
+
+3 directories, 10 files
 
 ```
 
@@ -94,12 +98,9 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 
 ## 3. アプリケーションの作成
 
-この時点である、 `graph/schema.graphqls` の中身(スキーマ)が、gqlgenがデフォルトで生成してくれているスキーマです。
-このスキーマをベースに簡単なtodoアプリケーションの作成を行う。
+Todoアプリケーションを動作させるには、`CreateTodo`と、`Todos`のメソッドを実装する必要があるようです。
 
-`init`で作成されたものを正常に動作させるためには`CreateTodo`と`Todos`を`graph/resolver.go` に実装させる必要がある。
-
-#### 3-1. 構造体の宣言
+#### 3-1. graph/resolver.go
 
 ```go: resolver.go
 type Resolver struct {
@@ -107,9 +108,9 @@ type Resolver struct {
 }
 ```
 
-#### 3-2. CreateTodo, Todosの関数の実装
+#### 3-2. graph/schema.resolvers.go
 
-```go: resolver.go
+```go: schema.resolvers.go
 func (r *mutationResolver) CreateTodo(ctx context. Context, input model. NewTodo) (*model. Todo, error) {
 
 	todo := &model.Todo{
