@@ -286,9 +286,21 @@ type Todo struct {
     UserID string
 
 }
+
 ```
 
 新しく定義するTodoの構造体にはデータではなく、UserIDとしてただの文字列を返すようにしています。
 このようにする事によって、不要なデータを返さないようにして、GraphQLの恩恵を最大限受けるのが正しい設計であると言えます。
 
-**
+## 5. GraphQLに沿った設計
+
+#### 5-1. Todo structの作成
+
+```go: graph/models/todo.go
+type Todo struct {
+  ID  string
+  Text  string
+  Done  bool
+  UserID  string
+}
+```
