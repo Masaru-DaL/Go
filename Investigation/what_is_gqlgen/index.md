@@ -131,55 +131,11 @@ func (r *queryResolver) Todos(ctx context. Context) ([]*model. Todo, error) {
 
 ```
 
-#### 3-3. この時点でのresolver.go
-
-formatterにより自動インポートなど
-
-```go: resolver.go
-package graph
-
-import (
-	"context"
-	"math/rand" // crypto/randから変更
-	"fmt"
-
-	"github.com/<UserName>/gqlgen-todos/graph/model" // UserName is your User Name
-)
-
-// This file will not be regenerated automatically.
-//
-// It serves as dependency injection for your app, add any dependencies you require here.
-
-type Resolver struct {
-	todos []*model.Todo
-}
-
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	todo := &model.Todo{
-		Text: input.Text,
-		ID:   fmt.Sprintf("T%d", rand.Int()),
-		User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
-	}
-	r.todos = append(r.todos, todo)
-	return todo, nil
-}
-
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return r.todos, nil
-}
-```
-
 #### 3-4. server.go
-
-公式もこの後に `server.go` を促していきますが、明らかにエラーが出ていて、コマンドを打っても案の定起動できません。
-
-調べていると[こちら](https://stackoverflow.com/questions/60669166/golang-gqlgen-error-trying-to-import-model-into-resolver-go)に当たって、generateコマンドは良く分からなかったので、もう1つの `graph/schema.resolvers.go` の `CreateTodo` と `Todos` をコメントアウトしました。
-するとエラーが収まったので、再度 `server.go` してみます。
 
 ```shell:
 $ go run server.go
 2022/10/01 14:18:45 connect to http://localhost:8080/ for GraphQL playground
-
 ```
 
 言われた通りにアクセスします。
@@ -195,13 +151,16 @@ $ go run server.go
 ```graphql:
 mutation {
   createTodo(input: { text: "todo", userId: "1" }) {
+
     user {
       id
     }
     text
     done
+
   }
 }
+
 ```
 
 レスポンス
@@ -229,13 +188,16 @@ mutation {
 ```graphql:
 query {
   todos {
+
     text
     done
     user {
       name
     }
+
   }
 }
+
 ```
 
 レスポンス
@@ -264,66 +226,103 @@ query {
 
 #### 4-2. GraphQLの恩恵
 
-読み進めるとこの時点ではmodelの中のTodoの構造体にUserデータが含まれているため、レスポンスの際に不必要なUserデータも返ってしまっている。
-次のステップで作る構造体と比べた時に違う点が以下だと思っている。
+Todoにユーザのデータ自体 `*User` として読み込ませると、取得する際にコストがかかってしまう。
+GraphQLでは特定の情報だけ抽出する事が出来るので、UserIDというただの文字列を返すものをmodelの実装する。
 
 ```go:
 type Todo struct {
+
 	ID   string `json:"id"`
+
 	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"` // Userのポインタを指している
+
+	Done bool `json:"done"`
+
+	User *User `json:"user"` // Userのポインタを指している
+
 }
+
 ```
 
 * 新しく作るTodoのmodel
 
 ```go:
 type Todo struct {
-
-    ID     string
-    Text   string
-    Done   bool
-    UserID string
-
+	ID     string `json:"id"`
+	Text   string `json:"text"`
+	Done   bool   `json:"done"`
+	UserID string `json:"userId"` // UserIDの追加
+	User   *User  `json:"user"`
 }
 
 ```
 
 新しく定義するTodoの構造体にはデータではなく、UserIDとしてただの文字列を返すようにしています。
-このようにする事によって、不要なデータを返さないようにして、GraphQLの恩恵を最大限受けるのが正しい設計であると言えます。
+このようにする事によって、不要なデータを返さないようにして、GraphQLの恩恵を最大限受けるのが正しい設計であると言えるようです。
 
 ## 5. GraphQLに沿った設計
 
-#### 5-1. Todo structの作成
+#### 5-1. 新しいTodo
 
 ```go: graph/model/todo.go
 package model
 
 type Todo struct {
-  ID  string
-  Text  string
-  Done  bool
-  UserID  string
+
+	ID     string `json:"id"`
+
+	Text   string `json:"text"`
+
+	Done   bool `json:"done"`
+
+	UserID string `json:"userId"`
+
+	User   *User `json:"user"`
+
 }
+
 ```
 
 ```yml:
-models:
-  Todo:
+# gqlgen will search for any type names in the schema in these go packages
+# if they match it will use them, otherwise it will generate them.
+autobind:
+  - "gqlgen-todos/graph/model"
 
-    model: gqlgen_tutorial/graph/model/todo.Todo
+###################################
+
+# This section declares type mapping between the GraphQL and go type systems
+#
+# The first line in each type will be used as defaults for resolver arguments and
+# modelgen, the others will be allowed when binding to fields. Configure them to
+# your liking
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  Todo:
+    fields:
+      user:
+        resolver: true
 
 ```
 
-`Todo struct` は、graph/model/todo.goのを使いますよというのを明示的に知らせてします。
+新しくmodelディレクトリに `todo.go` を作成する。
+次に `yml` ファイルを書き換える。
+自動バインドの有効と、ユーザフィールドのリゾルバの生成。
+正直あんま分かってない...
 
- `go run github.com/99designs/gqlgen generate`
-
-(途中何回か `go get` で追加してくれって出たのでモジュールを追加してます。)
-
-を行うと、 `models_gen.go` の `Todo struct` が消えています。
-無事に適用されたようです。
+そこまで出来たら
+`go run github.com/99designs/gqlgen generate` を行う。
+再生成される。
 
 #### 5-2. resolver.go
 
