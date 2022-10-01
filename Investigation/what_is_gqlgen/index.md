@@ -319,4 +319,12 @@ models:
 
  `go run github.com/99designs/gqlgen generate`
 
+(途中何回か `go get` で追加してくれって出たのでモジュールを追加してます。)
+
 を行うと、 `models_gen.go` の `Todo struct` が消えています。
+無事に適用されたようです。
+
+#### 5-2. resolver.go
+
+resolver.goのファイルがエラーになっています。
+`Todo struct` のUserを `*User` ではなく `UserID` に変更したため、そこに対する修正を行います。
