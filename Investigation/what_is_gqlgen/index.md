@@ -57,16 +57,16 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 .
 ├── go.mod
 ├── go.sum
-├── gqlgen.yml
+├── gqlgen.yml               // コード生成の設定ファイル
 ├── graph
-│   ├── generated
+│   ├── generated            // 自動生成されたパッケージ（基本的にいじらない）
 │   │   └── generated.go
-│   ├── model
+│   ├── model                // Goで実装したgraph model用のパッケージ（自動生成されたファイルと自分でもファイルを定義することが可能）
 │   │   └── models_gen.go
-│   ├── resolver.go
-│   ├── schema.graphqls
-│   └── schema.resolvers.go
-├── server.go
+│   ├── resolver.go          // ルートのresolverの型定義ファイル. 再生成で上書きされない。
+│   ├── schema.graphqls      // GraphQLのスキーマ定義ファイル. 実装者が好きに分割してもOK
+│   └── schema.resolvers.go  // schema.graphqlから生成されたresolverの実装ファイル
+└── server.go                // アプリへのエントリポイント. 再生成で上書きされない。
 └── tools.go
 
 3 directories, 10 files
