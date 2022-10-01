@@ -341,7 +341,7 @@ func (r *todoResolver) User(ctx context. Context, obj *model. Todo) (*model. Use
 - CreateTodo
   - UserIDを実装する
 
-- User
+- Userの実装
 
 ```go:
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
@@ -359,3 +359,13 @@ func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, 
 	return &model.User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
 }
 ```
+
+#### 5-3. resolver.go
+
+packageとimportの間に以下の文を追加する。
+ `//go:generate go run github.com/99designs/gqlgen generate`
+
+コードを再生成する時に実行するコマンドを `go generate` に伝える役割がある。
+
+プロジェクト全体に対して再帰的に `go generate` を実行するには、以下のコマンドを使用する。
+ `go generate ./...`
