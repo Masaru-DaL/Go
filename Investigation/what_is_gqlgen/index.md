@@ -24,7 +24,7 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 イメージとしてはREST APIと対を成すイメージ。
 
 * APIのためのクエリ言語
-  * APIに対してSQLのように命令をする？
+  + APIに対してSQLのように命令をする？
 
 * URLは1つ
 
@@ -66,21 +66,22 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 │   ├── schema.graphqls
 │   └── schema.resolvers.go
 └── server.go
+
 ```
 
 #### 2-2. graphフォルダの中身
 
 * graph/generated/generated.go
-  GraphQLサーバに対するリクストを解釈し、`graph/resolver.go`の適切なメソッドを呼ぶ役割を果たす。
+  GraphQLサーバに対するリクストを解釈し、 `graph/resolver.go` の適切なメソッドを呼ぶ役割を果たす。
 
 * graph/model/models_gen.go
   スキーマで定義したものをgolangの構造体に変換したものが定義される。
-  なんとなくイメージ ->  [GraphQLスキーマ設計](https://future-architect.github.io/articles/20200609/#:~:text=%E3%81%A7%E3%81%8A%E3%81%97%E3%81%BE%E3%81%84%E3%81%A7%E3%81%99%E3%80%82-,GraphQL%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E%E8%A8%AD%E8%A8%88,-%E3%81%93%E3%81%93%E3%81%8B%E3%82%89GraphQL)
+  なんとなくイメージ ->  [GraphQLスキーマ設計](https://future-architect.github.io/articles/20200609/#:~:text=%E3%81%A7%E3%81%8A%E3%81%97%E3%81%BE%E3%81%84%E3%81%A7%E3%81%99%E3%80%82-, GraphQL%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E%E8%A8%AD%E8%A8%88, -%E3%81%93%E3%81%93%E3%81%8B%E3%82%89GraphQL)
 
 * graph/schema.resolver.go
-  リクエストを元に実際の処理を実装する`resolver`ファイル
+  リクエストを元に実際の処理を実装する `resolver` ファイル
 
-上記の3つのファイルをもって、スキーマを変更した後、`go run github.com/99designs/gqlgen generate`を実行することでコードが再生成される。
+上記の3つのファイルをもって、スキーマを変更した後、 `go run github.com/99designs/gqlgen generate` を実行することでコードが再生成される。
 
 * graph/resolver.go
   ルートとなるresolver構造体が宣言される。再生成はされない。
@@ -93,5 +94,39 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 
 #### 2-3. アプリケーションの作成
 
-この時点である、`graph/schema.graphqls`の中身(スキーマ)が、gqlgenがデフォルトで生成してくれているスキーマです。
+この時点である、 `graph/schema.graphqls` の中身(スキーマ)が、gqlgenがデフォルトで生成してくれているスキーマです。
 このスキーマをベースに簡単なtodoアプリケーションの作成を行う。
+
+`init`で作成されたものを正常に動作させるためには`CreateTodo`と`Todos`を`graph/resolver.go` に実装させる必要がある。
+
+1. 構造体の宣言
+
+```go: resolver.go
+type Resolver struct {
+  todos []*model.Todo
+}
+```
+
+2. CreateTodo, Todosの関数の実装
+
+```go: resolver.go
+func (r *mutationResolver) CreateTodo(ctx context. Context, input model. NewTodo) (*model. Todo, error) {
+
+	todo := &model.Todo{
+		Text:   input.Text,
+		ID:     fmt.Sprintf("T%d", rand.Int()),
+		User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	}
+	r.todos = append(r.todos, todo)
+	return todo, nil
+
+}
+
+func (r *queryResolver) Todos(ctx context. Context) ([]*model. Todo, error) {
+
+	return r.todos, nil
+
+}
+```
+
+3. この時点でのresolver.go
