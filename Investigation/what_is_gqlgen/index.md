@@ -92,14 +92,14 @@ gqlgenの読み方がわからないけど、"graphqlgenerate"的な感じがす
 * gqlgen.yml
   gqlgenの設定ファイル。schemaの分割などの設定もこのファイルで行われる。
 
-#### 2-3. アプリケーションの作成
+## 3. アプリケーションの作成
 
 この時点である、 `graph/schema.graphqls` の中身(スキーマ)が、gqlgenがデフォルトで生成してくれているスキーマです。
 このスキーマをベースに簡単なtodoアプリケーションの作成を行う。
 
 `init`で作成されたものを正常に動作させるためには`CreateTodo`と`Todos`を`graph/resolver.go` に実装させる必要がある。
 
-1. 構造体の宣言
+#### 3-1. 構造体の宣言
 
 ```go: resolver.go
 type Resolver struct {
@@ -107,7 +107,7 @@ type Resolver struct {
 }
 ```
 
-2. CreateTodo, Todosの関数の実装
+#### 3-2. CreateTodo, Todosの関数の実装
 
 ```go: resolver.go
 func (r *mutationResolver) CreateTodo(ctx context. Context, input model. NewTodo) (*model. Todo, error) {
@@ -130,7 +130,7 @@ func (r *queryResolver) Todos(ctx context. Context) ([]*model. Todo, error) {
 
 ```
 
-3. この時点でのresolver.go
+#### 3-3. この時点でのresolver.go
 
 formatterにより自動インポートなど
 
@@ -168,7 +168,7 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 }
 ```
 
-4. server.go
+#### 3-4. server.go
 
 公式もこの後に `server.go` を促していきますが、明らかにエラーが出ていて、コマンドを打っても案の定起動できません。
 
@@ -178,7 +178,43 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 ```shell:
 $ go run server.go
 2022/10/01 14:18:45 connect to http://localhost:8080/ for GraphQL playground
+
 ```
 
 言われた通りにアクセスします。
 すると無事に `GraphQL playground` に繋がりました。
+
+## 4. GraphQL playground で色々やってみる
+
+1. todoの作成
+以下のコードを左側に記述し、"Execute query"(以降エンター)
+
+```graphql:
+mutation {
+  createTodo(input: { text: "todo", userId: "1" }) {
+    user {
+      id
+    }
+    text
+    done
+  }
+}
+```
+
+レスポンス
+
+```graphql:
+{
+  "data": {
+
+    "createTodo": {
+      "user": {
+        "id": "1"
+      },
+      "text": "todo",
+      "done": false
+    }
+
+  }
+}
+```
