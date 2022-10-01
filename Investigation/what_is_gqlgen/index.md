@@ -173,3 +173,12 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 公式もこの後に `server.go` を促していきますが、明らかにエラーが出ていて、コマンドを打っても案の定起動できません。
 
 調べていると[こちら](https://stackoverflow.com/questions/60669166/golang-gqlgen-error-trying-to-import-model-into-resolver-go)に当たって、generateコマンドは良く分からなかったので、もう1つの `graph/schema.resolvers.go` の `CreateTodo` と `Todos` をコメントアウトしました。
+するとエラーが収まったので、再度 `server.go` してみます。
+
+```shell:
+$ go run server.go
+2022/10/01 14:18:45 connect to http://localhost:8080/ for GraphQL playground
+```
+
+言われた通りにアクセスします。
+すると無事に `GraphQL playground` に繋がりました。
