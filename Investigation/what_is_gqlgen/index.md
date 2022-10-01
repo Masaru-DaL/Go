@@ -296,7 +296,9 @@ type Todo struct {
 
 #### 5-1. Todo structの作成
 
-```go: graph/models/todo.go
+```go: graph/model/todo.go
+package model
+
 type Todo struct {
   ID  string
   Text  string
@@ -304,3 +306,17 @@ type Todo struct {
   UserID  string
 }
 ```
+
+```yml:
+models:
+  Todo:
+
+    model: gqlgen_tutorial/graph/model/todo.Todo
+
+```
+
+`Todo struct` は、graph/model/todo.goのを使いますよというのを明示的に知らせてします。
+
+ `go run github.com/99designs/gqlgen generate`
+
+を行うと、 `models_gen.go` の `Todo struct` が消えています。

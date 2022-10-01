@@ -62,4 +62,4 @@ models:
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
   Todo:
-    model: gqlgen_tutorial/graph/model.Todo
+    model: gqlgen_tutorial/graph/model/todo.Todo
