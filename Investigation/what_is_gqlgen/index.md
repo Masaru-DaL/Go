@@ -186,6 +186,8 @@ $ go run server.go
 
 ## 4. GraphQL playground で色々やってみる
 
+#### 4-1. todoの作成と取得(確認)
+
 1. todoの作成
 以下のコードを左側に記述し、"Execute query"(以降エンター)
 
@@ -217,4 +219,76 @@ mutation {
 
   }
 }
+
 ```
+
+2. 作成したtodoの取得
+以下のコードを記述後、エンター
+
+```graphql:
+query {
+  todos {
+    text
+    done
+    user {
+      name
+    }
+  }
+}
+```
+
+レスポンス
+
+```graphql:
+{
+  "data": {
+
+    "todos": [
+      {
+        "text": "todo",
+        "done": false,
+        "user": {
+          "name": "user 1"
+        }
+      }
+    ]
+
+  }
+}
+
+```
+
+ここまでやった事はinitで作成されたgqlgenのひな形の `resolver.go` でresolverを実装しただけです。
+それだけでtodoの作成、取得ができるアプリケーションが作成されました。
+
+#### 4-2. GraphQLの恩恵
+
+読み進めるとこの時点ではmodelの中のTodoの構造体にUserデータが含まれているため、レスポンスの際に不必要なUserデータも返ってしまっている。
+次のステップで作る構造体と比べた時に違う点が以下だと思っている。
+
+```go:
+type Todo struct {
+	ID   string `json:"id"`
+	Text string `json:"text"`
+	Done bool   `json:"done"`
+	User *User  `json:"user"` // Userのポインタを指している
+}
+```
+
+* 新しく作るTodoのmodel
+
+```go:
+type Todo struct {
+
+    ID     string
+    Text   string
+    Done   bool
+    UserID string
+
+}
+```
+
+新しく定義するTodoの構造体にはデータではなく、UserIDとしてただの文字列を返すようにしています。
+このようにする事によって、不要なデータを返さないようにして、GraphQLの恩恵を最大限受けるのが正しい設計であると言えます。
+
+**
