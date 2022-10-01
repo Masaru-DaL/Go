@@ -324,7 +324,38 @@ models:
 `go run github.com/99designs/gqlgen generate` を行う。
 再生成される。
 
-#### 5-2. resolver.go
+`/graph/schema.resolvers.go` に新しく以下のUserが追加されていればOK。
 
-resolver.goのファイルがエラーになっています。
-`Todo struct` のUserを `*User` ではなく `UserID` に変更したため、そこに対する修正を行います。
+```go:
+// User is the resolver for the user field.
+func (r *todoResolver) User(ctx context. Context, obj *model. Todo) (*model. User, error) {
+
+	panic(fmt.Errorf("not implemented: User - user"))
+
+}
+
+```
+
+#### 5-2. graph/schema.resolver.go
+
+- CreateTodo
+  - UserIDを実装する
+
+- User
+
+```go:
+func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+	todo := &model.Todo{
+		Text:   input.Text,
+		ID:     fmt.Sprintf("T%d", rand.Int()),
+		User:   &model.User{ID: input.UserID, Name: "user " + input.UserID},
+		UserID: input.UserID, // 追加
+	}
+	r.todos = append(r.todos, todo)
+	return todo, nil
+}
+
+func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
+	return &model.User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
+}
+```
