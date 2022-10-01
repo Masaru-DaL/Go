@@ -127,6 +127,49 @@ func (r *queryResolver) Todos(ctx context. Context) ([]*model. Todo, error) {
 	return r.todos, nil
 
 }
+
 ```
 
 3. この時点でのresolver.go
+
+formatterにより自動インポートなど
+
+```go: resolver.go
+package graph
+
+import (
+	"context"
+	"math/rand" // crypto/randから変更
+	"fmt"
+
+	"github.com/<UserName>/gqlgen-todos/graph/model" // UserName is your User Name
+)
+
+// This file will not be regenerated automatically.
+//
+// It serves as dependency injection for your app, add any dependencies you require here.
+
+type Resolver struct {
+	todos []*model.Todo
+}
+
+func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+	todo := &model.Todo{
+		Text: input.Text,
+		ID:   fmt.Sprintf("T%d", rand.Int()),
+		User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	}
+	r.todos = append(r.todos, todo)
+	return todo, nil
+}
+
+func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+	return r.todos, nil
+}
+```
+
+4. server.go
+
+公式もこの後に `server.go` を促していきますが、明らかにエラーが出ていて、コマンドを打っても案の定起動できません。
+
+調べていると[こちら](https://stackoverflow.com/questions/60669166/golang-gqlgen-error-trying-to-import-model-into-resolver-go)に当たって、generateコマンドは良く分からなかったので、もう1つの `graph/schema.resolvers.go` の `CreateTodo` と `Todos` をコメントアウトしました。
