@@ -16,6 +16,7 @@
     - [2-9. Benefits of a Schema & Type System](#2-9-benefits-of-a-schema--type-system)
   - [3. Core Concepts](#3-core-concepts)
     - [3-1. The Schema Definition Language (SDL)](#3-1-the-schema-definition-language-sdl)
+    - [3-2. Fetching Data with Queries](#3-2-fetching-data-with-queries)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -194,3 +195,11 @@ type Person {
   posts: [Post!]!
 }
 ```
+
+### 3-2. Fetching Data with Queries
+
+REST APIの場合、データは特定のエンドポイントから読み込まれる。各エンドポイントで、返す情報が決まっている。
+
+GraphQLのアプローチは、**データを返す複数エンドポイントを持っているが、公開するのは単一エンドポイントのみ**。エンドポイントに対して返す情報を固定していないため、これが機能する。その代わり、柔軟性があり、クライアントが実際に必要なデータのみを提供できる。
+
+GraphQLの場合、クライアントは必要なデータのみを取得するために、より多くの情報をサーバに送る必要がある。(=**必要なデータを明示的に指定する**)この情報は、**クエリ**と呼ばれる。
