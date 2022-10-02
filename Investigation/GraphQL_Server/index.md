@@ -68,6 +68,28 @@ REST APIでは、複数のエンドポイントにアクセスすることでデ
 3. 特定のユーザのフォロワーの名前を表示するためにユーザのフォロワーのリストを取得する
 エンドポイント: `/users/<id>/followers`
 
-[引用: 1~3のデータのやり取り](https://imgur.com/VRyV7Jh.png)
+[引用: REST APIの1~3のデータのやり取り](https://imgur.com/VRyV7Jh.png)
 RESTでは必要なデータを取得するために、**異なるエンドポイント**に、**複数回(今回は3回)**のリクエストを送る必要がある。
 また、エンドポイントには不必要なデータも含まれているため、**overfetching(過剰取得)**になっている。(引用画像を見ると分かるが、今回のデータ要求に住所や誕生日などは必要がない)
+
+#### 2-3. GraphQLの場合
+
+一方、GraphQLでは、具体的なデータ要件を含む**1つのクエリをGraphQLサーバに送信するだけ**で済む。**GraphQLサーバはJSONオブジェクトで応答する**。
+
+[引用: GraphQLのデータのやり取り](https://imgur.com/z9VKnHs.png)
+クエリ内容から分かるように要件を満たすだけの必要なリクエストのみで済んでいる。返ってくる内容も要件を満たし、かつシンプルで見やすい。
+※クエリで定義されたネスト構造の通りに正確に返ってくる。
+
+### 2-4. No more Over- and Underfetching
+
+RESTの最も一般的な問題の1つが、オーバーフェッチとアンダーフェッチの問題。これは、クライアントがデータを取得する唯一の手段が**固定的なレスポンスを返すエンドポイントを返す事**によって起こる。
+クライアントの要求が都度変わる事に対してRESTの設計で対応することは非常に困難だというのは想像できる。
+
+> "Think in graphs, not endpoints"
+> by Lee Byron, GraphQL Co-Inventor
+
+#### 2-5. Overfetching: Downloading superfluous data
+
+Overfetchingは `2-2` の節で説明済みなので割愛する。
+
+#### 2-6. Underfetching and the n+1 problem
