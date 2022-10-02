@@ -1,3 +1,17 @@
+- [GraphQL Server](#graphql-server)
+  - [1. Basics Tutorial - Introduction](#1-basics-tutorial---introduction)
+      - [1-1. GraphQLの特徴](#1-1-graphqlの特徴)
+      - [1-2. APIのためのクエリ言語](#1-2-apiのためのクエリ言語)
+      - [1-3. REST APIから代替が必要とされた背景](#1-3-rest-apiから代替が必要とされた背景)
+      - [1-4. 急成長するコミュニティ](#1-4-急成長するコミュニティ)
+  - [2. GraphQL is the better REST](#2-graphql-is-the-better-rest)
+    - [2-1. Data Fetching with REST vs GraphQL](#2-1-data-fetching-with-rest-vs-graphql)
+      - [2-2. REST APIの場合](#2-2-rest-apiの場合)
+      - [2-3. GraphQLの場合](#2-3-graphqlの場合)
+    - [2-4. No more Over- and Underfetching](#2-4-no-more-over--and-underfetching)
+      - [2-5. Overfetching: Downloading superfluous data](#2-5-overfetching-downloading-superfluous-data)
+      - [2-6. Underfetching and the n+1 problem](#2-6-underfetching-and-the-n1-problem)
+    - [2-7. Rapid Product Iterations on the Frontend](#2-7-rapid-product-iterations-on-the-frontend)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -93,3 +107,26 @@ RESTの最も一般的な問題の1つが、オーバーフェッチとアンダ
 Overfetchingは `2-2` の節で説明済みなので割愛する。
 
 #### 2-6. Underfetching and the n+1 problem
+
+* アンダーフェッチ
+  + 特定のエンドポイントが必要な情報を十分に提供しないことを指す
+この問題が起こる時、要件を満たすまで追加のリクエストを行わなければならない。
+
+n+1問題は例から考えた方が分かりやすかった。
+`2-1` の節で用いた例から別の機能を実装しようとするときを考える。
+
+同じアプリでユーザごとの直近3人のフォロワーを表示する必要があった場合。
+各ユーザごとを表示させようと思ったら、 `/users` に1回りクエストし、各ユーザの `/users/<id>/followers` にリクエストを送る必要がある。
+
+### 2-7. Rapid Product Iterations on the Frontend
+
+RESTの利点は複数のエンドポイントを用いて、特定のビューに必要な全ての情報を取得できるように出来るため、便利である。
+しかし、この設計スタイルはUIを変更する度にエンドポイントの変更をしなくてはならなかったり、バックエンドでデータ取得の調整を行わなければならないなどの必要性が出てくる。
+
+これは現在求められている迅速な開発・迅速な製品のアップデートを行うことを阻害してしまう。
+
+GraphQLを使うとこの問題は解決される。
+
+* クライアントがデータ要件を正確に指定できる
+  + サーバ側で余分な作業をしなくてもクライアント側の要求を変えれば良いだけ
+* UIが変わってもバックエンドで調整する必要がない
