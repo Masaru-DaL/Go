@@ -21,3 +21,19 @@ Goを選ぶと更に様々な選択肢が。
 ## 3. Learn Golang + GraphQL + Relay #1
 
 公式にはチュートリアル的なものはなかったので、紹介されていた[Learn Golang + GraphQL + Relay #1](https://wehavefaces.net/learn-golang-graphql-relay-1-e59ea174a902)を見ていきたいと思います。(記事が古いのが気になりますが)
+
+* GraphQLの型システムの簡略表記
+上位のクエリの1つにlatestPostフィールドを持ち、それはGraphQLの組み込みのStringの値を返す(Hello World)
+
+```graphql: schema.graphql
+//
+// In GraphQL's type system shorthand notation.
+// (See: http://graphql.org/docs/typesystem)
+//
+
+type Query {
+  latestPost: String
+}
+```
+
+これを基にGraphQLスキーマを定義していく。
