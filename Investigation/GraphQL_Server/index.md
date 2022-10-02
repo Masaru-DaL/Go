@@ -13,6 +13,9 @@
       - [2-6. Underfetching and the n+1 problem](#2-6-underfetching-and-the-n1-problem)
     - [2-7. Rapid Product Iterations on the Frontend](#2-7-rapid-product-iterations-on-the-frontend)
     - [2-8. Insightful Analytics on the Backend](#2-8-insightful-analytics-on-the-backend)
+    - [2-9. Benefits of a Schema & Type System](#2-9-benefits-of-a-schema--type-system)
+  - [3. Core Concepts](#3-core-concepts)
+    - [3-1. The Schema Definition Language (SDL)](#3-1-the-schema-definition-language-sdl)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -136,4 +139,58 @@ GraphQLを使うとこの問題は解決される。
 
 GraphQLを使用すると、バックエンド側で要求されたデータについて詳しく知る事が出来る。 -> **分析が出来る**
 
-クライアントからのリクエストは必要なデータを正確に送るため、用意したデータがどのように使われているかを知る事が出来る。あまり要求のされていない特定のフィールドを削除したりなど、APIを進化させる事に繋がる。
+クライアントからのリクエストは必要なデータを正確に送るため、用意したデータがどのように使われているかを知る事が出来る。あまり要求のされていない特定のフィールドを削除したりなど、**APIを進化させる事に繋がる**。
+
+また、GraphQLを使用すると、サーバで処理されるリクエストの低レベルのパフォーマンス監視を行うことができる。GraphQLではリゾルバ関数の概念を用いてクライアントから要求されたデータを収集するので、このリゾルバのパフォーマンスを計測することで**システムのボトルネックを特定したりすることができる**。
+
+### 2-9. Benefits of a Schema & Type System
+
+GraphQLは強力な型システムを使用している。
+ここがGraphQLは**規格**と言う所以だと思う。
+
+APIで公開される全ての型は、"GraphQL Schema Definition Language(SDL)"を使用してスキーマに書き込まれる。**このスキーマは、クライアントがデータにどのようにアクセスできるかを定義する**。
+
+この規格と呼ばれるある種の縛りの恩恵は、これを認識することによりフロントエンドとバックエンドの両チームで**余分なコミュニケーションをとる事なく作業を行う事に繋がる**。
+
+## 3. Core Concepts
+
+この章では、GraphQLの基本的な言語構成について学ぶ。
+* 型を定義するための構文
+* `queries` & `mutations` を送信するための構文
+
+### 3-1. The Schema Definition Language (SDL)
+
+GraphQLは、APIのスキーマ(Web APIの仕様定義)を定義するために、独自の型システムを持っている。スキーマを記述するための構文は**スキーマ定義言語(SDL)**と呼ばれる。
+
+* SDLを使用してPersonという単純な型を定義する例
+
+```go:
+/* Person型は2つのフィールド(name, age)を持つ */
+/* それぞれString型, Int型で"!"はこのフィールドが必須であることを意味する */
+type Person {
+  name: String!
+  age: Int!
+}
+
+```
+
+- 型と型の間の関係を表現する事も可能
+
+```go:
+type Post {
+  title: String!
+  author: Person! // 型定義したものをフィールドに関連付ける
+}
+```
+
+* PostにPersonを関連付けたならば、Personにも関連付けなければならない
+  + ちょっとよくわからないが、1対1の関係を作っただけ？
+  + authorはPersonのデータを持つが、postsはPostと関連付けただけでデータは持たない？
+
+```go:
+type Person {
+  name: String!
+  age: Int!
+  posts: [Post!]!
+}
+```
