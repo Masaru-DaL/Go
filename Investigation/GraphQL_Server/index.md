@@ -12,6 +12,7 @@
       - [2-5. Overfetching: Downloading superfluous data](#2-5-overfetching-downloading-superfluous-data)
       - [2-6. Underfetching and the n+1 problem](#2-6-underfetching-and-the-n1-problem)
     - [2-7. Rapid Product Iterations on the Frontend](#2-7-rapid-product-iterations-on-the-frontend)
+    - [2-8. Insightful Analytics on the Backend](#2-8-insightful-analytics-on-the-backend)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -130,3 +131,9 @@ GraphQLを使うとこの問題は解決される。
 * クライアントがデータ要件を正確に指定できる
   + サーバ側で余分な作業をしなくてもクライアント側の要求を変えれば良いだけ
 * UIが変わってもバックエンドで調整する必要がない
+
+### 2-8. Insightful Analytics on the Backend
+
+GraphQLを使用すると、バックエンド側で要求されたデータについて詳しく知る事が出来る。 -> **分析が出来る**
+
+クライアントからのリクエストは必要なデータを正確に送るため、用意したデータがどのように使われているかを知る事が出来る。あまり要求のされていない特定のフィールドを削除したりなど、APIを進化させる事に繋がる。
