@@ -17,6 +17,7 @@
   - [3. Core Concepts](#3-core-concepts)
     - [3-1. The Schema Definition Language (SDL)](#3-1-the-schema-definition-language-sdl)
     - [3-2. Fetching Data with Queries](#3-2-fetching-data-with-queries)
+      - [3-3. Basic Queries](#3-3-basic-queries)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -194,6 +195,7 @@ type Person {
   age: Int!
   posts: [Post!]!
 }
+
 ```
 
 ### 3-2. Fetching Data with Queries
@@ -203,3 +205,62 @@ REST APIの場合、データは特定のエンドポイントから読み込ま
 GraphQLのアプローチは、**データを返す複数エンドポイントを持っているが、公開するのは単一エンドポイントのみ**。エンドポイントに対して返す情報を固定していないため、これが機能する。その代わり、柔軟性があり、クライアントが実際に必要なデータのみを提供できる。
 
 GraphQLの場合、クライアントは必要なデータのみを取得するために、より多くの情報をサーバに送る必要がある。(=**必要なデータを明示的に指定する**)この情報は、**クエリ**と呼ばれる。
+
+#### 3-3. Basic Queries
+
+* クライアントがサーバに送信するクエリの例
+
+```go:
+{
+  allPersons {
+    name
+  }
+}
+```
+
+allPersonsのフィールドはクエリの**ルートフィールド**と呼ばれる。
+ルートフィールドの後に続くものは全て、クエリの**ペイロード**と呼ばれる。
+上記のクエリ(allPersonsのname)を指定した場合、レスポンスとして返ってくるのが以下になる。
+
+```go:
+{
+  "allPersons": [
+
+    { "name": "Johnny" },
+    { "name": "Sarah" },
+    { "name": "Alice" }
+
+  ]
+}
+
+```
+
+各々の名前が返っていて、それ以外の情報は返ってきていない。
+**指定された情報がnameだけだったから。**
+もし年齢も必要とするなら以下のようにクエリを調整する。
+
+```go:
+{
+  allPersons {
+    name
+    age
+  }
+}
+```
+
+GraphQLによる大きな利点の1つが、**ネストした情報を自然にクエリできること。**
+例えば、ある人物が書いた全ての投稿を読み込みたい場合、型の構造に従ってこの情報を要求されるだけで良い。つまり、**指定方法がシンプルで分かりやすいという利点がある**。
+
+```go:
+{
+  allPersons {
+
+    name
+    age
+    posts {
+      title
+    }
+
+  }
+}
+```
