@@ -18,6 +18,7 @@
     - [3-1. The Schema Definition Language (SDL)](#3-1-the-schema-definition-language-sdl)
     - [3-2. Fetching Data with Queries](#3-2-fetching-data-with-queries)
       - [3-3. Basic Queries](#3-3-basic-queries)
+      - [3-4. Queries with Arguments](#3-4-queries-with-arguments)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -264,3 +265,13 @@ GraphQLによる大きな利点の1つが、**ネストした情報を自然に�
   }
 }
 ```
+
+#### 3-4. Queries with Arguments
+
+* 引数付きクエリ
+allPersonsフィールドに引数を指定した場合、特定の人数までしか返さないようにすることができる。
+= ページネーション
+[GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)
+参照先: https://relay.dev/graphql/connections.htm
+
+例えば `allPersons(last: 2)` とすると登録された所から逆順に2人分だけ返すようにクエリを指定している。
