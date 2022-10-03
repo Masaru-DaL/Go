@@ -56,3 +56,55 @@ GraphQL APIに新しい機能を追加する必要がある場合は、スキー
     2. **リンクを作成するためのミューテーション**
   + 新しいリンクを作成するための入力
   + ログイン, createUser, refreshTokenなどの認証システムのためのミューテーション
+
+* 上述を満たすように、スキーマの定義を行う
+
+```go: graph/schema.graphqls
+type Link {
+  id: ID!
+  title: String!
+  address: String!
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  links: [Link!]!
+}
+
+input NewLink {
+  title: String!
+  address: String!
+}
+
+input RefreshTokenInput{
+  token: String!
+}
+
+input NewUser {
+  username: String!
+  password: String!
+}
+
+input Login {
+  username: String!
+  password: String!
+}
+
+type Mutation {
+  createLink(input: NewLink!): Link!
+  createUser(input: NewUser!): String!
+  login(input: Login!): String!
+  # we'll talk about this in authentication section
+  refreshToken(input: RefreshTokenInput!): String!
+}
+```
+
+スキーマ定義後、
+ `$ go run github.com/99designs/gqlgen generate`
+
+`validation failed: packages.Load` というエラーが出たので、公式の手順通りに `schema.resolvers.go` のCreateTodoとTodosを削除してから再度 `go run github.com/99designs/gqlgen generate` を叩いて無事スキーマで定義した関数が生成される。
