@@ -428,4 +428,36 @@ type Mutation {
 type Subscription {
   newPerson: Person!
 }
+
+```
+
+ここまでをまとめた完全なスキーマが以下。
+
+```go:
+type Query {
+  allPersons(last: Int): [Person!]!
+  allPosts(last: Int): [Post!]!
+}
+
+type Mutation {
+  createPerson(name: String!, age: Int!): Person!
+  updatePerson(id: ID!, name: String!, age: String!): Person!
+  deletePerson(id: ID!): Person!
+}
+
+type Subscription {
+  newPerson: Person!
+}
+
+type Person {
+  id: ID!
+  name: String!
+  age: Int!
+  posts: [Post!]!
+}
+
+type Post {
+  title: String!
+  author: Person!
+}
 ```
