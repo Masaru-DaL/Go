@@ -410,4 +410,22 @@ allPersonsは、APIのルートフィールドと呼ばれる。
 type Query {
   allPersons(last: Int): [Person!]!
 }
+
+```
+
+同様に、`createPerson-mutation`を使用するには、ミューテーションタイプにもルートフィールドを追加する必要がある。
+
+```go:
+type Mutation {
+  // 新規作成の際に2つの引数を必要とすることを定義する
+  createPerson(name: String!, age:Int!): Person!
+}
+```
+
+最後に、サブスクリプションを使うために、 `newPerson` をサブスクリプションのルートフィールドに追加する。
+
+```go:
+type Subscription {
+  newPerson: Person!
+}
 ```
