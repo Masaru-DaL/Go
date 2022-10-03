@@ -19,6 +19,7 @@
     - [3-2. Fetching Data with Queries](#3-2-fetching-data-with-queries)
       - [3-3. Basic Queries](#3-3-basic-queries)
       - [3-4. Queries with Arguments](#3-4-queries-with-arguments)
+    - [3-5. Writing Data with Mutations](#3-5-writing-data-with-mutations)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -258,6 +259,7 @@ GraphQLによる大きな利点の1つが、**ネストした情報を自然に�
 
     name
     age
+
     posts {
       title
     }
@@ -282,5 +284,56 @@ allPersonsフィールドに引数を指定した場合、特定の人数まで�
   allPersons(last: 2) {
     name
   }
+}
+```
+
+### 3-5. Writing Data with Mutations
+
+サーバに情報を要求する以外にも、データの変更をする方法が必要。
+GraphQLでは、データの変更は**ミューテーション**を使用して行われる。
+ミューテーションには以下の3つの種類がある。
+
+1. 新しいデータの作成
+2. 既存のデータの更新
+3. 既存のデータの削除
+
+ミューテーションはクエリと同じ構文に従うが、**常にミューテーションというキーワードで始まる必要がある**。
+以下に新しいPersonを作成する場合の例を挙げる。
+
+```go:
+mutation {
+  createPerson(name: "Bob", age: 36) {
+
+    name
+    age
+
+  }
+}
+
+```
+
+前に書いたクエリと同様にこのミューテーションはルートフィールドを持っていて、この場合は `createPerson` が該当する。
+この例では、新しくname, ageを定義して、レスポンス要求で更にname, ageを返すように要求しているのであまり役には立たない。(新たに作成したname, ageがそのまま返ってくるだけ)
+
+しかし、**ミューテーションを送信する際に情報の問い合わせが出来る事自体がすごい機能**である。
+(いちいちクエリを送る必要がないということ。)
+
+* 上記のミューテーションに対するサーバの応答
+
+```go:
+"createPerson": {
+  "name": "Bob",
+  "age": 36,
+}
+```
+
+GraphQLのtypeとして定義した型はAutoIncrementの機能がある。
+Person型を拡張してidを追加すると、これが一意のIDを持つ。
+
+```go:
+type Person {
+  id: ID!
+  name: String!
+  age: Int!
 }
 ```
