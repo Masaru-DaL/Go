@@ -24,6 +24,7 @@
     - [3-7. Defining a Schema](#3-7-defining-a-schema)
   - [4. Big Picture (Architecture)](#4-big-picture-architecture)
     - [4-1. Use Cases](#4-1-use-cases)
+      - [4-1-1. GraphQL server with a connected database](#4-1-1-graphql-server-with-a-connected-database)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -477,3 +478,5 @@ GraphQLは**仕様書のみが公開されている**。
 1. データベースと接続されたGraphQLサーバ
 2. 既存システムを統合するGraphQLサーバ
 3. データベースとの接続、既存システムの統合の2種類の方法でアプローチを行うGraphQLサーバ
+
+#### 4-1-1. GraphQL server with a connected database
