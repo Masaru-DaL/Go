@@ -28,6 +28,7 @@
       - [4-2. GraphQL layer that integrates existing systems](#4-2-graphql-layer-that-integrates-existing-systems)
       - [4-3. Hybrid approach with connected database and integration of existing system](#4-3-hybrid-approach-with-connected-database-and-integration-of-existing-system)
     - [4-4. Resolver Functions](#4-4-resolver-functions)
+    - [4-5. GraphQL Client Libraries](#4-5-graphql-client-libraries)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -521,3 +522,35 @@ GraphQLは、既存システムを統一してその複雑さを、優れたGrap
 
 GraphQLでこのような柔軟性はどのようにして得られるのか？
 GraphQLはなぜこのような異なる種類のユースケースに適合するのか？
+
+GraphQLのクエリ(またはミューテーション)のペイロードは一連のフィールドで構成されている。GraphQLのサーバの実装では、これらの各フィールドは、実際には**リゾルバと呼ばれる1つの関数に対応している**。
+
+リゾルバ関数の唯一の目的は、その**フィールドのデータを取得すること**。
+
+1. サーバはクエリを受け取る。
+2. クエリのペイロードで指定されたフィールドに対する全ての関数を呼び出す。
+3. クエリを解決し、各フィールドの正しいデータを取得することができる。
+4. 全てのリゾルバが返されるとサーバはクエリで記述されたフォーマットでデータをパッケージングし、クライアントに送り返す。
+
+[引用: リゾルバ関数の対応](https://imgur.com/e1gBEP5.png)
+サーバにクエリを送り、そのクエリの各フィールドはリゾルバ関数に対応している。つまり、**クエリを送るということは必要なリゾルバを呼び出すということ**。
+
+### 4-5. GraphQL Client Libraries
+
+GraphQLは、オーバーフェッチ、アンダーフェッチを完全に排除するため、フロントエンドの開発者にとっては特に恩恵がある。
+クエリは欲しいデータだけを要求すれば良いだけなので、どこにどんなデータがあるからどこのエンドポイントを使用する、などということは**考える必要がない**。
+
+* REST APIの場合のデータ取得の際のステップ
+
+1. HTTPリクエストの作成と送信
+2. サーバの応答を受信し、解析する
+3. データをローカルに保存する
+4. データをUIに表示させる
+
+* 理想的なデータ取得のステップ
+
+1. データ要件の記述
+2. データをUIに表示させる
+
+データ保存だけでなく、理想的なデータ取得のステップのように、**低レベルのネットワーキングのタスクは全て抽象化され、データ要求の通りに返されるべき**。
+これこそがRelayやApolloのようなGraphQLクライアントライブラリで実現できることである。
