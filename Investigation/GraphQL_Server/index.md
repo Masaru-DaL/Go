@@ -21,6 +21,7 @@
       - [3-4. Queries with Arguments](#3-4-queries-with-arguments)
     - [3-5. Writing Data with Mutations](#3-5-writing-data-with-mutations)
     - [3-6. Realtime Updates with Subscriptions](#3-6-realtime-updates-with-subscriptions)
+    - [3-7. Defining a Schema](#3-7-defining-a-schema)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -377,5 +378,36 @@ subscription {
     "age": 23
 
   }
+}
+
+```
+
+### 3-7. Defining a Schema
+
+これまでのクエリ、ミューテーション、サブスクリプションを用いて具体的にスキーマを定義してみる。
+**スキーマは、GraphQL APIを使用する際に最も重要な概念のひとつ**である。
+
+スキーマは、**APIの機能を指定し、クライアントがどのようにデータを要求できるかを定義する**。これはしばしば、**サーバとクライアントとの契約**とみなされる。
+
+スキーマは**GraphQLの型を集めたもの**であるが、APIのスキーマを書く場合には**いくつかの特別なルート型がある**。以下の3つはクライアントから送信されるリクエストのエントリポイントとなる。
+
+* type Query{...} // GET
+* type Mutation{...} // POST, PUT, DELETE
+* type Subscription{...}
+
+クライアントからQueryでデータ取得を許可する場合は以下のように記述する。(allPersonsに対しての場合)
+
+```go:
+type Query {
+  allPersons: [Person!]!
+}
+```
+
+allPersonsは、APIのルートフィールドと呼ばれる。
+情報の中から必要な情報を抜き出す際の指定方法を含めて以下のように記述しなければならない。
+
+```go:
+type Query {
+  allPersons(last: Int): [Person!]!
 }
 ```
