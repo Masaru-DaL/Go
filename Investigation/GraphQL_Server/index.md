@@ -20,6 +20,7 @@
       - [3-3. Basic Queries](#3-3-basic-queries)
       - [3-4. Queries with Arguments](#3-4-queries-with-arguments)
     - [3-5. Writing Data with Mutations](#3-5-writing-data-with-mutations)
+    - [3-6. Realtime Updates with Subscriptions](#3-6-realtime-updates-with-subscriptions)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -335,5 +336,46 @@ type Person {
   id: ID!
   name: String!
   age: Int!
+}
+
+```
+
+このようにPersonにidを持たせた事により、ミューテーションで新しくPersonを作成した際にidを求める事ができる。
+
+```go:
+mutation {
+  createPerson(name: "Alice", age: 36) {
+    id // 要求クエリ
+  }
+}
+```
+
+### 3-6. Realtime Updates with Subscriptions
+
+* サブスクリプション
+リアルタイムに欲しい情報を得るために**サーバへのリアルタイムな接続**を持ちたい。(例えば重要なイベントなどは即座に確認したい。)
+そのためにGraphQLは**サブスクリプションという概念**を提供する。
+
+**クライアントがサブスクリプションをサーバに送信すると、両者の間にコネクションが開かれる。**
+サブスクリプションを以下のように送ると、新しいPersonを作成するミューテーションが実行される度に、サーバはこのPersonに関する情報をクライアントに送る。
+
+```go:
+subscription {
+  newPerson { // Person型にnewというメソッドで新規作成と紐付け？
+
+    name
+    age
+
+  }
+}
+
+/*  mutation: CreatePerson()が実行された場合のレスポンス */
+{
+  "newPerson": {
+
+    "name": "Jane",
+    "age": 23
+
+  }
 }
 ```
