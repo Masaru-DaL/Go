@@ -264,6 +264,7 @@ GraphQLによる大きな利点の1つが、**ネストした情報を自然に�
 
   }
 }
+
 ```
 
 #### 3-4. Queries with Arguments
@@ -274,4 +275,12 @@ allPersonsフィールドに引数を指定した場合、特定の人数まで�
 [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)
 参照先: https://relay.dev/graphql/connections.htm
 
-例えば `allPersons(last: 2)` とすると登録された所から逆順に2人分だけ返すようにクエリを指定している。
+例えば以下の指定方法 `allPersons(last: 2)` は、登録された所から逆順に2人分の名前だけ返すようにクエリを指定している。
+
+```go:
+{
+  allPersons(last: 2) {
+    name
+  }
+}
+```
