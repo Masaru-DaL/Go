@@ -25,6 +25,9 @@
   - [4. Big Picture (Architecture)](#4-big-picture-architecture)
     - [4-1. Use Cases](#4-1-use-cases)
       - [4-1-1. GraphQL server with a connected database](#4-1-1-graphql-server-with-a-connected-database)
+      - [4-2. GraphQL layer that integrates existing systems](#4-2-graphql-layer-that-integrates-existing-systems)
+      - [4-3. Hybrid approach with connected database and integration of existing system](#4-3-hybrid-approach-with-connected-database-and-integration-of-existing-system)
+    - [4-4. Resolver Functions](#4-4-resolver-functions)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -497,3 +500,24 @@ GraphQLにおける一般的なアーキテクチャ。
     - SQLデータベース、NoSQLデータベースを使用可能
 
 [引用: 1つのデータベースに接続する、1つのGraphQLサーバを持つアーキテクチャ図](https://imgur.com/cRE6oeb.png)
+
+#### 4-2. GraphQL layer that integrates existing systems
+
+GraphQLのもう1つの主要なユースケースが、既存システムの統合です。
+レガシーなインフラストラクチャや、メンテナンスの負担が大きい企業にとっては特に重宝される。
+
+GraphQLは、既存システムを統一してその複雑さを、優れたGraphQL APIの背後に隠すために使用することができる。こうすることで**新しいクライアントアプリケーションを開発し、単にGraphQLサーバと会話して必要なデータを取得することができる**。
+
+[引用: 様々な既存システムの複雑性を単一インターエースで隠蔽する](https://imgur.com/zQggcSX.png)
+
+#### 4-3. Hybrid approach with connected database and integration of existing system
+
+データベース接続 + 既存システム統合のハイブリットアプローチが可能。
+**サーバはクエリを受け取るとそれを解決し、接続されたデータベースまたは統合されたAPIの一部から必要なデータを取得する**。
+
+[引用: ハイブリットアプローチ](https://imgur.com/73dByTz.png)
+
+### 4-4. Resolver Functions
+
+GraphQLでこのような柔軟性はどのようにして得られるのか？
+GraphQLはなぜこのような異なる種類のユースケースに適合するのか？
