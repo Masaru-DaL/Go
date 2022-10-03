@@ -22,6 +22,8 @@
     - [3-5. Writing Data with Mutations](#3-5-writing-data-with-mutations)
     - [3-6. Realtime Updates with Subscriptions](#3-6-realtime-updates-with-subscriptions)
     - [3-7. Defining a Schema](#3-7-defining-a-schema)
+  - [4. Big Picture (Architecture)](#4-big-picture-architecture)
+    - [4-1. Use Cases](#4-1-use-cases)
 # GraphQL Server
 
 : [GraphQL](https://graphql.org/)
@@ -461,3 +463,17 @@ type Post {
   author: Person!
 }
 ```
+
+## 4. Big Picture (Architecture)
+
+GraphQLは**仕様書のみが公開されている**。
+つまり、**サーバーの動作を詳細に記述した文書以上の機能はない**。
+
+### 4-1. Use Cases
+
+このセクションではGraphQLサーバを含む3種類のアーキテクチャを学ぶ。
+いずれもGraphQLの主要なユースケースを表していて、GraphQLの柔軟性を示している。
+
+1. データベースと接続されたGraphQLサーバ
+2. 既存システムを統合するGraphQLサーバ
+3. データベースとの接続、既存システムの統合の2種類の方法でアプローチを行うGraphQLサーバ
