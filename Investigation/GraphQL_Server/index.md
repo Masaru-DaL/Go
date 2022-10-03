@@ -29,4 +29,21 @@ GraphQL APIに新しい機能を追加する必要がある場合は、スキー
   + gqlgenの設定ファイル
   + 生成されたコードの制御
 
--
+* `graph/generated/generated.go`
+  + GraphQL実行ランタイム
+  + 生成されたコード
+
+* `graph/model/models_gen.go`
+  + グラフを構築するために必要な、生成されたモデル
+  + 必要に応じて独自のモデルでオーバーライドする
+
+* `graph/schema.graphqls`
+  + GraphQLスキーマを追加するファイル
+
+* `graph/schema.resolvers.go`
+  + ここにアプリケーションのコードを記述する
+  + `generated.go`はここを呼び出し、ユーザがリクエストしたデータを取得する
+
+* `server.go`
+  + 最小限のエントリポイント
+  + `go run server.go`でサーバーを起動し、ブラウザを開くと、GraphQL playgroundが表示される
