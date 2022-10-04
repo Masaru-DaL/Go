@@ -108,10 +108,3 @@ type Mutation {
  `$ go run github.com/99designs/gqlgen generate`
 
 `validation failed: packages.Load` というエラーが出たので、公式の手順通りに `schema.resolvers.go` のCreateTodoとTodosを削除してから再度 `go run github.com/99designs/gqlgen generate` を叩いて無事スキーマで定義した関数が生成される。
-
-## 3. Queries
-
-2章でサーバーのセットアップが完了した。
-`schema.graphqls` で定義したQueryを実装する。
-
-### 3-1. Simple Query
