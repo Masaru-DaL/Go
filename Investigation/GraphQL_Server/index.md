@@ -186,3 +186,33 @@ Query {
 `resolvers.go` に実装することで、クエリを投げた際にその項目がレスポンスされるその方法が分かった。ここまではあくまでもダミーのレスポンスなので、実際にやりたいことは**他のユーザのリンクを全て照会できるようにしたい**。
 
 次の章で、アプリケーションにデータベースに保存したリンクを取得できるようにする。
+
+## 4. Mutations
+
+### 4-1. What Is A Mutation
+
+**技術的にはQueryもデータの書き込み(POST)に使用出来るが、そのやり方は推奨されていない。**
+つまり、ミューテーションはクエリのように使えるということで、名前とパラメータを持っていて**データを返す事ができる**。
+
+### 4-2. A Simple Mutation
+
+まだデータベースをセットアップしていない。(次の章で行う)
+そのため、リンクデータを受け取り、リンクオブジェクトを構築し、レスポンスを返すという動作を行う `CreateLink` ミューテーションを実装する。(データベースを介さない)
+
+ `func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {`
+
+この関数は、 `schema.graphqls` で定義したNewLink構造を持つNewLinkを入力として受け取る。(ちょっとよくわからない)
+
+1. `schema.graphqls`で定義したLinkオブジェクトを構築する
+
+```go: schema.resolvers.go
+func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink) (*model. Link, error) {
+  var link model. Link
+  var user model. User
+  link. Address = input. Address
+  link. Title = input. Title
+  user. Name = "test"
+  link. User = &user
+  return &link, nil
+}
+```
