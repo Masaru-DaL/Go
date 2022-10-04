@@ -102,6 +102,7 @@ type Mutation {
   # we'll talk about this in authentication section
   refreshToken(input: RefreshTokenInput!): String!
 }
+
 ```
 
 スキーマ定義後、
@@ -114,4 +115,51 @@ type Mutation {
 2章でサーバーのセットアップが完了した。
 `schema.graphqls` で定義したQueryを実装する。
 
-### 3-1. Simple Query
+### 3-1. What Is A Query
+
+* Queryとは？
+GraphQLのクエリとは、**データを要求するもの**。
+クエリを使って欲しい情報を指定すると、GraphQLサーバは要求した情報を返す。
+
+### 3-2. Simple Query
+
+スキーマで定義されたものを実装するには、 `schema.resolvers.go` に記述することで実装される。
+既に生成されているLinks関数を見てみる。
+
+ `func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {`
+
+この関数は、Contextを受け取り、Linksのスライスとエラー(もしあれば)を返す。
+`ctx` 引数には、リクエストを送信した人のデータが含まれている。
+
+1. この関数に対して、ダミーのレスポンスを作成してみる。
+
+```go: schema.resolvers.go
+func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
+    var links []*model.Link
+    dummyLink := model.Link{
+        Title: "our dummy link",
+        Address: "https://address.org",
+        User: &model.User{Name: "admin"},
+    }
+    links = append(links, &dummyLink)
+    return links, nil
+}
+```
+
+2. `$ go run server.go`
+
+3. GraphQLサーバにQueryを送る
+
+```graphql:
+Query {
+  links {
+
+    title,
+    address,
+    user {
+      name
+    }
+
+  }
+}
+```
