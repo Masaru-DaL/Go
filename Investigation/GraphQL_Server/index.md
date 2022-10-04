@@ -37,6 +37,9 @@
       - [6-1-2. linksディレクトリ](#6-1-2-linksディレクトリ)
       - [6-1-3. Save関数をCreateLinkリゾルバで使用する](#6-1-3-save関数をcreatelinkリゾルバで使用する)
       - [6-1-4. ミューテーションの送信](#6-1-4-ミューテーションの送信)
+    - [6-2. links Query](#6-2-links-query)
+      - [6-2-1. リンクの取得、サーバに渡す関数](#6-2-1-リンクの取得サーバに渡す関数)
+      - [6-2-2. GetAll関数でリンクを取得できるようにする](#6-2-2-getall関数でリンクを取得できるようにする)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -595,5 +598,68 @@ mutation create{
       "id": "1" // AutoIncrement
     }
   }
+}
+```
+
+### 6-2. links Query
+
+CreateLinkミューテーションの次に、Linksクエリを実装する。
+データベースからリンクを取得し、リゾルバでそれをGraphQLサーバに渡す関数が必要。
+
+#### 6-2-1. リンクの取得、サーバに渡す関数
+
+関数をGetAllという名前で作成する。
+
+```go: internal/links/links.go
+func GetAll() []Link {
+  stmt, err := database. Db. Prepare("select id, title, address from Links")
+  if err != nil {
+
+    log.Fatal(err)
+
+  }
+  defer stmt. Close()
+
+  rows, err := stmt. Query()
+  if err != nil {
+
+    log.Fatal(err)
+
+  }
+  defer rows. Close()
+
+  var links []link
+  for rows. Next() {
+
+    var link Link
+    err := rows.Scan(&link.ID, &link.Title, &link.Address)
+    if err != nil {
+      log.Fatal(err)
+    }
+    links = append(links, link)
+
+  }
+  if err = rows. Err(); err != nil {
+
+    log.Fatal(err)
+
+  }
+  return links
+}
+
+```
+
+#### 6-2-2. GetAll関数でリンクを取得できるようにする
+
+```go: schema.resolvers.go
+func (r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
+  var resultLinks []*model. Link
+  var dbLinks []links. Link
+  dbLinks = links. GetAll()
+  for _, link := range dbLinks {
+
+    resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title:link.Title, Address:link.Address})
+  }
+  return resultLinks, nil
 }
 ```
