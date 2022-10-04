@@ -40,6 +40,7 @@
     - [6-2. links Query](#6-2-links-query)
       - [6-2-1. リンクの取得、サーバに渡す関数](#6-2-1-リンクの取得サーバに渡す関数)
       - [6-2-2. GetAll関数でリンクを取得できるようにする](#6-2-2-getall関数でリンクを取得できるようにする)
+      - [6-2-3. Queryの送信](#6-2-3-queryの送信)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -661,5 +662,36 @@ func (r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
     resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title:link.Title, Address:link.Address})
   }
   return resultLinks, nil
+}
+```
+
+#### 6-2-3. Queryの送信
+
+```graphql:
+query {
+  links {
+
+    title
+    address
+    id
+
+  }
+}
+
+```
+
+- レスポンス
+
+```graphql:
+{
+  "data": {
+    "links": [
+      {
+        "title": "something",
+        "address": "somewhere",
+        "id": "1"
+      }
+    ]
+  }
 }
 ```
