@@ -341,6 +341,7 @@ CREATE TABLE IF NOT EXISTS Links(
     PRIMARY KEY (ID)
 
 )
+
 ```
 
 5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。
@@ -351,3 +352,89 @@ CREATE TABLE IF NOT EXISTS Links(
 6. データベースの接続を行う。
 今回はMySQLを使用するので、mysqlフォルダの下にデータベースへの接続を初期化する関数を作成する。
 複数のデータベースを持つ場合は、他のフォルダを追加できる。
+
+```go: internal/pkg/db/mysql/mysql.go
+package database
+
+import (
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate"
+	"github.com/golang-migrate/migrate/database/mysql"
+	_ "github.com/golang-migrate/migrate/source/file"
+	"log"
+)
+
+var Db *sql.DB
+
+func InitDB() {
+	// Use root:dbpass@tcp(172.17.0.2)/hackernews, if you're using Windows.
+	db, err := sql.Open("mysql", "root:dbpass@tcp(localhost)/hackernews")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if err = db.Ping(); err != nil {
+ 		log.Panic(err)
+	}
+	Db = db
+}
+
+func CloseDB() error {
+	return Db.Close()
+}
+
+func Migrate() {
+	if err := Db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+	driver, _ := mysql.WithInstance(Db, &mysql.Config{})
+	m, _ := migrate.NewWithDatabaseInstance(
+		"file://internal/pkg/db/migrations/mysql",
+		"mysql",
+		driver,
+	)
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal(err)
+	}
+
+}
+```
+
+* InitDB関数
+  + データベースへの接続を作成する。
+
+* Migrate関数
+  + migrationsファイルを実行する
+  + コマンドラインで行った事と同じようにmigrationsを適用する
+  + この関数を使うことで、アプリケーションは起動前に常に最新のmigrationsを適用する
+
+* CloseDB関数
+  + アプリケーションが終了したらデータベース接続を閉じる役割を果たす
+  + deferキーワードで呼び出され、main関数で終了したときに実行される
+    - (遅延させて、最後に実行される)
+
+7. main関数にInitDBとMigrateを呼び出すように記述し、アプリの開始時にデータベース接続を作成するようにする。
+
+```go: server.go
+func main() {
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	router := chi.NewRouter()
+
+	database.InitDB()
+	defer database.CloseDB()
+	database.Migrate()
+	server := handler.NewDefaultServer(hackernews.NewExecutableSchema(hackernews.Config{Resolvers: &hackernews.Resolver{}}))
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", server)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, router))
+
+}
+```
