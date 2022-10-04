@@ -44,6 +44,7 @@
   - [7. Authentication](#7-authentication)
     - [7-1. JWT: Json Web Token](#7-1-jwt-json-web-token)
     - [7-2. Setup](#7-2-setup)
+    - [7-3. Generating and Parsing JWT Tokens](#7-3-generating-and-parsing-jwt-tokens)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -718,3 +719,10 @@ query {
 このアプリでは、**ユーザがサインアップまたはログインするときにトークンを生成できる**ようにする必要がある。また、与えられたトークンを使ってユーザを認証するためのミドルウェアを作成し、誰がサーバに接続しているかを知る必要がある。
 
 JWTトークンの生成とパースには、 `github.com/dgrijalva/jwt-go` ライブラリを使用する。
+
+### 7-3. Generating and Parsing JWT Tokens
+
+アプリケーションのルートにpkgという新しいディレクトリを作成する。対してアプリケーションの内部でのみ使用したいものには `internal` を使用している。
+pkgディレクトリは、アプリケーションのどこにでもインポートできるファイルのためのもの。JWT生成スクリプトや検証スクリプトがこれに該当する。
+
+**クレーム**と呼ばれる概念があることを覚えておく。
