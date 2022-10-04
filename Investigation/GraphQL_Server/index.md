@@ -162,4 +162,23 @@ Query {
 
   }
 }
+
+```
+
+4. GraphQLからのレスポンス
+
+```graphql:
+{
+  "data": {
+    "links": [
+      {
+        "title": "our dummy link",
+        "address": "https://address.org",
+        "user": {
+          "name": "admin"
+        }
+      }
+    ]
+  }
+}
 ```
