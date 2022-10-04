@@ -328,4 +328,26 @@ CREATE TABLE IF NOT EXISTS Users (
 )
 ```
 
-4.
+4. `000002_create_links_table.up.sql`に、リンク用のテーブルを追加する。
+
+```sql:
+CREATE TABLE IF NOT EXISTS Links(
+
+    ID INT NOT NULL UNIQUE AUTO_INCREMENT,
+    Title VARCHAR (255) ,
+    Address VARCHAR (255) ,
+    UserID INT ,
+    FOREIGN KEY (UserID) REFERENCES Users(ID) ,
+    PRIMARY KEY (ID)
+
+)
+```
+
+5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。
+プロジェクトのルートディレクトリでこのコマンドを実行します。
+
+ `$ migrate -database mysql://root:dbpass@/hackernews -path internal/pkg/db/migrations/mysql up`
+
+6. データベースの接続を行う。
+今回はMySQLを使用するので、mysqlフォルダの下にデータベースへの接続を初期化する関数を作成する。
+複数のデータベースを持つ場合は、他のフォルダを追加できる。
