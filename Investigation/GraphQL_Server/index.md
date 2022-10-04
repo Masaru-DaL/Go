@@ -1,3 +1,40 @@
+- [Building a GraphQL Server with Go Backend Tutorial | Intro](#building-a-graphql-server-with-go-backend-tutorial--intro)
+  - [1. Introduction](#1-introduction)
+      - [1-1. Motivation](#1-1-motivation)
+      - [1-2. Schema-Driven Development](#1-2-schema-driven-development)
+  - [2. Getting Started](#2-getting-started)
+    - [2-1. Project Setup](#2-1-project-setup)
+      - [2-2. 生成されたgqlgenファイルの説明](#2-2-生成されたgqlgenファイルの説明)
+    - [2-3. Defining Our Schema](#2-3-defining-our-schema)
+  - [3. Queries](#3-queries)
+    - [3-1. What Is A Query](#3-1-what-is-a-query)
+    - [3-2. Simple Query](#3-2-simple-query)
+      - [3-1-1. この関数に対して、ダミーのレスポンスを作成してみる。](#3-1-1-この関数に対してダミーのレスポンスを作成してみる)
+      - [3-1-2. `$ go run server.go`](#3-1-2--go-run-servergo)
+      - [3-1-3. GraphQLサーバにQueryを送る](#3-1-3-graphqlサーバにqueryを送る)
+      - [3-1-4. GraphQLからのレスポンス](#3-1-4-graphqlからのレスポンス)
+  - [4. Mutations](#4-mutations)
+    - [4-1. What Is A Mutation](#4-1-what-is-a-mutation)
+    - [4-2. A Simple Mutation](#4-2-a-simple-mutation)
+      - [4-2-1. `schema.graphqls` で定義したLinkオブジェクトを構築する](#4-2-1-schemagraphqls-で定義したlinkオブジェクトを構築する)
+      - [4-2-2. `$ go run server.go`](#4-2-2--go-run-servergo)
+      - [4-2-3. ミューテーションを使用して新しいリンクを作成する](#4-2-3-ミューテーションを使用して新しいリンクを作成する)
+      - [4-2-4. GraphQLからのレスポンス](#4-2-4-graphqlからのレスポンス)
+  - [5. Database](#5-database)
+    - [5-1. Setup MySQL](#5-1-setup-mysql)
+    - [5-2. Create MySQL database](#5-2-create-mysql-database)
+    - [5-3. Models and migrations](#5-3-models-and-migrations)
+      - [5-3-1. プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。](#5-3-1-プロジェクトのルートディレクトリにデータベースファイルのためのフォルダ構造を作成する)
+      - [5-3-2. `go mysql driver` と `golang-migrate` パッケージをインストールし、migrationsを作成する。](#5-3-2-go-mysql-driver-と-golang-migrate-パッケージをインストールしmigrationsを作成する)
+      - [5-3-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。](#5-3-3-000001_create_users_tableupsqにユーザ用のテーブルを追加する)
+      - [5-3-4. `000002_create_links_table.up.sql` に、リンク用のテーブルを追加する。](#5-3-4-000002_create_links_tableupsql-にリンク用のテーブルを追加する)
+      - [5-3-5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。](#5-3-5-3-4で設定した内容を反映させそれぞれのテーブルを作成するmigrateコマンドで行う)
+      - [5-3-6. データベースの接続を行う。](#5-3-6-データベースの接続を行う)
+      - [5-3-7. main関数にInitDBとMigrateを呼び出すように記述し、アプリの開始時にデータベース接続を作成するようにする。](#5-3-7-main関数にinitdbとmigrateを呼び出すように記述しアプリの開始時にデータベース接続を作成するようにする)
+  - [6. Create and Retrieve Links](#6-create-and-retrieve-links)
+    - [6-1. CreateLinks](#6-1-createlinks)
+      - [6-1-1. usersディレクトリ](#6-1-1-usersディレクトリ)
+      - [6-1-2. linksディレクトリ](#6-1-2-linksディレクトリ)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -131,7 +168,7 @@ GraphQLのクエリとは、**データを要求するもの**。
 この関数は、Contextを受け取り、Linksのスライスとエラー(もしあれば)を返す。
 `ctx` 引数には、リクエストを送信した人のデータが含まれている。
 
-1. この関数に対して、ダミーのレスポンスを作成してみる。
+#### 3-1-1. この関数に対して、ダミーのレスポンスを作成してみる。
 
 ```go: schema.resolvers.go
 func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
@@ -146,9 +183,9 @@ func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
 }
 ```
 
-2. `$ go run server.go`
+#### 3-1-2. `$ go run server.go`
 
-3. GraphQLサーバにQueryを送る
+#### 3-1-3. GraphQLサーバにQueryを送る
 
 ```graphql:
 Query {
@@ -165,7 +202,7 @@ Query {
 
 ```
 
-4. GraphQLからのレスポンス
+#### 3-1-4. GraphQLからのレスポンス
 
 ```graphql:
 {
@@ -203,7 +240,7 @@ Query {
 
 この関数は、 `schema.graphqls` で定義したNewLink構造を持つNewLinkを入力として受け取る。(ちょっとよくわからない)
 
-1. `schema.graphqls`で定義したLinkオブジェクトを構築する
+#### 4-2-1. `schema.graphqls` で定義したLinkオブジェクトを構築する
 
 ```go: schema.resolvers.go
 func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink) (*model. Link, error) {
@@ -218,9 +255,9 @@ func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink
 
 ```
 
-2. `$ go run server.go`
+#### 4-2-2. `$ go run server.go`
 
-3. ミューテーションを使用して新しいリンクを作成する
+#### 4-2-3. ミューテーションを使用して新しいリンクを作成する
 
 ```graphql:
 mutation {
@@ -234,7 +271,7 @@ mutation {
 }
 ```
 
-4. GraphQLからのレスポンス
+#### 4-2-4. GraphQLからのレスポンス
 
 ```graphql:
 {
@@ -295,14 +332,14 @@ dockerでMySQLのイメージを使用する。
 * マイグレーション
   + テーブル・インデックス更新の自動化が行える。
 
-1. プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。
+#### 5-3-1. プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。
 
 ```shell:
 $ tree
 
 ```
 
-2. `go mysql driver`と`golang-migrate`パッケージをインストールし、migrationsを作成する。
+#### 5-3-2. `go mysql driver` と `golang-migrate` パッケージをインストールし、migrationsを作成する。
 
 ```shell:
 $ go get -u github.com/go-sql-driver/mysql
@@ -317,7 +354,7 @@ migrateコマンドは、マイグレーションごとに `.up` と `.down` で
 up -> マイグレーションを適用する役割
 down -> それを反転する役割
 
-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。
+#### 5-3-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。
 
 ```sql:
 CREATE TABLE IF NOT EXISTS Users (
@@ -328,7 +365,7 @@ CREATE TABLE IF NOT EXISTS Users (
 )
 ```
 
-4. `000002_create_links_table.up.sql`に、リンク用のテーブルを追加する。
+#### 5-3-4. `000002_create_links_table.up.sql` に、リンク用のテーブルを追加する。
 
 ```sql:
 CREATE TABLE IF NOT EXISTS Links(
@@ -344,12 +381,14 @@ CREATE TABLE IF NOT EXISTS Links(
 
 ```
 
-5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。
+#### 5-3-5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。
+
 プロジェクトのルートディレクトリでこのコマンドを実行します。
 
  `$ migrate -database mysql://root:dbpass@/hackernews -path internal/pkg/db/migrations/mysql up`
 
-6. データベースの接続を行う。
+#### 5-3-6. データベースの接続を行う。
+
 今回はMySQLを使用するので、mysqlフォルダの下にデータベースへの接続を初期化する関数を作成する。
 複数のデータベースを持つ場合は、他のフォルダを追加できる。
 
@@ -414,7 +453,7 @@ func Migrate() {
   + deferキーワードで呼び出され、main関数で終了したときに実行される
     - (遅延させて、最後に実行される)
 
-7. main関数にInitDBとMigrateを呼び出すように記述し、アプリの開始時にデータベース接続を作成するようにする。
+#### 5-3-7. main関数にInitDBとMigrateを呼び出すように記述し、アプリの開始時にデータベース接続を作成するようにする。
 
 ```go: server.go
 func main() {
@@ -437,4 +476,78 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, router))
 
 }
+
 ```
+
+## 6. Create and Retrieve Links
+
+### 6-1. CreateLinks
+
+まず、アプリケーションとデータベースを繋げるリンクを作成するための関数が必要。
+`internal` ディレクトリに、linksとusersディレクトリを作成する。
+作成した2つのディレクトリが、データベースとアプリケーションのやり取りを行う階層となる。
+
+#### 6-1-1. usersディレクトリ
+
+```go: internal/users/users.go
+package users
+
+type User struct {
+  ID  string `json:"id"`
+  Username string `json:"name"`
+  Password string `json:"paddword"`
+}
+```
+
+#### 6-1-2. linksディレクトリ
+
+```go: internal/links/links.go
+package links
+
+import (
+
+	database "github.com/glyphack/go-graphql-hackernews/internal/pkg/db/mysql"
+	"github.com/glyphack/go-graphql-hackernews/internal/users"
+	"log"
+
+)
+
+// #1
+type Link struct {
+
+	ID      string
+	Title   string
+	Address string
+	User    *users.User
+
+}
+
+//#2
+func (link Link) Save() int64 {
+
+	//#3
+	stmt, err := database.Db.Prepare("INSERT INTO Links(Title,Address) VALUES(?,?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	//#4
+	res, err := stmt.Exec(link.Title, link.Address)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//#5
+	id, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal("Error:", err.Error())
+	}
+	log.Print("Row inserted!")
+	return id
+
+}
+```
+
+1. リンクを表す構造体の定義
+2. リンクをデータベースに挿入し、IDを返す関数を定義
+3. "INSERT INTO..."でリンクをLinksテーブルに挿入するSQLクエリ。`prepare`を使うとセキュリティやパフォーマンス向上に役立つ。
+4. SQL文の実行
+5. 挿入されたリンクのIDを取得する。
