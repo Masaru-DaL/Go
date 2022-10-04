@@ -35,6 +35,8 @@
     - [6-1. CreateLinks](#6-1-createlinks)
       - [6-1-1. usersディレクトリ](#6-1-1-usersディレクトリ)
       - [6-1-2. linksディレクトリ](#6-1-2-linksディレクトリ)
+      - [6-1-3. Save関数をCreateLinkリゾルバで使用する](#6-1-3-save関数をcreatelinkリゾルバで使用する)
+      - [6-1-4. ミューテーションの送信](#6-1-4-ミューテーションの送信)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -544,6 +546,7 @@ func (link Link) Save() int64 {
 	return id
 
 }
+
 ```
 
 1. リンクを表す構造体の定義
@@ -551,3 +554,46 @@ func (link Link) Save() int64 {
 3. "INSERT INTO..."でリンクをLinksテーブルに挿入するSQLクエリ。`prepare`を使うとセキュリティやパフォーマンス向上に役立つ。
 4. SQL文の実行
 5. 挿入されたリンクのIDを取得する。
+
+#### 6-1-3. Save関数をCreateLinkリゾルバで使用する
+
+```go: schema.resolvers.go
+func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
+  var link links.Link
+  link.Title = input.Title
+  link.Address = input.Address
+  linkID := link.Save()
+  return &model.Link{ID: strconv.FormatInt(linkID, 10), Title:link.Title, Address:link.Address}, nil
+}
+```
+
+このコードは、入力からリンクオブジェクトを作成してデータベースに保存し、新しく作成されたリンクを返している。(strconv. FormatIntでIDを文字列に変換している)
+
+#### 6-1-4. ミューテーションの送信
+
+```graphql:
+mutation create{
+  createLink(input: {title: "something", address: "somewhere"}){
+
+    title,
+    address,
+    id,
+
+  }
+}
+
+```
+
+- レスポンス
+
+```graphql:
+{
+  "data": {
+    "createLink": {
+      "title": "something",
+      "address": "somewhere",
+      "id": "1" // AutoIncrement
+    }
+  }
+}
+```
