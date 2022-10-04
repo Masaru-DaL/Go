@@ -250,9 +250,54 @@ mutation {
 
   }
 }
+
 ```
 
 `schema.resolvers.go` で実装したように、inputで入力した内容がinput.で記述した箇所と紐づき、デフォルト値(test)を設定した箇所はそれが返っている。
 **どういった内容でミューテーションが送られたか、その結果が返ってきている**。
 
 ## 5. Database
+
+GraphQLスキーマを実装するために、ユーザとリンクを保存するためのデータベースをセットアップする必要がある。
+
+* MySQLのセットアップ
+* MySQLデータベースの作成
+* モデルを定義し、マイグレーションを作成する
+
+### 5-1. Setup MySQL
+
+dockerでMySQLのイメージを使用する。
+
+ `docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=dbpass -e MYSQL_DATABASE=hackernews -d mysql:latest`
+
+`$ docker ps` でMySQLのイメージが起動しているのを確認する。
+
+### 5-2. Create MySQL database
+
+* hackernewsデータベースを作成する。
+
+1. MySQLのコンテナに入る
+ `$ docker exec -it mysql bash`
+
+2. rootユーザMySQLを使用する
+ `$ mysql -u root -p`
+
+3. rootのパスワードを入力
+"dbpass" (上で設定したもの)
+
+4. データベースの作成
+ `CREATE DATABASE hackernews;`
+
+### 5-3. Models and migrations
+
+アプリを実行する度に必要なテーブルを作成・適切に動作するために、マイグレーションを作成する必要がある。
+
+* マイグレーション
+  + テーブル・インデックス更新の自動化が行える。
+
+プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。
+
+```shell:
+$ tree
+
+```
