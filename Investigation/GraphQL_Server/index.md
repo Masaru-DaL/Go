@@ -295,9 +295,37 @@ dockerでMySQLのイメージを使用する。
 * マイグレーション
   + テーブル・インデックス更新の自動化が行える。
 
-プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。
+1. プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。
 
 ```shell:
 $ tree
 
 ```
+
+2. `go mysql driver`と`golang-migrate`パッケージをインストールし、migrationsを作成する。
+
+```shell:
+$ go get -u github.com/go-sql-driver/mysql
+$ go build -tags 'mysql' -ldflags="-X main. Version=1.0.0" -o $GOPATH/bin/migrate github.com/golang-migrate/migrate/v4/cmd/migrate/
+$ cd internal/pkg/db/migrations/
+$ migrate create -ext sql -dir mysql -seq create_users_table
+$ migrate create -ext sql -dir mysql -seq create_links_table
+
+```
+
+migrateコマンドは、マイグレーションごとに `.up` と `.down` で終わる2つのファイルを作成する。
+up -> マイグレーションを適用する役割
+down -> それを反転する役割
+
+3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。
+
+```sql:
+CREATE TABLE IF NOT EXISTS Users (
+  ID INT NOT NULL UNIQUE AUTO_INCREMENT,
+  Username VARCHAR (127) NOT NULL UNIQUE,
+  Password VARCHAR (127) NOT NULL,
+  PRIMARY KEY (ID)
+)
+```
+
+4.
