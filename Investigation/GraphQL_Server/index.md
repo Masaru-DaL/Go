@@ -215,4 +215,44 @@ func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink
   link. User = &user
   return &link, nil
 }
+
 ```
+
+2. `$ go run server.go`
+
+3. ミューテーションを使用して新しいリンクを作成する
+
+```graphql:
+mutation {
+  createLink(input: {title: "new link", address:"http://address.org"}) {
+    title,
+    user {
+      name
+    }
+    address
+  }
+}
+```
+
+4. GraphQLからのレスポンス
+
+```graphql:
+{
+  "data": {
+
+    "createLink": {
+      "title": "new link",
+      "user": {
+        "name": "test"
+      },
+      "address": "http://address.org"
+    }
+
+  }
+}
+```
+
+`schema.resolvers.go` で実装したように、inputで入力した内容がinput.で記述した箇所と紐づき、デフォルト値(test)を設定した箇所はそれが返っている。
+**どういった内容でミューテーションが送られたか、その結果が返ってきている**。
+
+## 5. Database
