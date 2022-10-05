@@ -1,6 +1,7 @@
 package users
 
 import (
+	"database/sql"
 	"log"
 
 	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
@@ -36,4 +37,24 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+// GetUserIdByUsername: 指定されたユーザ名でデータベースにユーザが存在するかどうかをチェックする
+func GetUserIdByUsername(username string) (int, error) {
+	statement, err := database.Db.Prepare("select ID from Users WHERE Username = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	row := statement.QueryRow(username)
+
+	var Id int
+	err = row.Scan(&Id)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return 0, err
+	}
+
+	return Id, nil
 }
