@@ -791,6 +791,7 @@ query {
 
   }
 }
+
 ```
 
 ## 7. Authentication
@@ -815,7 +816,63 @@ JWTトークンの生成とパースには、 `github.com/dgrijalva/jwt-go` ラ�
 
 ### 7-3. Generating and Parsing JWT Tokens
 
-アプリケーションのルートにpkgという新しいディレクトリを作成する。対してアプリケーションの内部でのみ使用したいものには `internal` を使用している。
-pkgディレクトリは、アプリケーションのどこにでもインポートできるファイルのためのもの。JWT生成スクリプトや検証スクリプトがこれに該当する。
+アプリケーションのルートにpkgという新しいディレクトリを作成する。pkgディレクトリは、アプリケーションのどこにでもインポートできるファイルのためのもの。JWT生成スクリプトや検証スクリプトがこれに該当する。
+
+対してアプリケーションの内部でのみ使用したいものには `internal` を使用している。
 
 **クレーム**と呼ばれる概念があることを覚えておく。
+
+```go: pkg/jwt/jwt.go
+package jwt
+
+import (
+	"log"
+	"time"
+
+	"github.com/form3tech-oss/jwt-go"
+)
+
+// 秘密鍵
+var (
+	SecretKey = []byte("secret")
+)
+
+// GenerateTokenはjwtトークンを生成する
+// そのclaimにユーザ名を割り当てて、返す
+func GenerateToken(username string) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	/* クレームを保存するためのマップを作成する */
+	claims := token.Claims.(jwt.MapClaims)
+	/* クレーム・トークンを設定する */
+	claims["username"] = username
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	tokenString, err := token.SignedString(SecretKey)
+	if err != nil {
+		log.Fatal("Error in Generating key")
+		return "", err
+	}
+	return tokenString, nil
+}
+
+// ParseTokenはjwtトークンを解析し、ユーザ名を返す
+func ParseToken(tokenStr string) (string, error) {
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		return SecretKey, nil
+	})
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		username := claims["username"].(string)
+		return username, nil
+	} else {
+		return "", err
+	}
+}
+
+```
+
+* GenerateToken関数
+あるユーザのトークンを生成したい時に使用される。
+トークン・クーレムにユーザ名を保存し、トークンの有効期限を24時間後に設定する。
+
+* ParseToken関数
+トークンを受け取り、誰がリクエストを送信したかを知りたい時に使用する。
