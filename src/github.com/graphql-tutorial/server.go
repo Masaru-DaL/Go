@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"graphql-tutorial/graph"
-	"graphql-tutorial/graph/generated"
-	database "graphql-tutorial/internal/pkg/db/mysql"
+	"github.com/graphql-tutorial/graph"
+	"github.com/graphql-tutorial/graph/generated"
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
