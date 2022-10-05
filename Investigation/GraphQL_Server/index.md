@@ -463,11 +463,12 @@ package database
 import (
 
 	"database/sql"
+	"log"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
-	"log"
 
 )
 
@@ -482,9 +483,7 @@ func InitDB() {
 	}
 
 	if err = db.Ping(); err != nil {
-
- 		log. Panic(err)
-
+		log.Panic(err)
 	}
 	Db = db
 
@@ -530,9 +529,29 @@ func Migrate() {
 
 #### 5-3-7. main関数にInitDBとMigrateを呼び出すように記述し、アプリの開始時にデータベース接続を作成するようにする。
 
-```go: server.go
-func main() {
+ここめっちゃハマりました。
+どうにもエラーが出まくるので公式のGitHubを参考にして導線通りのコードじゃなありませんが、動いたコード貼っておきます。
 
+```go: server.go
+package main
+
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/graphql-tutorial/graph"
+	"github.com/graphql-tutorial/graph/generated"
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
+)
+
+const defaultPort = "8080"
+
+func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
@@ -543,13 +562,12 @@ func main() {
 	database.InitDB()
 	defer database.CloseDB()
 	database.Migrate()
-	server := handler.NewDefaultServer(hackernews.NewExecutableSchema(hackernews.Config{Resolvers: &hackernews.Resolver{}}))
+	server := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", server)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
-
 }
 
 ```
@@ -584,26 +602,22 @@ type User struct {
 package links
 
 import (
-
-	database "github.com/glyphack/go-graphql-hackernews/internal/pkg/db/mysql"
-	"github.com/glyphack/go-graphql-hackernews/internal/users"
 	"log"
 
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+	"github.com/graphql-tutorial/internal/users"
 )
 
 // #1
 type Link struct {
-
 	ID      string
 	Title   string
 	Address string
 	User    *users.User
-
 }
 
-//#2
+// #2
 func (link Link) Save() int64 {
-
 	//#3
 	stmt, err := database.Db.Prepare("INSERT INTO Links(Title,Address) VALUES(?,?)")
 	if err != nil {
@@ -621,7 +635,6 @@ func (link Link) Save() int64 {
 	}
 	log.Print("Row inserted!")
 	return id
-
 }
 
 ```
@@ -648,6 +661,9 @@ func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink
 このコードは、入力からリンクオブジェクトを作成してデータベースに保存し、新しく作成されたリンクを返している。(strconv. FormatIntでIDを文字列に変換している)
 
 #### 6-1-4. ミューテーションの送信
+
+この時点で明らかにエラーが出てサーバに繋がりませんでした。
+インポートのパスとかを見直す事と、`server.go`のコード自体が違うんじゃないかなという所でした。[完成形のコード](https://github.com/howtographql/graphql-golang)の`server.go`を入れて、インポートパスを調整して何とかサーバを起動させる事が出来ました。
 
 ```graphql:
 mutation create{
