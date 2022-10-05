@@ -106,7 +106,7 @@ GraphQL APIに新しい機能を追加する必要がある場合は、スキー
 
 * 上述を満たすように、スキーマの定義を行う
 
-```go: graph/schema.graphqls
+```graphqls: graph/schema.graphqls
 type Link {
   id: ID!
   title: String!
@@ -198,7 +198,7 @@ func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
 #### 3-1-3. GraphQLサーバにQueryを送る
 
 ```graphql:
-Query {
+query {
   links {
 
     title,
