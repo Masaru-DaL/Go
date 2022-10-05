@@ -979,6 +979,8 @@ func GetUserIdByUsername(username string) (int, error) {
 また、リゾルバにリクエストが来るたびに、どのユーザがリクエストを送ったかを知る必要がある。これを実現するためには、**リクエストがリゾルバに到達する前に実行されるミドルウェアを書かなければならない**。
 このミドルウェアは、送られてきたリクエストからユーザを解決し、それをリゾルバに渡す。
 
+以下のコードでミドルウェアをサーバで使用できるようになる。
+
 ```go: internal/auth/middleware.go
 package auth
 
@@ -1040,4 +1042,53 @@ func ForContext(ctx context.Context) *users.User {
 	return raw
 }
 
+```
+
+* ミドルウェアを使用するよう、server.goに反映させる。
+
+```go: server.go
+package main
+
+import (
+
+	"log"
+
+	"net/http"
+	"os"
+
+	"github.com/graphql-tutorial/graph"
+	"github.com/graphql-tutorial/graph/generated"
+	"github.com/graphql-tutorial/internal/auth"
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
+
+)
+
+const defaultPort = "8080"
+
+func main() {
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	router := chi.NewRouter()
+
+	router.Use(auth.Middleware())
+
+	database.InitDB()
+	defer database.CloseDB()
+	database.Migrate()
+	server := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", server)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, router))
+
+}
 ```
