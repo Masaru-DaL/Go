@@ -46,6 +46,7 @@
     - [7-2. Setup](#7-2-setup)
     - [7-3. Generating and Parsing JWT Tokens](#7-3-generating-and-parsing-jwt-tokens)
     - [7-4. User SignUP and Login Functionality](#7-4-user-signup-and-login-functionality)
+    - [7-5. Authentication Middleware](#7-5-authentication-middleware)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -890,6 +891,7 @@ func ParseToken(tokenStr string) (string, error) {
 package users
 
 import (
+	"database/sql"
 
 	"log"
 
@@ -938,4 +940,40 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 
 }
+
+// GetUserIdByUsername: 指定されたユーザ名でデータベースにユーザが存在するかどうかをチェックする
+func GetUserIdByUsername(username string) (int, error) {
+
+	statement, err := database.Db.Prepare("select ID from Users WHERE Username = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	row := statement.QueryRow(username)
+
+	var Id int
+	err = row.Scan(&Id)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return 0, err
+	}
+
+	return Id, nil
+
+}
+
 ```
+
+* 認証に関するコードの分解(GetUserIdByUsername関数)
+この関数は、認証ミドルウェアでユーザ名を持つユーザオブジェクトを取得するために使用する。
+
+1. usersテーブルからパスワードを選択するクエリを作成する。
+2. Execの代わりにQueryRowを使用しているが、QueryRow()は、sql.Row.Scanへの**ポインタを返す**という違いがある。
+3. `.Scan`メソッドを使用して、データベースからハッシュ化したパスワードを`hashedPassword`変数に代入している。(パスワードをそのままデータベースに保存することはない)
+4. **指定されたユーザ名を持つユーザが存在するかチェックする**。一致するものがいなければfalseを返す。一致するユーザがいた場合、与えられたハッシュ化する前のパスワードでユーザのhashedPasswordをチェックする。
+
+### 7-5. Authentication Middleware
+
+また、リゾルバにリクエストが来るたびに、どのユーザがリクエストを送ったかを知る必要がある。これを実現するためには、**リクエストがリゾルバに到達する前に実行されるミドルウェアを書かなければならない**。
+このミドルウェアは、送られてきたリクエストからユーザを解決し、それをリゾルバに渡す。
