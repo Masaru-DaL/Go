@@ -416,6 +416,10 @@ CREATE TABLE IF NOT EXISTS Links(
 
  `$ migrate -database mysql://root:dbpass@/hackernews -path internal/pkg/db/migrations/mysql up`
 
+->
+`1/u create_users_table (43.049791ms)`
+`2/u create_links_table (78.876041ms)`
+
 #### 5-3-6. データベースの接続を行う。
 
 今回はMySQLを使用するので、mysqlフォルダの下にデータベースへの接続を初期化する関数を作成する。
