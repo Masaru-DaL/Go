@@ -45,6 +45,7 @@
     - [7-1. JWT: Json Web Token](#7-1-jwt-json-web-token)
     - [7-2. Setup](#7-2-setup)
     - [7-3. Generating and Parsing JWT Tokens](#7-3-generating-and-parsing-jwt-tokens)
+    - [7-4. User SignUP and Login Functionality](#7-4-user-signup-and-login-functionality)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -876,3 +877,10 @@ func ParseToken(tokenStr string) (string, error) {
 
 * ParseToken関数
 トークンを受け取り、誰がリクエストを送信したかを知りたい時に使用する。
+
+**ここまでで、各ユーザのトークンを生成することが出来る。**
+
+### 7-4. User SignUP and Login Functionality
+
+各ユーザのトークンを生成する前に、そのユーザがデータベースに存在(登録)されていることを確認する必要がある。
+これを行うには**データベースに問い合わせをして、与えられたユーザ名とパスワードをユーザにマッチさせれば良い**。そのために、ユーザが登録しようとした時に、その**ユーザ名とパスワードをデータベースに保存する**必要がある。
