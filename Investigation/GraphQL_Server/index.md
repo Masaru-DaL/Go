@@ -346,7 +346,26 @@ dockerでMySQLのイメージを使用する。
 
 ```shell:
 $ tree
+.
+├── go.mod
+├── go.sum
+├── gqlgen.yml
+├── graph
+│   ├── generated
+│   │   └── generated.go
+│   ├── model
+│   │   └── models_gen.go
+│   ├── resolver.go
+│   ├── schema.graphqls
+│   └── schema.resolvers.go
+├── internal
+│   └── pkg
+│       └── db
+│           └── migrations
+│               └── mysql
+└── server.go
 
+8 directories, 9 files
 ```
 
 #### 5-3-2. `go mysql driver` と `golang-migrate` パッケージをインストールし、migrationsを作成する。
