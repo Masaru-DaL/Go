@@ -464,6 +464,7 @@ package database
 import (
 
 	"database/sql"
+
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -884,3 +885,57 @@ func ParseToken(tokenStr string) (string, error) {
 
 各ユーザのトークンを生成する前に、そのユーザがデータベースに存在(登録)されていることを確認する必要がある。
 これを行うには**データベースに問い合わせをして、与えられたユーザ名とパスワードをユーザにマッチさせれば良い**。そのために、ユーザが登録しようとした時に、その**ユーザ名とパスワードをデータベースに保存する**必要がある。
+
+```go: internal/users/users.go
+package users
+
+import (
+
+	"log"
+
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+	"golang.org/x/crypto/bcrypt"
+
+)
+
+type User struct {
+
+	ID       string `json:"id"`
+
+	Username string `json:"name"`
+
+	Password string `json:"password"`
+
+}
+
+func (user *User) Create() {
+
+	statement, err := database.Db.Prepare("INSERT INTO Users(Username,Password) VALUES(?,?)")
+	print(statement)
+	if err != nil {
+		log.Fatal(err)
+	}
+	hashedPassword, err := HashPassword(user.Password)
+	_, err = statement.Exec(user.Username, hashedPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+// HashPassword関数: 与えられたパスワードをハッシュ化する
+func HashPassword(password string) (string, error) {
+
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+
+}
+
+// CheckPassword: 生のパスワードとハッシュ化された値を比較する
+func CheckPasswordHash(password, hash string) bool {
+
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+
+}
+```
