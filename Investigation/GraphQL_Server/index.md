@@ -26,7 +26,7 @@
     - [5-3. Models and migrations](#5-3-models-and-migrations)
       - [5-3-1. プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。](#5-3-1-プロジェクトのルートディレクトリにデータベースファイルのためのフォルダ構造を作成する)
       - [5-3-2. `go mysql driver` と `golang-migrate` パッケージをインストールし、migrationsを作成する。](#5-3-2-go-mysql-driver-と-golang-migrate-パッケージをインストールしmigrationsを作成する)
-      - [5-3-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。](#5-3-3-000001_create_users_tableupsqにユーザ用のテーブルを追加する)
+      - [5-3-3. `000001_create_users_table.up.sq` に、ユーザ用のテーブルを追加する。](#5-3-3-000001_create_users_tableupsq-にユーザ用のテーブルを追加する)
       - [5-3-4. `000002_create_links_table.up.sql` に、リンク用のテーブルを追加する。](#5-3-4-000002_create_links_tableupsql-にリンク用のテーブルを追加する)
       - [5-3-5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。](#5-3-5-3-4で設定した内容を反映させそれぞれのテーブルを作成するmigrateコマンドで行う)
       - [5-3-6. データベースの接続を行う。](#5-3-6-データベースの接続を行う)
@@ -66,7 +66,17 @@ GraphQL APIに新しい機能を追加する必要がある場合は、スキー
 
 ### 2-1. Project Setup
 
-1. `$ go mod init github.com/[username]/hackernews`
+* GOPATH以下で
+
+```shell:
+src
+└──github.com
+
+    └──graphql-tutorial
+
+```
+
+1. `$ go mod init github.com/graphql-tutorial`
 2. `$ go get github.com/99designs/gqlgen`
 3. `$ go run github.com/99designs/gqlgen init`
 
@@ -182,6 +192,7 @@ GraphQLのクエリとは、**データを要求するもの**。
 
 ```go: schema.resolvers.go
 func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
+
     var links []*model.Link
     dummyLink := model.Link{
         Title: "our dummy link",
@@ -190,7 +201,9 @@ func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
     }
     links = append(links, &dummyLink)
     return links, nil
+
 }
+
 ```
 
 #### 3-1-2. `$ go run server.go`
@@ -217,6 +230,7 @@ query {
 ```graphql:
 {
   "data": {
+
     "links": [
       {
         "title": "our dummy link",
@@ -226,8 +240,10 @@ query {
         }
       }
     ]
+
   }
 }
+
 ```
 
 `resolvers.go` に実装することで、クエリを投げた際にその項目がレスポンスされるその方法が分かった。ここまではあくまでもダミーのレスポンスなので、実際にやりたいことは**他のユーザのリンクを全て照会できるようにしたい**。
@@ -272,13 +288,16 @@ func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink
 ```graphql:
 mutation {
   createLink(input: {title: "new link", address:"http://address.org"}) {
+
     title,
     user {
       name
     }
     address
+
   }
 }
+
 ```
 
 #### 4-2-4. GraphQLからのレスポンス
@@ -359,13 +378,24 @@ $ tree
 │   ├── schema.graphqls
 │   └── schema.resolvers.go
 ├── internal
-│   └── pkg
-│       └── db
-│           └── migrations
-│               └── mysql
+│   ├── links
+│   │   └── links.go
+│   ├── pkg
+│   │   └── db
+│   │       ├── migrations
+│   │       │   └── mysql
+│   │       │       ├── 000001_create_users_table.down.sql
+│   │       │       ├── 000001_create_users_table.up.sql
+│   │       │       ├── 000002_create_links_table.down.sql
+│   │       │       └── 000002_create_links_table.up.sql
+│   │       └── mysql
+│   │           └── mysql.go
+│   └── users
+│       └── users.go
 └── server.go
 
-8 directories, 9 files
+11 directories, 16 files
+
 ```
 
 #### 5-3-2. `go mysql driver` と `golang-migrate` パッケージをインストールし、migrationsを作成する。
@@ -383,15 +413,16 @@ migrateコマンドは、マイグレーションごとに `.up` と `.down` で
 up -> マイグレーションを適用する役割
 down -> それを反転する役割
 
-#### 5-3-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。
+#### 5-3-3. `000001_create_users_table.up.sq` に、ユーザ用のテーブルを追加する。
 
 ```sql:
 CREATE TABLE IF NOT EXISTS Users (
-  ID INT NOT NULL UNIQUE AUTO_INCREMENT,
-  Username VARCHAR (127) NOT NULL UNIQUE,
-  Password VARCHAR (127) NOT NULL,
+  ID INT NOT NULL UNIQUE AUTO_INCREMENT, 
+  Username VARCHAR (127) NOT NULL UNIQUE, 
+  Password VARCHAR (127) NOT NULL, 
   PRIMARY KEY (ID)
 )
+
 ```
 
 #### 5-3-4. `000002_create_links_table.up.sql` に、リンク用のテーブルを追加する。
@@ -417,8 +448,9 @@ CREATE TABLE IF NOT EXISTS Links(
  `$ migrate -database mysql://root:dbpass@/hackernews -path internal/pkg/db/migrations/mysql up`
 
 ->
-`1/u create_users_table (43.049791ms)`
-`2/u create_links_table (78.876041ms)`
+ `1/u create_users_table (43.049791ms)`
+
+ `2/u create_links_table (78.876041ms)`
 
 #### 5-3-6. データベースの接続を行う。
 
@@ -429,17 +461,20 @@ CREATE TABLE IF NOT EXISTS Links(
 package database
 
 import (
+
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
 	"log"
+
 )
 
-var Db *sql.DB
+var Db *sql. DB
 
 func InitDB() {
+
 	// Use root:dbpass@tcp(172.17.0.2)/hackernews, if you're using Windows.
 	db, err := sql.Open("mysql", "root:dbpass@tcp(localhost)/hackernews")
 	if err != nil {
@@ -447,16 +482,22 @@ func InitDB() {
 	}
 
 	if err = db.Ping(); err != nil {
- 		log.Panic(err)
+
+ 		log. Panic(err)
+
 	}
 	Db = db
+
 }
 
 func CloseDB() error {
+
 	return Db.Close()
+
 }
 
 func Migrate() {
+
 	if err := Db.Ping(); err != nil {
 		log.Fatal(err)
 	}
@@ -471,6 +512,7 @@ func Migrate() {
 	}
 
 }
+
 ```
 
 * InitDB関数
@@ -527,9 +569,13 @@ package users
 
 type User struct {
   ID  string `json:"id"`
+
   Username string `json:"name"`
+
   Password string `json:"paddword"`
+
 }
+
 ```
 
 #### 6-1-2. linksディレクトリ
@@ -589,13 +635,14 @@ func (link Link) Save() int64 {
 #### 6-1-3. Save関数をCreateLinkリゾルバで使用する
 
 ```go: schema.resolvers.go
-func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
-  var link links.Link
-  link.Title = input.Title
-  link.Address = input.Address
-  linkID := link.Save()
-  return &model.Link{ID: strconv.FormatInt(linkID, 10), Title:link.Title, Address:link.Address}, nil
+func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink) (*model. Link, error) {
+  var link links. Link
+  link. Title = input. Title
+  link. Address = input. Address
+  linkID := link. Save()
+  return &model. Link{ID: strconv. FormatInt(linkID, 10), Title:link. Title, Address:link. Address}, nil
 }
+
 ```
 
 このコードは、入力からリンクオブジェクトを作成してデータベースに保存し、新しく作成されたリンクを返している。(strconv. FormatIntでIDを文字列に変換している)
@@ -615,18 +662,21 @@ mutation create{
 
 ```
 
-- レスポンス
+* レスポンス
 
 ```graphql:
 {
   "data": {
+
     "createLink": {
       "title": "something",
       "address": "somewhere",
       "id": "1" // AutoIncrement
     }
+
   }
 }
+
 ```
 
 ### 6-2. links Query
@@ -687,9 +737,11 @@ func (r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
   for _, link := range dbLinks {
 
     resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title:link.Title, Address:link.Address})
+
   }
   return resultLinks, nil
 }
+
 ```
 
 #### 6-2-3. Queryの送信
@@ -707,11 +759,12 @@ query {
 
 ```
 
-- レスポンス
+* レスポンス
 
 ```graphql:
 {
   "data": {
+
     "links": [
       {
         "title": "something",
@@ -719,6 +772,7 @@ query {
         "id": "1"
       }
     ]
+
   }
 }
 ```
