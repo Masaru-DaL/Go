@@ -49,6 +49,7 @@
     - [7-5. Authentication Middleware](#7-5-authentication-middleware)
   - [8. Auth Endpoints](#8-auth-endpoints)
     - [8-1. CreateUser](#8-1-createuser)
+    - [8-2. Login](#8-2-login)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -1112,4 +1113,56 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) 
 }
 ```
 
-このミューテーションは、与えられたユーザ名とパスワードを使ってユーザを作成し、
+このミューテーションは、与えられたユーザ名とパスワードを使ってユーザを作成し、そのユーザのトークンを生成して、リクエストの中でユーザを認識できるようにする。
+
+* ミューテーションの送信
+
+```graphql:
+mutation {
+  createUser(input: {username: "user1", password: "123"})
+}
+
+```
+
+- レスポンス
+
+```graphql:
+{
+  "data": {
+    "createUser": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjUxMDI1MDAsInVzZXJuYW1lIjoidXNlcjEifQ.Sd94XEJSft9mrNbCZ8N6G7rUVq7oRuHMvVV0OJ7EPYQ"
+  }
+}
+```
+
+無事、最初のユーザが作成されました！
+
+### 8-2. Login
+
+このミューテーションのために、まず**ユーザがデータベースに存在し、与えられたパスワードが正しいかどうかを確認する**必要がある。
+そして、ユーザのためのトークンを生成し、それをユーザに返す。
+
+```go: internal/users/users.go
+func (user *User) Authenticate() bool {
+
+	statement, err := database.Db.Prepare("select Password from Users WHERE Username = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	row := statement.QueryRow(user.Username)
+
+	var hashedPassword string
+	err = row.Scan(&hashedPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		} else {
+			log.Fatal(err)
+		}
+	}
+
+	return CheckPasswordHash(user.Password, hashedPassword)
+
+}
+```
+
+与えられたユーザ名でユーザを選択肢、与えられたパスワードのハッシュがデータベースに保存されたハッシュ化されたパスワードと等しいかどうかをチェックする。
