@@ -51,6 +51,7 @@
     - [8-1. CreateUser](#8-1-createuser)
     - [8-2. Login](#8-2-login)
     - [8-3. Refresh Token](#8-3-refresh-token)
+  - [9. Logged in User](#9-logged-in-user)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -1201,6 +1202,7 @@ func (m *WrongUsernameOrPasswordError) Error() string {
 	return "wrong username or password"
 
 }
+
 ```
 
 ※Goでカスタムエラーを定義するには、Errorメソッドを実装した構造体が必要。
@@ -1212,3 +1214,19 @@ func (m *WrongUsernameOrPasswordError) Error() string {
 
 例えば、ユーザがアプリにログインした後、トークンが設定した時間で失効してしまうとする。1つの解決策は、**期限切れになるトークンを取得するエンドポイントを用意し、そのユーザのために新しいトークンを再生成して、アプリが新しいトークンを使用できるようにすること**です。
 つまり、エンドポイントはトークンを受け取り、ユーザ名をパースして、そのユーザ名のための新しいトークンを生成する必要がある。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error) {
+	username, err := jwt.ParseToken(input.Token)
+	if err != nil {
+		return "", fmt.Errorf("access denied")
+	}
+	token, err := jwt.GenerateToken(username)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+```
+
+## 9. Logged in User
