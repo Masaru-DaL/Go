@@ -20,13 +20,13 @@ func Middleware() func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			header := r.Header.Get("Authorization")
 
-			// Allow unauthenticated users in
+			// 未認証のユーザを許可する
 			if header == "" {
 				next.ServeHTTP(w, r)
 				return
 			}
 
-			//validate jwt token
+			// jwtトークンの有効化
 			tokenStr := header
 			username, err := jwt.ParseToken(tokenStr)
 			if err != nil {
@@ -34,7 +34,7 @@ func Middleware() func(http.Handler) http.Handler {
 				return
 			}
 
-			// create user and check if user exists in db
+			// ユーザを作成し、データベース内にユーザが存在するかどうかをチェックする
 			user := users.User{Username: username}
 			id, err := users.GetUserIdByUsername(username)
 			if err != nil {
@@ -42,17 +42,17 @@ func Middleware() func(http.Handler) http.Handler {
 				return
 			}
 			user.ID = strconv.Itoa(id)
-			// put it in context
+			// コンテキストに入れる
 			ctx := context.WithValue(r.Context(), userCtxKey, &user)
 
-			// and call the next with our new context
+			// そして、新しいコンテキストで次を呼び出す
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 		})
 	}
 }
 
-// ForContext finds the user from the context. REQUIRES Middleware to have run.
+// ForContext: コンテキストからユーザを見つける。ミドルウェアが動作している必要がある。
 func ForContext(ctx context.Context) *users.User {
 	raw, _ := ctx.Value(userCtxKey).(*users.User)
 	return raw

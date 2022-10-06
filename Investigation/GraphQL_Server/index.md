@@ -50,6 +50,7 @@
   - [8. Auth Endpoints](#8-auth-endpoints)
     - [8-1. CreateUser](#8-1-createuser)
     - [8-2. Login](#8-2-login)
+    - [8-3. Refresh Token](#8-3-refresh-token)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -1163,6 +1164,51 @@ func (user *User) Authenticate() bool {
 	return CheckPasswordHash(user.Password, hashedPassword)
 
 }
+
 ```
 
+- Authenticate関数
 与えられたユーザ名でユーザを選択肢、与えられたパスワードのハッシュがデータベースに保存されたハッシュ化されたパスワードと等しいかどうかをチェックする。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
+	var user users.User
+	user.Username = input.Username
+	user.Password = input.Password
+	correct := user.Authenticate()
+	if !correct {
+		// 1
+		return "", &users.WrongUsernameOrPasswordError{}
+	}
+	token, err := jwt.GenerateToken(user.Username)
+	if err != nil{
+		return "", err
+	}
+	return token, nil
+}
+```
+
+* Login
+Authenticate関数を使用して、ユーザ名とパスワードが正しい場合は、新しいユーザトークンを返し、正しくない場合はエラー(&users. WrongUsernameOrPasswordError)を返す。以下でこのエラーに対する実装する。
+
+```go: internal/users/errors.go
+package users
+
+type WrongUsernameOrPasswordError struct{}
+
+func (m *WrongUsernameOrPasswordError) Error() string {
+
+	return "wrong username or password"
+
+}
+```
+
+※Goでカスタムエラーを定義するには、Errorメソッドを実装した構造体が必要。
+ここでは、Error()メソッドでユーザ名やパスワードの間違いに対するエラーを定義する。その場合、もう一度作成したユーザ名とパスワードでログインし、トークンを取得する事ができる。
+
+### 8-3. Refresh Token
+
+認証システムを完成させるために必要な、最後のエンドポイント。
+
+例えば、ユーザがアプリにログインした後、トークンが設定した時間で失効してしまうとする。1つの解決策は、**期限切れになるトークンを取得するエンドポイントを用意し、そのユーザのために新しいトークンを再生成して、アプリが新しいトークンを使用できるようにすること**です。
+つまり、エンドポイントはトークンを受け取り、ユーザ名をパースして、そのユーザ名のための新しいトークンを生成する必要がある。
