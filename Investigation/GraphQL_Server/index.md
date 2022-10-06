@@ -47,6 +47,8 @@
     - [7-3. Generating and Parsing JWT Tokens](#7-3-generating-and-parsing-jwt-tokens)
     - [7-4. User SignUP and Login Functionality](#7-4-user-signup-and-login-functionality)
     - [7-5. Authentication Middleware](#7-5-authentication-middleware)
+  - [8. Auth Endpoints](#8-auth-endpoints)
+    - [8-1. CreateUser](#8-1-createuser)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -1091,4 +1093,23 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, router))
 
 }
+
 ```
+
+## 8. Auth Endpoints
+
+### 8-1. CreateUser
+
+Authセクションで書いた関数を使って、CreateUserのミューテーションの実装を行う。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
+	var link links.Link
+	link.Title = input.Title
+	link.Address = input.Address
+	linkID := link.Save()
+	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address}, nil
+}
+```
+
+このミューテーションは、与えられたユーザ名とパスワードを使ってユーザを作成し、
