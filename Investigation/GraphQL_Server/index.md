@@ -1381,3 +1381,5 @@ mutation {
   "Authorization": "" // use your own generated token
 }
 ```
+
+ここにCreateUserで作成した際に発行されたトークンを入れるとレスポンスが返ってくる！
