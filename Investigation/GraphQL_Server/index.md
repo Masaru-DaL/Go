@@ -52,6 +52,7 @@
     - [8-2. Login](#8-2-login)
     - [8-3. Refresh Token](#8-3-refresh-token)
   - [9. Logged in User](#9-logged-in-user)
+    - [9-1. Finished](#9-1-finished)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -1230,3 +1231,153 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 ```
 
 ## 9. Logged in User
+
+以前作成したCreateLinkミューテーションは、当時ユーザを認証する事ができなかったので、不完全なままだったので、そこを完全なものにする。
+
+今ある機能で、AuthorizationHTTPヘッダをチェックすることで、ユーザがログインしているかどうかをチェックすることができる。認証ミドルウェアでやった事を使えば、ctx引数を使ってリゾルバでユーザを取得することができる。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink) (*model. Link, error) {
+
+	// 1
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return &model.Link{}, fmt.Errorf("access denied")
+	}
+
+	// 2
+	var link links.Link
+	link.Title = input.Title
+	link.Address = input.Address
+	link.User = user
+	linkID := link.Save()
+	graphqlUser := &model.User{
+		ID:   user.ID,
+		Name: user.Username,
+	}
+	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address, User: graphqlUser}, nil
+
+}
+
+```
+
+1. ctxからuserオブジェクトを取得し、userが設定されていない場合、access deniedというメッセージでエラーを返す。
+2. 次に、そのリンクのユーザを、リンクの作成を要求しているユーザと同じに設定します。
+
+* そして、リンクのクエリを編集して、DBからユーザを取得する。
+
+```go: schema.resolvers.go
+func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
+	var resultLinks []*model.Link
+	var dbLinks []links.Link
+	dbLinks = links.GetAll()
+	for _, link := range dbLinks {
+		graphqlUser := &model.User{
+			ID:   link.User.ID,
+			Name: link.User.Username,
+		}
+		resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title: link.Title, Address: link.Address, User: graphqlUser})
+	}
+	return resultLinks, nil
+}
+```
+
+あとは、リンクを作成するためのデータベース操作で、挿入したリンクからそのユーザへの外部キーを作成する必要がある。
+
+* saveメソッド
+
+```go: internal/links/links.go
+stmt, err := database. Db. Prepare("INSERT INTO Links(Title, Address, UserID) VALUES(?, ?, ?)")
+
+```
+
+- クエリを実行する行を追加(saveメソッド内)
+
+```go: internal/links/links.go
+res, err := stmt.Exec(link.Title, link.Address, link.User.ID)
+```
+
+* GetAll関数
+LinksテーブルとUsersテーブルを結合する。
+
+```go: internal/links/link.go
+func GetAll() []Link {
+
+	stmt, err := database.Db.Prepare("select L.id, L.title, L.address, L.UserID, U.Username from Links L inner join Users U on L.UserID = U.ID") // changed
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	var links []Link
+	var username string
+	var id string
+	for rows.Next() {
+		var link Link
+		err := rows.Scan(&link.ID, &link.Title, &link.Address, &id, &username) // changed
+		if err != nil{
+			log.Fatal(err)
+		}
+		link.User = &users.User{
+			ID:       id,
+			Username: username,
+		} // changed
+		links = append(links, link)
+	}
+	if err = rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return links
+
+}
+
+```
+
+### 9-1. Finished
+
+アプリケーションの完成！
+ `$ go run serve.go`
+
+- ミューテーションの送信(リンクの作成)
+
+```go:
+mutation {
+  createLink(input: {title: "real link!", address: "www.graphql.org"}){
+    user{
+      name
+    }
+  }
+}
+```
+
+* レスポンス
+
+```json:
+{
+  "errors": [
+
+    {
+      "message": "access denied",
+      "path": [
+        "createLink"
+      ]
+    }
+
+  ], 
+  "data": null
+}
+
+```
+
+今試すと、アクセス拒否のメッセージが表示される。
+そのため、Authorizationヘッダを設定する必要がある。
+
+```go:
+{
+  "Authorization": "" // use your own generated token
+}
+```
