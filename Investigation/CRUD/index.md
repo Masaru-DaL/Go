@@ -88,3 +88,33 @@ volumes:
 * bind
   + コンテナファイルとホストのディレクトリをバインドマウントする
   + `.sh`がコンテナ後に自動実行される
+
+#### 1-1-4. .env_mysql
+
+```env:
+MYSQL_DATABASE=test_database
+MYSQL_USER=test_user
+MYSQL_PASSWORD=pass
+MYSQL_ROOT_PASSWORD=root
+```
+
+環境変数の記述。
+
+#### 1-1-5. create_table.sh
+
+```shell:
+#!/bin/sh
+
+CMD_MYSQL="mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}"
+$CMD_MYSQL -e "create table article (
+  id int(10) AUTO_INCREMENT NOT NULL primary key, 
+  title varchar(50) NOT NULL, 
+  body varchar(1000)
+  ); "
+$CMD_MYSQL -e "insert into article values (1, '記事1', '記事1です。'); "
+$CMD_MYSQL -e "insert into article values (2, '記事2', '記事2です。'); "
+```
+
+自動的に実行される。
+`${環境変数名}` で、env_fileに記述した環境変数を読み込める。
+articleという名前のテーブルを作成し、データを2つ挿入する。
