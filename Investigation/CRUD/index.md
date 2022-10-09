@@ -118,3 +118,17 @@ $CMD_MYSQL -e "insert into article values (2, '記事2', '記事2です。'); "
 自動的に実行される。
 `${環境変数名}` で、env_fileに記述した環境変数を読み込める。
 articleという名前のテーブルを作成し、データを2つ挿入する。
+
+#### 1-1-6. 実行
+
+1. initディレクトリ以下のアクセス権限をchmodコマンドで変更する。
+ `chmod a+x ./init/*.sh`
+
+2. フォアグラウンドで実行
+ `docker compose up`
+
+3. コンテナに入る
+ `docker exec -it db bash`
+
+4. mysqlの使用
+ `mysql mysql -utest_user -ppass test_database`
