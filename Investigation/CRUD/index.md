@@ -44,3 +44,47 @@ ENV LANG ja_JP.UTF-8
 ベースイメージ: mysql8.0
 
 #### 1-1-3. docker-compose.yml
+
+```yml: docker-compose.yml
+version: "3.8"
+
+services: # アプリケーションを動かす各要素
+  db: # サービスとして定義
+
+    container_name: db  # 任意
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    tty: true
+    ports:
+
+      - 3306:3306
+    env_file:
+
+      - ./.env_mysql
+    volumes:
+
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
+
+      - type: bind
+        source: ./init
+        target: /docker-entrypoint-initdb.d
+
+volumes:
+  mysql-data:
+
+    name: mysql-volume
+
+```
+
+* env_file
+  + 指定したファイルの環境変数をコンテナ内で参照可能
+* volumes
+  + コンテナのデータを永続化
+  + Dockerのボリュームとコンテナを紐づける
+* bind
+  + コンテナファイルとホストのディレクトリをバインドマウントする
+  + `.sh`がコンテナ後に自動実行される
