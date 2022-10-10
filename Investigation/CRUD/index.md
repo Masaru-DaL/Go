@@ -244,3 +244,207 @@ func main() {
 1. `$ docker compose up reload_test`
 2. `http://localhost:8080`にアクセス
 3. Hello Normalが表示される。
+
+#### 1-2-6. main.goの変更・リロードの挙動の確認
+
+```go: main.go
+package main
+
+import (
+
+	"fmt"
+	"net/http"
+
+)
+
+func helloHandler(w http. ResponseWriter, r *http. Request) {
+
+	fmt.Fprintf(w, "<h1>Hello Normal Update</h1>")
+
+}
+
+func main() {
+
+	http.HandleFunc("/", helloHandler)
+	http.ListenAndServe(":8080", nil)
+
+}
+
+```
+
+ブラウザをリロードしてもHello Normalのまま。
+
+`$ docker compose restart`
+ブラウザを更新すると、Hello Normal Updateと表示された。
+
+#### 1-2-7. Airの導入 Dockerfile
+
+```dockerfile: Dockerfile
+FROM golang:1.17.7-alpine
+
+RUN apk update && apk add git
+RUN go get github.com/cosmtrek/air@v1.29.0
+WORKDIR /app
+
+# air -c <tomlファイル名>
+CMD ["air", "-c", ".air.toml"]
+```
+
+gitからAirをインストールし、airコマンドの実行。
+
+#### 1-2-8. .air.toml
+
+[Air](https://github.com/cosmtrek/air)
+air_example.tomlから。
+
+```toml: .air.toml
+
+# Config file for [Air](https://github.com/cosmtrek/air) in TOML format
+
+# Working directory
+
+# . or absolute path, please note that the directories following must be under root.
+
+root = "."
+tmp_dir = "tmp"
+
+[build]
+
+# Just plain old shell command. You could use `make` as well.
+
+cmd = "go build -o ./tmp/main ."
+
+# Binary file yields from `cmd` .
+
+bin = "tmp/main"
+
+# Customize binary, can setup environment variables when run your app.
+
+full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"
+
+# Watch these filename extensions.
+
+include_ext = ["go", "tpl", "tmpl", "html"]
+
+# Ignore these filename extensions or directories.
+
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
+
+# Watch these directories if you specified.
+
+include_dir = []
+
+# Exclude files.
+
+exclude_file = []
+
+# Exclude specific regular expressions.
+
+exclude_regex = ["_test.go"]
+
+# Exclude unchanged files.
+
+exclude_unchanged = true
+
+# Follow symlink for directories
+
+follow_symlink = true
+
+# This log file places in your tmp_dir.
+
+log = "air.log"
+
+# It's not necessary to trigger build each time file changes if it's too frequent.
+
+delay = 1000 # ms
+
+# Stop running old binary when build errors occur.
+
+stop_on_error = true
+
+# Send Interrupt signal before killing process (windows does not support this feature)
+
+send_interrupt = false
+
+# Delay after sending Interrupt signal
+
+kill_delay = 500 # ms
+
+[log]
+
+# Show log time
+
+time = false
+
+[color]
+
+# Customize each part's color. If no color found, use the raw app log.
+
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+
+# Delete tmp directory on exit
+
+clean_on_exit = true
+
+```
+
+#### 1-2-9. 実行・Airの挙動の確認
+
+一度Containerは削除する。
+
+```shell:
+-> docker compose up reload_test
+[+] Running 0/1
+ ⠿ reload_test Error     3.6s
+[+] Building 11.6s (8/8) FINISHED [internal] load bui  0.0s
+ => [internal] load bui  0.0s
+ => => transferrin 215B  0.0s
+ => [internal] load .do  0.0s
+ => => transferring  2B  0.0s
+ => [internal] load met  2.0s
+ => CACHED [1/4] FROM d  0.0s
+ => [2/4] RUN apk updat  5.3s
+ => [3/4] RUN go get gi  4.1s
+ => [4/4] WORKDIR /app   0.0s
+ => exporting to image   0.1s
+ => => exporting layers  0.1s
+ => => writing image sh  0.0s
+ => => naming to docker  0.0s
+[+] Running 1/0
+ ⠿ Network docker-crud_default[+] Running 2/2
+ ⠿ Network docker-crud_default  Created 0.0ss
+ ⠿ Container reload_test        Created 0.1s
+Attaching to reload_test
+reload_test  |
+reload_test  |   __    _   ___
+reload_test  |  / /\  | | | |_)
+reload_test  | /_/--\ |_| |_| \_ , built with Go
+reload_test  |
+reload_test  | mkdir /app/tmp
+reload_test  | watching .
+reload_test  | watching mysql
+reload_test  | watching mysql/init
+reload_test  | !exclude tmp
+reload_test  | building...
+reload_test  | running...
+```
+
+ `http://localhost:8080`
+
+Hello Normal Updateと表示されている。
+
+`main.go` をHello Air!!と変更し、ブラウザでリロード。
+
+```shell:
+reload_test  | main.go has changed
+reload_test  | building...
+reload_test  | running...
+```
+
+ログから、変更した時点でホットリロードされていることが分かる。
+無事にHello Air‼︎と表示されている。
