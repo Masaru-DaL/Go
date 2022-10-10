@@ -113,6 +113,7 @@ $CMD_MYSQL -e "create table article (
   ); "
 $CMD_MYSQL -e "insert into article values (1, '記事1', '記事1です。'); "
 $CMD_MYSQL -e "insert into article values (2, '記事2', '記事2です。'); "
+
 ```
 
 自動的に実行される。
@@ -132,3 +133,108 @@ articleという名前のテーブルを作成し、データを2つ挿入する
 
 4. mysqlの使用
  `mysql mysql -utest_user -ppass test_database`
+
+5. table確認
+
+```shell:
+mysql> show tables;
++-------------------------+
+| Tables_in_test_database |
++-------------------------+
+| article                 |
++-------------------------+
+1 row in set (0.01 sec)
+
+mysql> select * from article;
++----+---------+------------------+
+| id | title   | body             |
++----+---------+------------------+
+|  1 | 記事1   | 記事1です。      |
+|  2 | 記事2   | 記事2です。      |
++----+---------+------------------+
+2 rows in set (0.00 sec)
+```
+
+### 1-2. Airの導入と挙動の確認
+
+golangファイルを実行して自動更新の挙動を確認する。
+
+1. 通常のビルドの挙動の確認
+2. Airの自動更新の挙動の確認
+
+#### 1-2-1. ディレクトリ構成
+
+`/github.com/docker-crud` 以下
+
+1. `go mod init github.com/docker-crud`
+2. 他3つファイルを作成
+
+```shell:
+-> tree
+.
+├── Dockerfile
+├── docker-compose.yml
+├── go.mod
+├── main.go
+
+# └── mysql
+
+#     ├── Dockerfile
+
+#     ├── docker-compose.yml
+
+#     └── init
+
+#         └── create_table.sh
+
+```
+
+1-1で使用したmysqlディレクトリ以下はこの節では使わない。
+
+#### 1-2-2. docker-compose.yml
+
+```yml. docker-compose.yml
+version: "3.8"
+
+services:
+  reload_test:
+    image: reload_test
+    container_name: reload_test
+    build: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+```
+
+volumesで、ローカルのルートディレクトリとコンテナの/appディレクトリをバインドマウントしているので、変更は即時反映される。
+
+#### 1-2-3. Dockerfile
+
+```dockerfile:
+FROM golang:1.17.7-alpine
+
+WORKDIR /app
+CMD ["go", "run", "main.go"]
+
+```
+
+#### 1-2-4. main.go
+
+```go:
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "<h1>Hello Normal</h1>")
+}
+
+func main() {
+	http.HandleFunc("/", helloHandler)
+	http.ListenAndServe(":8080", nil)
+}
+```
