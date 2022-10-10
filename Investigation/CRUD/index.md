@@ -238,3 +238,9 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 ```
+
+#### 1-2-5. 実行
+
+1. `$ docker compose up reload_test`
+2. `http://localhost:8080`にアクセス
+3. Hello Normalが表示される。
