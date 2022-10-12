@@ -453,3 +453,5 @@ reload_test  | running...
 ### 1-3. golangとMySQLをDockerで環境構築
 
 今回のCRUD処理を行う環境構築を行う。
+
+#### 1-3-1. スタート時のディレクトリ構成

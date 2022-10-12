@@ -20,6 +20,15 @@ services:
         source: ./init
         target: /docker-entrypoint-initdb.d
 
+  reload_test:
+    image: reload_test
+    container_name: reload_test
+    build: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+
 volumes:
   mysql-data:
     name: mysql-volume
