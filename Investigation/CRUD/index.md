@@ -618,3 +618,31 @@ runner = "green"
 # Delete tmp directory on exit
 clean_on_exit = true
 ```
+
+#### 1-3-5. main.go
+
+`main.go`はhttpのハンドルのみ。
+articleパッケージ内にCRUDメソッドを後ほど実装する。
+
+```go: main.go
+package main
+
+import (
+	"golang_crud/internal/article"
+	"log"
+	"net/http"
+)
+
+func main() {
+	http.HandleFunc("/", article.Index)
+	http.HandleFunc("/show", article.Show)
+	http.HandleFunc("/create", article.Create)
+	http.HandleFunc("/edit", article.Edit)
+	http.HandleFunc("/delete", article.Delete)
+
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
+}
+
+```
