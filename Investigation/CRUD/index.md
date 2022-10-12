@@ -455,3 +455,51 @@ reload_test  | running...
 今回のCRUD処理を行う環境構築を行う。
 
 #### 1-3-1. スタート時のディレクトリ構成
+
+1-1, 1-2を同プロジェクト内で進めたので、中途半端ですが、再度構築していきます。
+
+```shell:
+-> tree -a
+.
+├── .air.toml
+├── Dockerfile
+├── docker-compose.yml
+├── go.mod
+├── main.go
+└── mysql
+    ├── .env
+    ├── Dockerfile
+    └── init
+        └── create_table.sh
+
+2 directories, 8 files
+```
+
+#### 1-3-2. ディレクトリ構成の変更
+
+* `docker compose`でgolangとMySQLのコンテナを作る
+* Dockerのnetworkを通じて、golangからMySQLを操作する
+* MySQLコンテナの初期化処理でarticleテーブルを作成し、データを2つ登録する
+  + golangでその確認を行う
+
+```shell:
+-> tree -a
+.
+├── .air.toml
+├── docker-compose.yml
+├── golang
+│   ├── Dockerfile
+│   └── src
+│       ├── article
+│       │   └── article.go
+│       ├── go.mod
+│       └── main.go
+└── mysql
+
+    ├── .env
+    ├── Dockerfile
+    └── init
+        └── create_table.sh
+
+5 directories, 9 files
+```
