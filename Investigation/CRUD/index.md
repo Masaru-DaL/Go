@@ -107,8 +107,8 @@ MYSQL_ROOT_PASSWORD=root
 
 CMD_MYSQL="mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}"
 $CMD_MYSQL -e "create table article (
-  id int(10) AUTO_INCREMENT NOT NULL primary key, 
-  title varchar(50) NOT NULL, 
+  id int(10) AUTO_INCREMENT NOT NULL primary key,
+  title varchar(50) NOT NULL,
   body varchar(1000)
   ); "
 $CMD_MYSQL -e "insert into article values (1, '記事1', '記事1です。'); "
@@ -448,3 +448,110 @@ reload_test  | running...
 
 ログから、変更した時点でホットリロードされていることが分かる。
 無事にHello Air‼︎と表示されている。
+
+### 1-3. golangとMySQLをDockerで環境構築
+
+今回のCRUD処理を行う環境構築を行う。
+
+#### 1-3-1. ディレクトリ構成
+
+```shell:
+go_blog
+├── build
+│   ├── app
+│   │   └── Dockerfile
+│   └── db
+│       ├── Dockerfile
+│       └── init
+│           └── create_table.sh
+├── cmd
+│   └── go_blog
+│       └── main.go
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── internal
+│   ├── article
+│   │   └── article.go
+│   └── utility
+│       └── database.go
+└── web
+    └── template
+        ├── create.html
+        ├── delete.html
+        ├── edit.html
+        ├── index.html
+        └── show.html
+```
+
+#### 1-3-2. docker-compose.yml
+
+```yml:
+version: "3.8"
+
+services:
+  golang_crud:
+    container_name: golang_crud
+    build:
+      context: ./build/app
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - 8080:8080
+    env_file:
+      - ./build/db/.env
+    expends_on: # サービス起動順: db -> go
+      - db
+    volumes:
+      - type: bind
+        source: .
+        target: /go/app
+    networks:
+      - golang_test_network
+
+db:
+  container_name: db
+  build:
+    context: ./build/db
+    dockerfile: Dockerfile
+  tty: true
+  platform: linux/amd64
+  ports:
+    - 3306:3306
+  env_file:
+    - ./build/db/.env
+  volumes:
+    - type: volumes
+      source: mysql_test_volume
+      target: /var/lib/mysql
+    - type: bind
+      source: ./build/db/init
+      target: /docker-entrypoint-initdb.d
+  networks:
+    - golang_test_network
+
+volumes:
+  mysql_test_volume:
+    name: mysql_test_volume
+
+networks:
+  golang_test_network:
+    external: true
+```
+
+#### 1-3-3. Dockerfile
+
+```dockerfile: build/db/Dockerfile
+FROM mysql:8.0
+ENV LANG ja_JP.UTF-8
+```
+
+```dockerfile: build/app/Dockerfile
+FROM golang:1.17.7-alpine
+RUN apk update && apk add git
+RUN go get github.com/cosmtrek/air@v1.29.0
+RUN mkdir -p /go/app
+WORKDIR /go/app
+
+CMD ["air", "-c", ".air.toml"]
+```
