@@ -651,6 +651,8 @@ func main() {
 
 - init関数でMySQL接続処理を行う
   - init関数は自動的に呼び出され、main関数より早く実行される。
+- MySQLの準備が完了し、接続されるまでcheckConnectが呼ばれ、2秒ごとに接続を試みる。
+  - 以後、MySQLとやりとりがしたい時は、database.goのDb変数を参照する。
 
 ```go: database.go
 package utility
