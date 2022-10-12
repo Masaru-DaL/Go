@@ -107,8 +107,8 @@ MYSQL_ROOT_PASSWORD=root
 
 CMD_MYSQL="mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}"
 $CMD_MYSQL -e "create table article (
-  id int(10) AUTO_INCREMENT NOT NULL primary key,
-  title varchar(50) NOT NULL,
+  id int(10) AUTO_INCREMENT NOT NULL primary key, 
+  title varchar(50) NOT NULL, 
   body varchar(1000)
   ); "
 $CMD_MYSQL -e "insert into article values (1, '記事1', '記事1です。'); "
@@ -132,7 +132,7 @@ articleという名前のテーブルを作成し、データを2つ挿入する
  `docker exec -it db bash`
 
 4. mysqlの使用
- `mysql mysql -utest_user -ppass test_database`
+ `mysql -utest_user -ppass test_database`
 
 5. table確認
 
@@ -444,6 +444,7 @@ Hello Normal Updateと表示されている。
 reload_test  | main.go has changed
 reload_test  | building...
 reload_test  | running...
+
 ```
 
 ログから、変更した時点でホットリロードされていることが分かる。
@@ -452,244 +453,3 @@ reload_test  | running...
 ### 1-3. golangとMySQLをDockerで環境構築
 
 今回のCRUD処理を行う環境構築を行う。
-
-#### 1-3-1. ディレクトリ構成
-
-```shell:
-go_blog
-├── build
-│   ├── app
-│   │   └── Dockerfile
-│   └── db
-│       ├── Dockerfile
-│       └── init
-│           └── create_table.sh
-├── cmd
-│   └── go_blog
-│       └── main.go
-├── docker-compose.yml
-├── go.mod
-├── go.sum
-├── internal
-│   ├── article
-│   │   └── article.go
-│   └── utility
-│       └── database.go
-└── web
-    └── template
-        ├── create.html
-        ├── delete.html
-        ├── edit.html
-        ├── index.html
-        └── show.html
-```
-
-#### 1-3-2. docker-compose.yml
-
-```yml:
-version: "3.8"
-
-services:
-  golang_crud:
-    container_name: golang_crud
-    build:
-      context: ./build/app
-      dockerfile: Dockerfile
-    tty: true
-    ports:
-      - 8080:8080
-    env_file:
-      - ./build/db/.env
-    expends_on: # サービス起動順: db -> go
-      - db
-    volumes:
-      - type: bind
-        source: .
-        target: /go/app
-    networks:
-      - golang_test_network
-
-db:
-  container_name: db
-  build:
-    context: ./build/db
-    dockerfile: Dockerfile
-  tty: true
-  platform: linux/amd64
-  ports:
-    - 3306:3306
-  env_file:
-    - ./build/db/.env
-  volumes:
-    - type: volumes
-      source: mysql_test_volume
-      target: /var/lib/mysql
-    - type: bind
-      source: ./build/db/init
-      target: /docker-entrypoint-initdb.d
-  networks:
-    - golang_test_network
-
-volumes:
-  mysql_test_volume:
-    name: mysql_test_volume
-
-networks:
-  golang_test_network:
-    external: true
-```
-
-#### 1-3-3. Dockerfile
-
-- alpineサーバのgolangを使用
-- ホットリロードのAirの導入
-
-```dockerfile: build/db/Dockerfile
-FROM mysql:8.0
-ENV LANG ja_JP.UTF-8
-```
-
-```dockerfile: build/app/Dockerfile
-FROM golang:1.17.7-alpine
-RUN apk update && apk add git
-RUN go get github.com/cosmtrek/air@v1.29.0
-RUN mkdir -p /go/app
-WORKDIR /go/app
-
-CMD ["air", "-c", ".air.toml"]
-```
-
-#### 1-3-4. .air.toml
-
-`build/app/Dockerfile`と同じ階層に`.air.toml`を作成
-
-```toml: build/app/.air.toml
-# Config file for [Air](https://github.com/cosmtrek/air) in TOML format
-
-# Working directory
-# . or absolute path, please note that the directories following must be under root.
-root = "."
-tmp_dir = "tmp"
-
-[build]
-# Just plain old shell command. You could use `make` as well.
-cmd = "go build -o ./tmp/main ./cmd/golang_crud"
-# Binary file yields from `cmd`.
-bin = "tmp/main"
-# Customize binary, can setup environment variables when run your app.
-full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"
-# Watch these filename extensions.
-include_ext = ["go", "tpl", "tmpl", "html"]
-# Ignore these filename extensions or directories.
-exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
-# Watch these directories if you specified.
-include_dir = []
-# Exclude files.
-exclude_file = []
-# Exclude specific regular expressions.
-exclude_regex = ["_test.go"]
-# Exclude unchanged files.
-exclude_unchanged = true
-# Follow symlink for directories
-follow_symlink = true
-# This log file places in your tmp_dir.
-log = "air.log"
-# It's not necessary to trigger build each time file changes if it's too frequent.
-delay = 1000 # ms
-# Stop running old binary when build errors occur.
-stop_on_error = true
-# Send Interrupt signal before killing process (windows does not support this feature)
-send_interrupt = false
-# Delay after sending Interrupt signal
-kill_delay = 500 # ms
-
-[log]
-# Show log time
-time = false
-
-[color]
-# Customize each part's color. If no color found, use the raw app log.
-main = "magenta"
-watcher = "cyan"
-build = "yellow"
-runner = "green"
-
-[misc]
-# Delete tmp directory on exit
-clean_on_exit = true
-```
-
-#### 1-3-5. main.go
-
-`main.go`はhttpのハンドルのみ。
-articleパッケージ内にCRUDメソッドを後ほど実装する。
-
-```go: main.go
-package main
-
-import (
-	"golang_crud/internal/article"
-	"log"
-	"net/http"
-)
-
-func main() {
-	http.HandleFunc("/", article.Index)
-	http.HandleFunc("/show", article.Show)
-	http.HandleFunc("/create", article.Create)
-	http.HandleFunc("/edit", article.Edit)
-	http.HandleFunc("/delete", article.Delete)
-
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal("ListenAndServe:", err)
-	}
-}
-
-```
-
-#### 1-3-6. database.go
-
-- init関数でMySQL接続処理を行う
-  - init関数は自動的に呼び出され、main関数より早く実行される。
-- MySQLの準備が完了し、接続されるまでcheckConnectが呼ばれ、2秒ごとに接続を試みる。
-  - 以後、MySQLとやりとりがしたい時は、database.goのDb変数を参照する。
-
-```go: database.go
-package utility
-
-import (
-	"database/sql"
-	"fmt"
-	"log"
-	"os"
-	"time"
-
-	_ "github.com/go-sql-driver/mysql"
-)
-
-var Db *sql.DB
-
-func init() {
-	user := os.Getenv("MYSQL_USER")
-	pw := os.Getenv("MYSQL_PASSWORD")
-	db_name := os.Getenv("MYSQL_DATABASE")
-	var path string = fmt.Sprintf("%s:%s@tcp(db:3306)/%s?charset=utf8&parseTime=true", user, pw, db_name)
-	var err error
-	if Db, err = sql.Open("mysql", path); err != nil {
-		log.Fatal("Db open error:", err.Error())
-	}
-	checkConnect(100)
-
-	fmt.Println("db connected!!")
-}
-
-func checkConnect(count uint) {
-	var err error
-	if err = Db.Ping(); err != nil {
-		time.Sleep(time.Second * 2)
-		count--
-		fmt.Printf("retry... count:%v\n", count)
-		checkConnect(count)
-	}
-}
-```
