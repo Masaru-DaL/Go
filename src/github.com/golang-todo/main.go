@@ -1,25 +1,20 @@
 package main
 
 import (
-	"log"
+	"golang-todo/src/database"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
-	/* ファイバーインスタンスを作成する
-	ポート5000でHTTPリクエストをリッスンする。*/
+	database.Connect()
+	database.AutoMigrate()
+
 	app := fiber.New()
-	app.Use(cors.New())
 
-	/* エンドポイントにアクセスするためのベースURLがhttp://localhost:5000/apiになる。 */
-	api := app.Group("/api")
-
-	// Test handler
-	api.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("App running 2")
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World")
 	})
 
-	log.Fatal(app.Listen(":5000"))
+	app.Listen(":3000")
 }

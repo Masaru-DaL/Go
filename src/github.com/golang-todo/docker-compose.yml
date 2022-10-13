@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  backend:
+    # docker-composeファイルと同階層のDockerfileをビルド
+    build: .
+    ports:
+      # local:Docker
+      - 8000:8000
+    # DockerとローカルのFSをマウント
+    volumes:
+      - .:/app
+    # dbを先に起動させる
+    # ただし、初回起動時はDBの準備に手間取るので、コネクトに失敗する可能性がある。
+    depends_on:
+      - db-mysql
+
+  db-mysql:
+    image: mysql:5.7.22
+    container_name: godockerDB
+    restart: always
+    environment:
+      MYSQL_DATABASE: ambassador
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: root
+    platform: linux/amd64
+    # ローカルに.dbdataを作成し、dbコンテナとFSをマウントする
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33066:3306
