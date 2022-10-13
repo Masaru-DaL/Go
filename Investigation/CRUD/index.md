@@ -528,7 +528,122 @@ func main() {
  │ Handlers ............. 3  Processes ........... 1 │
  │ Prefork ....... Disabled  PID ............. 85878 │
  └───────────────────────────────────────────────────┘
+
 ```
 
 4. `localhost:5000/api`にアクセス
 App running
+
+## 2-3. Dockerで実行する
+
+```dockerfile: Dockerfile
+FROM golang:1.16-alpine AS base
+WORKDIR /app
+
+# 環境変数の設定
+
+## GOOS: コンパイラにlinuxでビルドすることを指示する
+
+## CGO_ENABLED=0: 外部依存無しにビルドする
+
+ENV GO111MODULE="on"
+ENV GOOS="linux"
+ENV CGO_ENABLED=0
+
+RUN apk update \
+    && apk add --no-cache \
+    ca-certificates \
+    curl \
+    tzdata \
+    git \
+    && update-ca-certificates
+
+# ベースステージを基にした開発ステージを作成
+FROM base AS dev
+WORKDIR /app
+
+# airをインストール
+
+## メインポート: 5000, デバッグポート: 2345
+
+RUN go get -u github.com/cosmtrek/air && go install github.com/go-delve/delve/cmd/dlv@latest
+EXPOSE 5000
+EXPOSE 2345
+
+ENTRYPOINT ["air"]
+
+# 本番用にコンパイルされたアプリケーションを作成するためのビルダーステージを作成
+
+## 全てのコードをコピーし、依存関係をインストールし、アプリをコンパイルする
+
+FROM base AS builder
+WORKDIR /app
+
+COPY . /app
+RUN go mod download \
+    && go mod verify
+
+RUN go build -o todo -a .
+
+# コンパイルされたコードをbuilderステージから取り出し、ポート5000で公開し、このコンパイルされたアプリのエントリポイントを設定する
+FROM alpine:latest as prod
+
+COPY --from=builder /app/todo /usr/local/bin/todo
+EXPOSE 5000
+
+ENTRYPOINT ["/usr/local/bin/todo"]
+```
+
+```toml: .air.toml
+
+# Config file for [Air](https://github.com/cosmtrek/air) in TOML format
+
+# Working directory
+
+# . or absolute path, please note that the directories following must be under root.
+
+root = "."
+tmp_dir = "tmp"
+
+[build]
+
+# Just plain old shell command. You could use `make` as well.
+
+cmd = "go build -gcflags='all=-N -l' -o ./tmp/main ."
+
+# Binary file yields from `cmd` .
+
+bin = "tmp/main"
+
+# Customize binary.
+
+full_bin = "dlv exec --accept-multiclient --log --headless --continue --listen :2345 --api-version 2 ./tmp/main"
+
+# Watch these filename extensions.
+
+include_ext = ["go", "tpl", "tmpl", "html"]
+
+```
+
+```yaml: docker-compose.yaml
+version: "3.7"
+
+services:
+  go-todo:
+    container_name: go-todo
+    image: thisk8brd/go-todo:dev
+    build:
+      context: .
+      target: dev
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+      - "2345:2345"
+    networks:
+      - go-todo-network
+
+networks:
+  go-todo-network:
+    name: go-todo-network
+```
