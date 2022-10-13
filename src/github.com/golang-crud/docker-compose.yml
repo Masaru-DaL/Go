@@ -1,33 +1,50 @@
 version: "3.8"
 
 services:
-  # db:
-  #   container_name: db
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   platform: linux/amd64
-  #   tty: true
-  #   ports:
-  #     - 3306:3306
-  #   env_file:
-  #     - ./.env
-  #   volumes:
-  #     - type: volume
-  #       source: mysql-data
-  #       target: /var/lib/mysql
-  #     - type: bind
-  #       source: ./init
-  #       target: /docker-entrypoint-initdb.d
-
-  reload_test:
-    image: reload_test
-    container_name: reload_test
-    build: .
+  go:
+    container_name: go
+    build:
+      context: ./golang
+      dockerfile: Dockerfile
+    tty: true
     ports:
       - 8080:8080
+    env_file:
+      - ./mysql/.env
+    depends_on:
+      - db
     volumes:
-      - .:/app
-# volumes:
-#   mysql-data:
-#     name: mysql-volume
+      - type: bind
+        source: ./golang/src
+        target: /go/src
+    networks:
+      - golang_test_network
+
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    tty: true
+    ports:
+      - 3306:3306
+    env_file:
+      - ./mysql/.env
+    volumes:
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
+      - type: bind
+        source: ./mysql/init
+        target: /docker-entrypoint-initdb.d
+    networks:
+      - golang_test_network
+
+volumes:
+  mysql-data:
+    name: mysql-volume
+
+networks:
+  golang_test_network:
+    external: true

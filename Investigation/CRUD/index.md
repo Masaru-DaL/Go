@@ -502,4 +502,63 @@ reload_test  | running...
         └── create_table.sh
 
 5 directories, 9 files
+
+```
+
+#### 1-3-3. docker-compose.yml
+
+- serviceにgoを追加
+- networksを追加することで、サービス名を使ってサービス間の通信を行うことができる。
+
+```yml: docker-compose.yml
+version: "3.8"
+
+services:
+  go:
+    container_name: go
+    build:
+      context: ./golang
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - 8080:8080
+    env_file:
+      - ./mysql/.env
+    depends_on:
+      - db
+    volumes:
+      - type: bind
+        source: ./golang/src
+        target: /go/src
+    networks:
+      - golang_test_network
+
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    tty: true
+    ports:
+      - 3306:3306
+    env_file:
+      - ./mysql/.env
+    volumes:
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
+      - type: bind
+        source: ./mysql/init
+        target: /docker-entrypoint-initdb.d
+    networks:
+      - golang_test_network
+
+volumes:
+  mysql-data:
+    name: mysql-volume
+
+networks:
+  golang_test_network:
+    external: true
 ```
