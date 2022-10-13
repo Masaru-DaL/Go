@@ -17,7 +17,6 @@ FROM base AS dev
 WORKDIR /app
 
 RUN go get -u github.com/cosmtrek/air && go install github.com/go-delve/delve/cmd/dlv@latest
-
 EXPOSE 5000
 EXPOSE 2345
 
