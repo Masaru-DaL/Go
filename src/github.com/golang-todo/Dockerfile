@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS base
+FROM golang:1.17.2 AS base
 WORKDIR /app
 
 ENV GO111MODULE="on"
@@ -16,7 +16,7 @@ RUN apk update \
 FROM base AS dev
 WORKDIR /app
 
-RUN go get -u github.com/cosmtrek/air && go install github.com/go-delve/delve/cmd/dlv@latest
+RUN go get -u github.com/cosmtrek/air && go get -u github.com/go-delve/delve/cmd/dlv@latest
 EXPOSE 5000
 EXPOSE 2345
 
