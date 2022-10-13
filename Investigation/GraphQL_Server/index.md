@@ -26,7 +26,7 @@
     - [5-3. Models and migrations](#5-3-models-and-migrations)
       - [5-3-1. プロジェクトのルートディレクトリに、データベースファイルのためのフォルダ構造を作成する。](#5-3-1-プロジェクトのルートディレクトリにデータベースファイルのためのフォルダ構造を作成する)
       - [5-3-2. `go mysql driver` と `golang-migrate` パッケージをインストールし、migrationsを作成する。](#5-3-2-go-mysql-driver-と-golang-migrate-パッケージをインストールしmigrationsを作成する)
-      - [5-3-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。](#5-3-3-000001_create_users_tableupsqにユーザ用のテーブルを追加する)
+      - [5-3-3. `000001_create_users_table.up.sq` に、ユーザ用のテーブルを追加する。](#5-3-3-000001_create_users_tableupsq-にユーザ用のテーブルを追加する)
       - [5-3-4. `000002_create_links_table.up.sql` に、リンク用のテーブルを追加する。](#5-3-4-000002_create_links_tableupsql-にリンク用のテーブルを追加する)
       - [5-3-5. 3, 4で設定した内容を反映させ、それぞれのテーブルを作成する。migrateコマンドで行う。](#5-3-5-3-4で設定した内容を反映させそれぞれのテーブルを作成するmigrateコマンドで行う)
       - [5-3-6. データベースの接続を行う。](#5-3-6-データベースの接続を行う)
@@ -45,6 +45,14 @@
     - [7-1. JWT: Json Web Token](#7-1-jwt-json-web-token)
     - [7-2. Setup](#7-2-setup)
     - [7-3. Generating and Parsing JWT Tokens](#7-3-generating-and-parsing-jwt-tokens)
+    - [7-4. User SignUP and Login Functionality](#7-4-user-signup-and-login-functionality)
+    - [7-5. Authentication Middleware](#7-5-authentication-middleware)
+  - [8. Auth Endpoints](#8-auth-endpoints)
+    - [8-1. CreateUser](#8-1-createuser)
+    - [8-2. Login](#8-2-login)
+    - [8-3. Refresh Token](#8-3-refresh-token)
+  - [9. Logged in User](#9-logged-in-user)
+    - [9-1. Finished](#9-1-finished)
 # Building a GraphQL Server with Go Backend Tutorial | Intro
 
 参考: [GraphQL Tutorial](https://www.howtographql.com/graphql-go/0-introduction)
@@ -66,7 +74,17 @@ GraphQL APIに新しい機能を追加する必要がある場合は、スキー
 
 ### 2-1. Project Setup
 
-1. `$ go mod init github.com/[username]/hackernews`
+* GOPATH以下で
+
+```shell:
+src
+└──github.com
+
+    └──graphql-tutorial
+
+```
+
+1. `$ go mod init github.com/graphql-tutorial`
 2. `$ go get github.com/99designs/gqlgen`
 3. `$ go run github.com/99designs/gqlgen init`
 
@@ -106,7 +124,7 @@ GraphQL APIに新しい機能を追加する必要がある場合は、スキー
 
 * 上述を満たすように、スキーマの定義を行う
 
-```go: graph/schema.graphqls
+```graphqls: graph/schema.graphqls
 type Link {
   id: ID!
   title: String!
@@ -182,6 +200,7 @@ GraphQLのクエリとは、**データを要求するもの**。
 
 ```go: schema.resolvers.go
 func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
+
     var links []*model.Link
     dummyLink := model.Link{
         Title: "our dummy link",
@@ -190,7 +209,9 @@ func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
     }
     links = append(links, &dummyLink)
     return links, nil
+
 }
+
 ```
 
 #### 3-1-2. `$ go run server.go`
@@ -198,7 +219,7 @@ func(r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
 #### 3-1-3. GraphQLサーバにQueryを送る
 
 ```graphql:
-Query {
+query {
   links {
 
     title,
@@ -217,6 +238,7 @@ Query {
 ```graphql:
 {
   "data": {
+
     "links": [
       {
         "title": "our dummy link",
@@ -226,8 +248,10 @@ Query {
         }
       }
     ]
+
   }
 }
+
 ```
 
 `resolvers.go` に実装することで、クエリを投げた際にその項目がレスポンスされるその方法が分かった。ここまではあくまでもダミーのレスポンスなので、実際にやりたいことは**他のユーザのリンクを全て照会できるようにしたい**。
@@ -272,13 +296,16 @@ func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink
 ```graphql:
 mutation {
   createLink(input: {title: "new link", address:"http://address.org"}) {
+
     title,
     user {
       name
     }
     address
+
   }
 }
+
 ```
 
 #### 4-2-4. GraphQLからのレスポンス
@@ -346,6 +373,36 @@ dockerでMySQLのイメージを使用する。
 
 ```shell:
 $ tree
+.
+├── go.mod
+├── go.sum
+├── gqlgen.yml
+├── graph
+│   ├── generated
+│   │   └── generated.go
+│   ├── model
+│   │   └── models_gen.go
+│   ├── resolver.go
+│   ├── schema.graphqls
+│   └── schema.resolvers.go
+├── internal
+│   ├── links
+│   │   └── links.go
+│   ├── pkg
+│   │   └── db
+│   │       ├── migrations
+│   │       │   └── mysql
+│   │       │       ├── 000001_create_users_table.down.sql
+│   │       │       ├── 000001_create_users_table.up.sql
+│   │       │       ├── 000002_create_links_table.down.sql
+│   │       │       └── 000002_create_links_table.up.sql
+│   │       └── mysql
+│   │           └── mysql.go
+│   └── users
+│       └── users.go
+└── server.go
+
+11 directories, 16 files
 
 ```
 
@@ -364,15 +421,16 @@ migrateコマンドは、マイグレーションごとに `.up` と `.down` で
 up -> マイグレーションを適用する役割
 down -> それを反転する役割
 
-#### 5-3-3. `000001_create_users_table.up.sq`に、ユーザ用のテーブルを追加する。
+#### 5-3-3. `000001_create_users_table.up.sq` に、ユーザ用のテーブルを追加する。
 
 ```sql:
 CREATE TABLE IF NOT EXISTS Users (
-  ID INT NOT NULL UNIQUE AUTO_INCREMENT,
-  Username VARCHAR (127) NOT NULL UNIQUE,
-  Password VARCHAR (127) NOT NULL,
+  ID INT NOT NULL UNIQUE AUTO_INCREMENT, 
+  Username VARCHAR (127) NOT NULL UNIQUE, 
+  Password VARCHAR (127) NOT NULL, 
   PRIMARY KEY (ID)
 )
+
 ```
 
 #### 5-3-4. `000002_create_links_table.up.sql` に、リンク用のテーブルを追加する。
@@ -397,6 +455,11 @@ CREATE TABLE IF NOT EXISTS Links(
 
  `$ migrate -database mysql://root:dbpass@/hackernews -path internal/pkg/db/migrations/mysql up`
 
+->
+ `1/u create_users_table (43.049791ms)`
+
+ `2/u create_links_table (78.876041ms)`
+
 #### 5-3-6. データベースの接続を行う。
 
 今回はMySQLを使用するので、mysqlフォルダの下にデータベースへの接続を初期化する関数を作成する。
@@ -406,17 +469,22 @@ CREATE TABLE IF NOT EXISTS Links(
 package database
 
 import (
+
 	"database/sql"
+
+	"log"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
-	"log"
+
 )
 
-var Db *sql.DB
+var Db *sql. DB
 
 func InitDB() {
+
 	// Use root:dbpass@tcp(172.17.0.2)/hackernews, if you're using Windows.
 	db, err := sql.Open("mysql", "root:dbpass@tcp(localhost)/hackernews")
 	if err != nil {
@@ -424,16 +492,20 @@ func InitDB() {
 	}
 
 	if err = db.Ping(); err != nil {
- 		log.Panic(err)
+		log.Panic(err)
 	}
 	Db = db
+
 }
 
 func CloseDB() error {
+
 	return Db.Close()
+
 }
 
 func Migrate() {
+
 	if err := Db.Ping(); err != nil {
 		log.Fatal(err)
 	}
@@ -448,6 +520,7 @@ func Migrate() {
 	}
 
 }
+
 ```
 
 * InitDB関数
@@ -465,9 +538,29 @@ func Migrate() {
 
 #### 5-3-7. main関数にInitDBとMigrateを呼び出すように記述し、アプリの開始時にデータベース接続を作成するようにする。
 
-```go: server.go
-func main() {
+ここめっちゃハマりました。
+どうにもエラーが出まくるので公式のGitHubを参考にして導線通りのコードじゃなありませんが、動いたコード貼っておきます。
 
+```go: server.go
+package main
+
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/graphql-tutorial/graph"
+	"github.com/graphql-tutorial/graph/generated"
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
+)
+
+const defaultPort = "8080"
+
+func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
@@ -478,13 +571,12 @@ func main() {
 	database.InitDB()
 	defer database.CloseDB()
 	database.Migrate()
-	server := handler.NewDefaultServer(hackernews.NewExecutableSchema(hackernews.Config{Resolvers: &hackernews.Resolver{}}))
+	server := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", server)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
-
 }
 
 ```
@@ -504,9 +596,13 @@ package users
 
 type User struct {
   ID  string `json:"id"`
+
   Username string `json:"name"`
+
   Password string `json:"paddword"`
+
 }
+
 ```
 
 #### 6-1-2. linksディレクトリ
@@ -515,26 +611,22 @@ type User struct {
 package links
 
 import (
-
-	database "github.com/glyphack/go-graphql-hackernews/internal/pkg/db/mysql"
-	"github.com/glyphack/go-graphql-hackernews/internal/users"
 	"log"
 
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+	"github.com/graphql-tutorial/internal/users"
 )
 
 // #1
 type Link struct {
-
 	ID      string
 	Title   string
 	Address string
 	User    *users.User
-
 }
 
-//#2
+// #2
 func (link Link) Save() int64 {
-
 	//#3
 	stmt, err := database.Db.Prepare("INSERT INTO Links(Title,Address) VALUES(?,?)")
 	if err != nil {
@@ -552,7 +644,6 @@ func (link Link) Save() int64 {
 	}
 	log.Print("Row inserted!")
 	return id
-
 }
 
 ```
@@ -566,18 +657,22 @@ func (link Link) Save() int64 {
 #### 6-1-3. Save関数をCreateLinkリゾルバで使用する
 
 ```go: schema.resolvers.go
-func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
-  var link links.Link
-  link.Title = input.Title
-  link.Address = input.Address
-  linkID := link.Save()
-  return &model.Link{ID: strconv.FormatInt(linkID, 10), Title:link.Title, Address:link.Address}, nil
+func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink) (*model. Link, error) {
+  var link links. Link
+  link. Title = input. Title
+  link. Address = input. Address
+  linkID := link. Save()
+  return &model. Link{ID: strconv. FormatInt(linkID, 10), Title:link. Title, Address:link. Address}, nil
 }
+
 ```
 
 このコードは、入力からリンクオブジェクトを作成してデータベースに保存し、新しく作成されたリンクを返している。(strconv. FormatIntでIDを文字列に変換している)
 
 #### 6-1-4. ミューテーションの送信
+
+この時点で明らかにエラーが出てサーバに繋がりませんでした。
+インポートのパスとかを見直す事と、`server.go`のコード自体が違うんじゃないかなという所でした。[完成形のコード](https://github.com/howtographql/graphql-golang)の`server.go`を入れて、インポートパスを調整して何とかサーバを起動させる事が出来ました。
 
 ```graphql:
 mutation create{
@@ -592,18 +687,21 @@ mutation create{
 
 ```
 
-- レスポンス
+* レスポンス
 
 ```graphql:
 {
   "data": {
+
     "createLink": {
       "title": "something",
       "address": "somewhere",
       "id": "1" // AutoIncrement
     }
+
   }
 }
+
 ```
 
 ### 6-2. links Query
@@ -664,9 +762,11 @@ func (r *queryResolver) Links(ctx context. Context) ([]*model. Link, error) {
   for _, link := range dbLinks {
 
     resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title:link.Title, Address:link.Address})
+
   }
   return resultLinks, nil
 }
+
 ```
 
 #### 6-2-3. Queryの送信
@@ -684,11 +784,12 @@ query {
 
 ```
 
-- レスポンス
+* レスポンス
 
 ```graphql:
 {
   "data": {
+
     "links": [
       {
         "title": "something",
@@ -696,8 +797,10 @@ query {
         "id": "1"
       }
     ]
+
   }
 }
+
 ```
 
 ## 7. Authentication
@@ -722,8 +825,565 @@ JWTトークンの生成とパースには、 `github.com/dgrijalva/jwt-go` ラ�
 
 ### 7-3. Generating and Parsing JWT Tokens
 
-アプリケーションのルートにpkgという新しいディレクトリを作成する。対してアプリケーションの内部でのみ使用したいものには `internal` を使用している。
-pkgディレクトリは、アプリケーションのどこにでもインポートできるファイルのためのもの。JWT生成スクリプトや検証スクリプトがこれに該当する。
+アプリケーションのルートにpkgという新しいディレクトリを作成する。pkgディレクトリは、アプリケーションのどこにでもインポートできるファイルのためのもの。JWT生成スクリプトや検証スクリプトがこれに該当する。
+
+対してアプリケーションの内部でのみ使用したいものには `internal` を使用している。
 
 **クレーム**と呼ばれる概念があることを覚えておく。
+<<<<<<< HEAD
 ~~~~
+=======
+
+```go: pkg/jwt/jwt.go
+package jwt
+
+import (
+	"log"
+	"time"
+
+	"github.com/form3tech-oss/jwt-go"
+)
+
+// 秘密鍵
+var (
+	SecretKey = []byte("secret")
+)
+
+// GenerateTokenはjwtトークンを生成する
+// そのclaimにユーザ名を割り当てて、返す
+func GenerateToken(username string) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	/* クレームを保存するためのマップを作成する */
+	claims := token.Claims.(jwt.MapClaims)
+	/* クレーム・トークンを設定する */
+	claims["username"] = username
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	tokenString, err := token.SignedString(SecretKey)
+	if err != nil {
+		log.Fatal("Error in Generating key")
+		return "", err
+	}
+	return tokenString, nil
+}
+
+// ParseTokenはjwtトークンを解析し、ユーザ名を返す
+func ParseToken(tokenStr string) (string, error) {
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		return SecretKey, nil
+	})
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		username := claims["username"].(string)
+		return username, nil
+	} else {
+		return "", err
+	}
+}
+
+```
+
+* GenerateToken関数
+あるユーザのトークンを生成したい時に使用される。
+トークン・クーレムにユーザ名を保存し、トークンの有効期限を24時間後に設定する。
+
+* ParseToken関数
+トークンを受け取り、誰がリクエストを送信したかを知りたい時に使用する。
+
+**ここまでで、各ユーザのトークンを生成することが出来る。**
+
+### 7-4. User SignUP and Login Functionality
+
+各ユーザのトークンを生成する前に、そのユーザがデータベースに存在(登録)されていることを確認する必要がある。
+これを行うには**データベースに問い合わせをして、与えられたユーザ名とパスワードをユーザにマッチさせれば良い**。そのために、ユーザが登録しようとした時に、その**ユーザ名とパスワードをデータベースに保存する**必要がある。
+
+```go: internal/users/users.go
+package users
+
+import (
+
+	"database/sql"
+
+	"log"
+
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+	"golang.org/x/crypto/bcrypt"
+
+)
+
+type User struct {
+
+	ID       string `json:"id"`
+
+	Username string `json:"name"`
+
+	Password string `json:"password"`
+
+}
+
+func (user *User) Create() {
+
+	statement, err := database.Db.Prepare("INSERT INTO Users(Username,Password) VALUES(?,?)")
+	print(statement)
+	if err != nil {
+		log.Fatal(err)
+	}
+	hashedPassword, err := HashPassword(user.Password)
+	_, err = statement.Exec(user.Username, hashedPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+// HashPassword関数: 与えられたパスワードをハッシュ化する
+func HashPassword(password string) (string, error) {
+
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+
+}
+
+// CheckPassword: 生のパスワードとハッシュ化された値を比較する
+func CheckPasswordHash(password, hash string) bool {
+
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+
+}
+
+// GetUserIdByUsername: 指定されたユーザ名でデータベースにユーザが存在するかどうかをチェックする
+func GetUserIdByUsername(username string) (int, error) {
+
+	statement, err := database.Db.Prepare("select ID from Users WHERE Username = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	row := statement.QueryRow(username)
+
+	var Id int
+	err = row.Scan(&Id)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+		return 0, err
+	}
+
+	return Id, nil
+
+}
+
+```
+
+* 認証に関するコードの分解(GetUserIdByUsername関数)
+この関数は、認証ミドルウェアでユーザ名を持つユーザオブジェクトを取得するために使用する。
+
+1. usersテーブルからパスワードを選択するクエリを作成する。
+2. Execの代わりにQueryRowを使用しているが、QueryRow()は、sql.Row.Scanへの**ポインタを返す**という違いがある。
+3. `.Scan`メソッドを使用して、データベースからハッシュ化したパスワードを`hashedPassword`変数に代入している。(パスワードをそのままデータベースに保存することはない)
+4. **指定されたユーザ名を持つユーザが存在するかチェックする**。一致するものがいなければfalseを返す。一致するユーザがいた場合、与えられたハッシュ化する前のパスワードでユーザのhashedPasswordをチェックする。
+
+### 7-5. Authentication Middleware
+
+また、リゾルバにリクエストが来るたびに、どのユーザがリクエストを送ったかを知る必要がある。これを実現するためには、**リクエストがリゾルバに到達する前に実行されるミドルウェアを書かなければならない**。
+このミドルウェアは、送られてきたリクエストからユーザを解決し、それをリゾルバに渡す。
+
+以下のコードでミドルウェアをサーバで使用できるようになる。
+
+```go: internal/auth/middleware.go
+package auth
+
+import (
+	"context"
+	"net/http"
+	"strconv"
+
+	"github.com/graphql-tutorial/internal/users"
+	"github.com/graphql-tutorial/pkg/jwt"
+)
+
+var userCtxKey = &contextKey{"user"}
+
+type contextKey struct {
+	name string
+}
+
+func Middleware() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			header := r.Header.Get("Authorization")
+
+			// 未認証のユーザを許可する
+			if header == "" {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// jwtトークンの有効化
+			tokenStr := header
+			username, err := jwt.ParseToken(tokenStr)
+			if err != nil {
+				http.Error(w, "Invalid token", http.StatusForbidden)
+				return
+			}
+
+			// ユーザを作成し、データベース内にユーザが存在するかどうかをチェックする
+			user := users.User{Username: username}
+			id, err := users.GetUserIdByUsername(username)
+			if err != nil {
+				next.ServeHTTP(w, r)
+				return
+			}
+			user.ID = strconv.Itoa(id)
+			// コンテキストに入れる
+			ctx := context.WithValue(r.Context(), userCtxKey, &user)
+
+			// そして、新しいコンテキストで次を呼び出す
+			r = r.WithContext(ctx)
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// ForContext: コンテキストからユーザを見つける。ミドルウェアが動作している必要がある。
+func ForContext(ctx context.Context) *users.User {
+	raw, _ := ctx.Value(userCtxKey).(*users.User)
+	return raw
+}
+
+```
+
+* ミドルウェアを使用するよう、server.goに反映させる。
+
+```go: server.go
+package main
+
+import (
+
+	"log"
+
+	"net/http"
+	"os"
+
+	"github.com/graphql-tutorial/graph"
+	"github.com/graphql-tutorial/graph/generated"
+	"github.com/graphql-tutorial/internal/auth"
+	database "github.com/graphql-tutorial/internal/pkg/db/mysql"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
+
+)
+
+const defaultPort = "8080"
+
+func main() {
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	router := chi.NewRouter()
+
+	router.Use(auth.Middleware())
+
+	database.InitDB()
+	defer database.CloseDB()
+	database.Migrate()
+	server := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", server)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, router))
+
+}
+
+```
+
+## 8. Auth Endpoints
+
+### 8-1. CreateUser
+
+Authセクションで書いた関数を使って、CreateUserのミューテーションの実装を行う。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
+	var link links.Link
+	link.Title = input.Title
+	link.Address = input.Address
+	linkID := link.Save()
+	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address}, nil
+}
+```
+
+このミューテーションは、与えられたユーザ名とパスワードを使ってユーザを作成し、そのユーザのトークンを生成して、リクエストの中でユーザを認識できるようにする。
+
+* ミューテーションの送信
+
+```graphql:
+mutation {
+  createUser(input: {username: "user1", password: "123"})
+}
+
+```
+
+- レスポンス
+
+```graphql:
+{
+  "data": {
+    "createUser": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjUxMDI1MDAsInVzZXJuYW1lIjoidXNlcjEifQ.Sd94XEJSft9mrNbCZ8N6G7rUVq7oRuHMvVV0OJ7EPYQ"
+  }
+}
+```
+
+無事、最初のユーザが作成されました！
+
+### 8-2. Login
+
+このミューテーションのために、まず**ユーザがデータベースに存在し、与えられたパスワードが正しいかどうかを確認する**必要がある。
+そして、ユーザのためのトークンを生成し、それをユーザに返す。
+
+```go: internal/users/users.go
+func (user *User) Authenticate() bool {
+
+	statement, err := database.Db.Prepare("select Password from Users WHERE Username = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	row := statement.QueryRow(user.Username)
+
+	var hashedPassword string
+	err = row.Scan(&hashedPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		} else {
+			log.Fatal(err)
+		}
+	}
+
+	return CheckPasswordHash(user.Password, hashedPassword)
+
+}
+
+```
+
+- Authenticate関数
+与えられたユーザ名でユーザを選択肢、与えられたパスワードのハッシュがデータベースに保存されたハッシュ化されたパスワードと等しいかどうかをチェックする。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
+	var user users.User
+	user.Username = input.Username
+	user.Password = input.Password
+	correct := user.Authenticate()
+	if !correct {
+		// 1
+		return "", &users.WrongUsernameOrPasswordError{}
+	}
+	token, err := jwt.GenerateToken(user.Username)
+	if err != nil{
+		return "", err
+	}
+	return token, nil
+}
+```
+
+* Login
+Authenticate関数を使用して、ユーザ名とパスワードが正しい場合は、新しいユーザトークンを返し、正しくない場合はエラー(&users. WrongUsernameOrPasswordError)を返す。以下でこのエラーに対する実装する。
+
+```go: internal/users/errors.go
+package users
+
+type WrongUsernameOrPasswordError struct{}
+
+func (m *WrongUsernameOrPasswordError) Error() string {
+
+	return "wrong username or password"
+
+}
+
+```
+
+※Goでカスタムエラーを定義するには、Errorメソッドを実装した構造体が必要。
+ここでは、Error()メソッドでユーザ名やパスワードの間違いに対するエラーを定義する。その場合、もう一度作成したユーザ名とパスワードでログインし、トークンを取得する事ができる。
+
+### 8-3. Refresh Token
+
+認証システムを完成させるために必要な、最後のエンドポイント。
+
+例えば、ユーザがアプリにログインした後、トークンが設定した時間で失効してしまうとする。1つの解決策は、**期限切れになるトークンを取得するエンドポイントを用意し、そのユーザのために新しいトークンを再生成して、アプリが新しいトークンを使用できるようにすること**です。
+つまり、エンドポイントはトークンを受け取り、ユーザ名をパースして、そのユーザ名のための新しいトークンを生成する必要がある。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error) {
+	username, err := jwt.ParseToken(input.Token)
+	if err != nil {
+		return "", fmt.Errorf("access denied")
+	}
+	token, err := jwt.GenerateToken(username)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+```
+
+## 9. Logged in User
+
+以前作成したCreateLinkミューテーションは、当時ユーザを認証する事ができなかったので、不完全なままだったので、そこを完全なものにする。
+
+今ある機能で、AuthorizationHTTPヘッダをチェックすることで、ユーザがログインしているかどうかをチェックすることができる。認証ミドルウェアでやった事を使えば、ctx引数を使ってリゾルバでユーザを取得することができる。
+
+```go: schema.resolvers.go
+func (r *mutationResolver) CreateLink(ctx context. Context, input model. NewLink) (*model. Link, error) {
+
+	// 1
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return &model.Link{}, fmt.Errorf("access denied")
+	}
+
+	// 2
+	var link links.Link
+	link.Title = input.Title
+	link.Address = input.Address
+	link.User = user
+	linkID := link.Save()
+	graphqlUser := &model.User{
+		ID:   user.ID,
+		Name: user.Username,
+	}
+	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address, User: graphqlUser}, nil
+
+}
+
+```
+
+1. ctxからuserオブジェクトを取得し、userが設定されていない場合、access deniedというメッセージでエラーを返す。
+2. 次に、そのリンクのユーザを、リンクの作成を要求しているユーザと同じに設定します。
+
+* そして、リンクのクエリを編集して、DBからユーザを取得する。
+
+```go: schema.resolvers.go
+func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
+	var resultLinks []*model.Link
+	var dbLinks []links.Link
+	dbLinks = links.GetAll()
+	for _, link := range dbLinks {
+		graphqlUser := &model.User{
+			ID:   link.User.ID,
+			Name: link.User.Username,
+		}
+		resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title: link.Title, Address: link.Address, User: graphqlUser})
+	}
+	return resultLinks, nil
+}
+```
+
+あとは、リンクを作成するためのデータベース操作で、挿入したリンクからそのユーザへの外部キーを作成する必要がある。
+
+* saveメソッド
+
+```go: internal/links/links.go
+stmt, err := database. Db. Prepare("INSERT INTO Links(Title, Address, UserID) VALUES(?, ?, ?)")
+
+```
+
+- クエリを実行する行を追加(saveメソッド内)
+
+```go: internal/links/links.go
+res, err := stmt.Exec(link.Title, link.Address, link.User.ID)
+```
+
+* GetAll関数
+LinksテーブルとUsersテーブルを結合する。
+
+```go: internal/links/link.go
+func GetAll() []Link {
+
+	stmt, err := database.Db.Prepare("select L.id, L.title, L.address, L.UserID, U.Username from Links L inner join Users U on L.UserID = U.ID") // changed
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	var links []Link
+	var username string
+	var id string
+	for rows.Next() {
+		var link Link
+		err := rows.Scan(&link.ID, &link.Title, &link.Address, &id, &username) // changed
+		if err != nil{
+			log.Fatal(err)
+		}
+		link.User = &users.User{
+			ID:       id,
+			Username: username,
+		} // changed
+		links = append(links, link)
+	}
+	if err = rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return links
+
+}
+
+```
+
+### 9-1. Finished
+
+アプリケーションの完成！
+ `$ go run serve.go`
+
+- ミューテーションの送信(リンクの作成)
+
+```go:
+mutation {
+  createLink(input: {title: "real link!", address: "www.graphql.org"}){
+    user{
+      name
+    }
+  }
+}
+```
+
+* レスポンス
+
+```json:
+{
+  "errors": [
+
+    {
+      "message": "access denied",
+      "path": [
+        "createLink"
+      ]
+    }
+
+  ], 
+  "data": null
+}
+
+```
+
+今試すと、アクセス拒否のメッセージが表示される。
+そのため、Authorizationヘッダを設定する必要がある。
+
+```go:
+{
+  "Authorization": "" // use your own generated token
+}
+```
+
+ここにCreateUserで作成した際に発行されたトークンを入れるとレスポンスが返ってくる！
+>>>>>>> 5332cb7389b247b481b22e2bb7caf6000b66707e
