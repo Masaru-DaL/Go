@@ -8,11 +8,10 @@
 
 ## 1. Dockerの環境構築
 
-今回のCRUDを実装するに当たって、自動でDockerの更新を行ってくれるAirを導入します。この章の目的は以下。
+Docker + Air を使用してみたいので、Airの挙動を確認してみる。
 
 1. Dockerの復習
 2. Airを導入した際の挙動の確認
-3. 今回のCRUDの実装の環境構築
 
 ### 1-1. Dockerの復習
 
@@ -452,8 +451,7 @@ reload_test  | running...
 
 ## 2. GolangでゼロからRESTful APIを作成する
 
-Dockerの環境構築が上手く行かないのでDocker無しでRESTを実装することにする。
-参考: [Golang を使用してゼロから Restful API を作成する](https://dev.to/pacheco/create-a-restful-api-with-golang-from-scratch-42g2#initial-setup)
+参考: [Create a Restful API with Golang from scratch](https://dev.to/pacheco/create-a-restful-api-with-golang-from-scratch-42g2#initial-setup)
 
 ### 2-1. main.go
 
@@ -476,4 +474,61 @@ func main() {
 }
 
 // App running
+
 ```
+
+### 2-2. Fiberの導入
+
+* Webフレームワーク
+* 高速開発が可能になる
+最初のエンドポイントを作成する。
+
+1. `go get github.com/gofiber/fiber/v2`
+
+2. Fiberをmain.goにインポートする
+
+```go: main.go
+package main
+
+import (
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+)
+
+func main() {
+	/* ファイバーインスタンスを作成する
+	ポート5000でHTTPリクエストをリッスンする。*/
+	app := fiber.New()
+	app.Use(cors.New())
+
+	/* エンドポイントにアクセスするためのベースURLがhttp://localhost:5000/apiになる。 */
+	api := app.Group("/api")
+
+	// Test handler
+	api.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("App running")
+	})
+
+	log.Fatal(app.Listen(":5000"))
+}
+```
+
+3. go run main.go
+
+```shell:
+-> go run main.go
+
+ ┌───────────────────────────────────────────────────┐
+ │                   Fiber v2.38.1                   │
+ │               http://127.0.0.1:5000               │
+ │       (bound on host 0.0.0.0 and port 5000)       │
+ │                                                   │
+ │ Handlers ............. 3  Processes ........... 1 │
+ │ Prefork ....... Disabled  PID ............. 85878 │
+ └───────────────────────────────────────────────────┘
+```
+
+4. `localhost:5000/api`にアクセス
+App running
