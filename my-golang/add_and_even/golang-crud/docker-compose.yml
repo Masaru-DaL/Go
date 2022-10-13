@@ -23,7 +23,7 @@ services:
   db:
     container_name: db
     build:
-      context: .
+      context: ./mysql
       dockerfile: Dockerfile
     platform: linux/amd64
     tty: true
