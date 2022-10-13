@@ -450,115 +450,30 @@ reload_test  | running...
 ログから、変更した時点でホットリロードされていることが分かる。
 無事にHello Air‼︎と表示されている。
 
-### 1-3. golangとMySQLをDockerで環境構築
+## 2. GolangでゼロからRESTful APIを作成する
 
-今回のCRUD処理を行う環境構築を行う。
+Dockerの環境構築が上手く行かないのでDocker無しでRESTを実装することにする。
+参考: [Golang を使用してゼロから Restful API を作成する](https://dev.to/pacheco/create-a-restful-api-with-golang-from-scratch-42g2#initial-setup)
 
-#### 1-3-1. スタート時のディレクトリ構成
-
-1-1, 1-2を同プロジェクト内で進めたので、中途半端ですが、再度構築していきます。
+### 2-1. main.go
 
 ```shell:
--> tree -a
+-> tree
 .
-├── .air.toml
-├── Dockerfile
-├── docker-compose.yml
 ├── go.mod
-├── main.go
-└── mysql
-    ├── .env
-    ├── Dockerfile
-    └── init
-        └── create_table.sh
-
-2 directories, 8 files
+└── main.go
 ```
 
-#### 1-3-2. ディレクトリ構成の変更
+```go: main.go
+package main
 
-* `docker compose`でgolangとMySQLのコンテナを作る
-* Dockerのnetworkを通じて、golangからMySQLを操作する
-* MySQLコンテナの初期化処理でarticleテーブルを作成し、データを2つ登録する
-  + golangでその確認を行う
+import "fmt"
 
-```shell:
--> tree -a
-.
-├── .air.toml
-├── docker-compose.yml
-├── golang
-│   ├── Dockerfile
-│   └── src
-│       ├── article
-│       │   └── article.go
-│       ├── go.mod
-│       └── main.go
-└── mysql
+func main() {
 
-    ├── .env
-    ├── Dockerfile
-    └── init
-        └── create_table.sh
+	fmt.Println("App running")
 
-5 directories, 9 files
+}
 
-```
-
-#### 1-3-3. docker-compose.yml
-
-- serviceにgoを追加
-- networksを追加することで、サービス名を使ってサービス間の通信を行うことができる。
-
-```yml: docker-compose.yml
-version: "3.8"
-
-services:
-  go:
-    container_name: go
-    build:
-      context: ./golang
-      dockerfile: Dockerfile
-    tty: true
-    ports:
-      - 8080:8080
-    env_file:
-      - ./mysql/.env
-    depends_on:
-      - db
-    volumes:
-      - type: bind
-        source: ./golang/src
-        target: /go/src
-    networks:
-      - golang_test_network
-
-  db:
-    container_name: db
-    build:
-      context: .
-      dockerfile: Dockerfile
-    platform: linux/amd64
-    tty: true
-    ports:
-      - 3306:3306
-    env_file:
-      - ./mysql/.env
-    volumes:
-      - type: volume
-        source: mysql-data
-        target: /var/lib/mysql
-      - type: bind
-        source: ./mysql/init
-        target: /docker-entrypoint-initdb.d
-    networks:
-      - golang_test_network
-
-volumes:
-  mysql-data:
-    name: mysql-volume
-
-networks:
-  golang_test_network:
-    external: true
+// App running
 ```
