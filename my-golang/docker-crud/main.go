@@ -2,7 +2,6 @@ package main
 
 import (
 	"dokcer-crud/todos"
-	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,10 +21,7 @@ func setupRoutes(app *fiber.App) {
 
 func main() {
 	app := fiber.New()
-	app.Get("/", func(c *fiber.Ctx) error {
-		fmt.Println("🥉 Last handler")
-		return c.SendString("Hello, Docker 👋!")
-	})
+	setupRoutes(app)
 
 	log.Fatal(app.Listen(":1323"))
 }
