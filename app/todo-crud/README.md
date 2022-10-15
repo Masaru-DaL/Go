@@ -1,6 +1,7 @@
 - [golang TODO Application](#golang-todo-application)
   - [1. 要件定義](#1-要件定義)
   - [2. Web APIの仕様選定](#2-web-apiの仕様選定)
+  - [3. Postman](#3-postman)
 # golang TODO Application
 
 ## 1. 要件定義
@@ -40,3 +41,7 @@
 * DELETE `tasks/:id`
   + **idを指定して、サーバのDBのタスクを削除する**
   + 例えば、`DELETE tasks/93b7cb6a`のようにリクエストする。
+
+## 3. Postman
+
+[Postman](https://www.postman.com/downloads/)でAPIを叩けるようにしておく。
