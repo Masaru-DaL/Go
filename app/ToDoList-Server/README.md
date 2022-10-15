@@ -2,6 +2,7 @@
   - [1. 要件定義](#1-要件定義)
   - [2. Web APIの仕様選定](#2-web-apiの仕様選定)
   - [3. Postman](#3-postman)
+  - [4. ディレクトリ構成](#4-ディレクトリ構成)
 # golang TODO Application
 
 ## 1. 要件定義
@@ -45,3 +46,20 @@
 ## 3. Postman
 
 [Postman](https://www.postman.com/downloads/)でAPIを叩けるようにしておく。
+
+## 4. ディレクトリ構成
+
+```shell:
+-> tree
+.
+├── Dockerfile
+├── README.md
+├── docker-compose.yml
+├── go.mod
+├── main.go
+├── model       # データベース操作用
+│   └── db.go
+└── router      # APIを受け取り、modelに受け渡す
+
+2 directories, 6 files
+```
