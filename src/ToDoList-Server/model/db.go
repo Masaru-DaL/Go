@@ -12,7 +12,7 @@ import (
 
 var db *gorm.DB
 
-/* DBconnection: DB接続とテーブルを作成する関数 */
+/* DBConnection: DB接続とテーブルを作成する関数 */
 func DBConnection() *sql.DB {
 	// GetDBConfigを実行し、戻り値をdsnと定義する
 	dsn := GetDBConfig()
@@ -46,7 +46,7 @@ func GetDBConfig() string {
 	dbname := os.Getenv("DB_DBNAME")
 
 	// dsn(DBの接続情報つける識別子)を定義する
-	dsn := fmt.Sprintf("%s.%s@tcp(%s:%s)/%s", user, password, hostname, port, dbname) + "?charset=utf8mb4&parseTime=True&loc=local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, password, hostname, port, dbname) + "?charset=utf8mb4&parseTime=True&loc=Local"
 	// dsnを返す
 	return dsn
 }
