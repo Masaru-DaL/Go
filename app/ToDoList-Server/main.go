@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ToDoList-Server/model"
 	"ToDoList-Server/router"
 
 	"github.com/labstack/echo/v4"

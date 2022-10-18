@@ -13,7 +13,7 @@ import (
 var db *gorm.DB
 
 /* DBconnection: DB接続とテーブルを作成する関数 */
-func DBconnection() *sql.DB {
+func DBConnection() *sql.DB {
 	// GetDBConfigを実行し、戻り値をdsnと定義する
 	dsn := GetDBConfig()
 	// error型のerrを定義する
