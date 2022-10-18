@@ -3,7 +3,9 @@ module ToDoList-Server
 go 1.19
 
 require (
+	github.com/dgryski/trifles v0.0.0-20220929205538-b1e55e64a6e3
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.9.1
 	gorm.io/driver/mysql v1.4.1
 	gorm.io/gorm v1.24.0
