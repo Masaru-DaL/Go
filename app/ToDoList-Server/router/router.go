@@ -24,6 +24,7 @@ func SetRouter(e *echo.Echo) error {
 	e.Use(middleware.CORS())
 
 	/* APIを書く */
+	e.GET("/api/tasks", GetTaskHandler)
 
 	/* port8000を開く */
 	err := e.Start(":8000")
