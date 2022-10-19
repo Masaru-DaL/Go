@@ -2,7 +2,7 @@
   - [1. 要件定義](#1-要件定義)
   - [2. Web APIの仕様選定](#2-web-apiの仕様選定)
   - [3. Postman](#3-postman)
-  - [4. ディレクトリ構成](#4-ディレクトリ構成)
+  - [4. GETメソッドを実装後](#4-getメソッドを実装後)
 # golang TODO Application
 
 ## 1. 要件定義
@@ -47,19 +47,28 @@
 
 [Postman](https://www.postman.com/downloads/)でAPIを叩けるようにしておく。
 
-## 4. ディレクトリ構成
+## 4. GETメソッドを実装後
+
+1. `docker compose up -d --build`
+2. serverコンテナ内に入る
+3. `go run main.go`
 
 ```shell:
--> tree
-.
-├── Dockerfile
-├── README.md
-├── docker-compose.yml
-├── go.mod
-├── main.go
-├── model       # データベース操作用
-│   └── db.go
-└── router      # APIを受け取り、modelに受け渡す
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.9.0
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
 
-2 directories, 6 files
+                                    O\
+
+⇨ http server started on [::]:8000
 ```
+
+4. POSTMANでAPIを叩く
+GETメソッド: `http://localhost:8000/api/tasks` -> send
+ターミナルに表示: `2022-10-19T10:28:29.639749756+09:00 localhost:8000 GET /api/tasks 200`
+
+POSTMANに表示: [] (DBが空なので正常)
