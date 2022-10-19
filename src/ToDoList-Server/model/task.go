@@ -49,3 +49,10 @@ func AddTask(name string) (*Task, error) {
 	// taskのポインタとerrを返す
 	return &task, db.Error
 }
+
+/* ChangeFinishedTask: 引数がuuid.UUID型のtaskID, 戻り値がerror型 */
+func ChangeFinishedTask(taskID uuid.UUID) error {
+	// DBのTaskテーブルから、taskIDと一致するidを探し、そのFinishedをtrueにする
+	err := db.Model(&Task{}).Where("id = ?", taskID).Update("finished", true).Error
+	return err
+}

@@ -26,8 +26,9 @@ func SetRouter(e *echo.Echo) error {
 	/* APIを書く */
 	e.GET("/api/tasks", GetTaskHandler)
 	e.POST("/api/tasks", AddTaskHandler)
+	e.PUT("/api/tasks/:taskID", ChangeFinishedTaskHandler)
+	e.DELETE("/api/tasks/:taskID", DeleteTaskHandler)
 
 	/* port8000を開く */
 	err := e.Start(":8000")
 	return err
-}

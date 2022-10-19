@@ -6,6 +6,7 @@
   - [5. 残りの実装](#5-残りの実装)
     - [5-1. POSTメソッドの実装と確認](#5-1-postメソッドの実装と確認)
     - [5-2. phpMyAdmin](#5-2-phpmyadmin)
+    - [5-3. PUT, DELETEメソッドの実装と確認](#5-3-put-deleteメソッドの実装と確認)
 # golang TODO Application
 
 ## 1. 要件定義
@@ -137,3 +138,13 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "ネットワー�
 todolist -> tasksでPOST出来ているのが確認出来た。
 
 ![](2022-10-19-16-54-56.png)
+
+### 5-3. PUT, DELETEメソッドの実装と確認
+
+* PUT
+ `e.PUT("/api/tasks/:taskID", ChangeFinishedTaskHandler)`
+
+[GORM CRUD: レコードの更新](https://gorm.io/ja_JP/docs/update.html)
+
+* DELETE
+ `e.DELETE("/api/tasks/:taskID", DeleteTaskHandler)`
