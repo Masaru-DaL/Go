@@ -2,8 +2,9 @@ package router
 
 import (
 	"ToDoList-Server/model"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 /* Task一覧をjsonで返却する関数 */
@@ -19,4 +20,10 @@ func GetTaskHandler(c echo.Context) error {
 
 	// エラーが起きなかった場合、StatusOKとtasksを返す
 	return c.JSON(http.StatusOK, tasks)
+}
+
+/* POSTメソッド用の構造体 */
+// RequestTask型は、文字列のNameをパラメータとして持つ
+type RequestTask struct {
+	Name string `json:"name"`
 }

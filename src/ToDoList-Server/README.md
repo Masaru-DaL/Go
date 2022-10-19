@@ -50,6 +50,8 @@
 
 ## 4. GETメソッドを実装後
 
+ `e.GET("/api/tasks", GetTaskHandler)`
+
 1. `docker compose up -d --build`
 2. serverコンテナ内に入る
 3. `go run main.go`
