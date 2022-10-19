@@ -25,5 +25,33 @@ func GetTaskHandler(c echo.Context) error {
 /* POSTメソッド用の構造体 */
 // RequestTask型は、文字列のNameをパラメータとして持つ
 type RequestTask struct {
+	// json:"name" -> jsonデータを代入するための識別子
 	Name string `json:"name"`
+}
+
+/* AddTaskHandler: 引数がecho.Context型, 戻り値はerror型 */
+func AddTaskHandler(c echo.Context) error {
+	// 空のRequestTaskであるreqを定義
+	var req RequestTask
+
+	// bodyのjsonファイルをbind
+	err := c.Bind(&req)
+	// エラーハンドリング
+	// StatusBadRequestを返す
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
+	}
+
+	// 空のmodel(package)のTaskである、taskを定義
+	var task *model.Task
+
+	// model(package)のAddTask関数を実行し、戻り値をtask, errと定義
+	task, err = model.AddTask(req.Name)
+	// エラーハンドリング
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
+	}
+
+	// エラーでない場合、StatusOKと追加されたtaskを返す
+	return c.JSON(http.StatusOK, task)
 }

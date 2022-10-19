@@ -27,3 +27,25 @@ func GetTasks() ([]Task, error) {
 	// tasksとerrを返す
 	return tasks, err
 }
+
+/* AddTask: 引数がstring型のname, 戻り値がTaskのポインタとerror型 */
+func AddTask(name string) (*Task, error) {
+	// 新たなuuidを生成し、これをid、成否をerrとする
+	id, err := uuid.NewUUID()
+	if err != nil {
+		return nil, err
+	}
+
+	// ID, Name, Finishedにid, name, falseを代入したTask型のtaskを定義する
+	task := Task{
+		ID:       id,
+		Name:     name,
+		Finished: false,
+	}
+
+	// taskをDBのTaskテーブルに追加。成否をerrとする
+	err = db.Create(&task).Error
+
+	// taskのポインタとerrを返す
+	return &task, db.Error
+}

@@ -4,6 +4,8 @@
   - [3. Postman](#3-postman)
   - [4. GETメソッドを実装後](#4-getメソッドを実装後)
   - [5. 残りの実装](#5-残りの実装)
+    - [5-1. POSTメソッドの実装と確認](#5-1-postメソッドの実装と確認)
+    - [5-2. phpMyAdmin](#5-2-phpmyadmin)
 # golang TODO Application
 
 ## 1. 要件定義
@@ -54,6 +56,9 @@
 
 1. `docker compose up -d --build`
 2. serverコンテナ内に入る
+起動しているコンテナに入る場合は `docker compose exec` を使う
+ `docker compose exec server sh `
+
 3. `go run main.go`
 
 ```shell:
@@ -68,6 +73,7 @@ ____________________________________O/_______
                                     O\
 
 ⇨ http server started on [::]:8000
+
 ```
 
 4. POSTMANでAPIを叩く
@@ -87,3 +93,47 @@ DBにタスク追加後はjsonで返ってくる予定。
 
 1. ToDoリストの完成(CUD)
 2. 起動し、正常に動くかの確認
+
+### 5-1. POSTメソッドの実装と確認
+
+ `e.POST("/api/tasks", AddTaskHandler)`
+
+1. コンテナの起動: `docker compose up -d --build`
+2. コンテナに入る: `docker compose exec server sh`
+3. POSTMANを開く
+   1. POSTメソッド
+   2. `http://localhost:8000/api/tasks`
+   3. body -> raw -> JSON
+   4. { "name": "golangを学習する" }
+   5. send
+6. 結果
+
+- POSTMANログ
+
+```json:
+{
+    "ID": "569455f5-4f81-11ed-bd07-0242ac140004",
+    "Name": "golangを学習する",
+    "Finished": false
+}
+```
+
+* 標準出力
+ `2022-10-19T16:40:44.038614676+09:00 localhost:8000 POST /api/tasks 200`
+
+無事にPOST出来ている。
+
+* curlでもPOSTしてみる
+
+```shell:
+curl -X POST -H "Content-Type: application/json" -d '{"name": "ネットワークを学習する"}' localhost:8000/api/tasks
+
+{"ID":"187821c7-4f83-11ed-bd07-0242ac140004", "Name":"ネットワークを学習する", "Finished":false}
+```
+
+### 5-2. phpMyAdmin
+
+`localhost:4040` で起動。
+todolist -> tasksでPOST出来ているのが確認出来た。
+
+![](2022-10-19-16-54-56.png)

@@ -8,3 +8,6 @@ COPY . .
 # alpineパッケージのアップデート
 RUN apk upgrade --update && \
     apk --no-cache add git
+RUN go get github.com/cosmtrek/air@v1.29.0
+
+CMD ["air", "-c", ".air.toml"]
