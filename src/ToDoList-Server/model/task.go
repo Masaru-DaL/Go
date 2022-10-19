@@ -56,3 +56,9 @@ func ChangeFinishedTask(taskID uuid.UUID) error {
 	err := db.Model(&Task{}).Where("id = ?", taskID).Update("finished", true).Error
 	return err
 }
+
+func DeleteTask(taskID uuid.UUID) error {
+	// DBのTaskテーブルからtaskIDと一致するidを探し、そのタスクを削除する
+	err := db.Where("id = ?", taskID).Delete(&Task{}).Error
+	return err
+}

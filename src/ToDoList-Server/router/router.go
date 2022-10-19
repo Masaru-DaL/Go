@@ -32,3 +32,5 @@ func SetRouter(e *echo.Echo) error {
 	/* port8000を開く */
 	err := e.Start(":8000")
 	return err
+
+}

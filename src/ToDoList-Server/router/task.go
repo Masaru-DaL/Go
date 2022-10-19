@@ -73,3 +73,15 @@ func ChangeFinishedTaskHandler(c echo.Context) error {
 	}
 	return c.NoContent(http.StatusOK)
 }
+
+func DeleteTaskHandler(c echo.Context) error {
+	taskID, err := uuid.Parse(c.Param("taskID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
+	}
+	err = model.DeleteTask(taskID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Bad Request")
+	}
+	return c.NoContent(http.StatusOK)
+}
