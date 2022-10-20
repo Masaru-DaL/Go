@@ -8,6 +8,32 @@
     - [5-2. phpMyAdmin](#5-2-phpmyadmin)
     - [5-3. PUT, DELETEメソッドの実装と確認](#5-3-put-deleteメソッドの実装と確認)
 # golang TODO Application
+* 最終的なディレクトリ構成
+
+```shell:
+-> tree
+.
+├── Dockerfile
+├── README.md
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── main.go
+├── model
+│   ├── db.go
+│   └── task.go
+├── mysql # Docker立ち上げの際に作られる
+│   └── data # volumeを指定
+├── phpmyadmin # Docker立ち上げの際に作られる
+└── router
+
+    ├── router.go
+    └── task.go
+
+```
+
+- 完成コード
+https://github.com/Masaru-DaL/Go/tree/main/src/ToDoList-Server
 
 ## 1. 要件定義
 
@@ -101,22 +127,27 @@ DBにタスク追加後はjsonで返ってくる予定。
 
 1. コンテナの起動: `docker compose up -d --build`
 2. コンテナに入る: `docker compose exec server sh`
-3. POSTMANを開く
+3. Echoの立ち上げ: `go run main.go`
+4. POSTMANを開く
    1. POSTメソッド
    2. `http://localhost:8000/api/tasks`
+
    3. body -> raw -> JSON
    4. { "name": "golangを学習する" }
    5. send
-6. 結果
+5. 結果
 
-- POSTMANログ
+* POSTMANログ
 
 ```json:
 {
+
     "ID": "569455f5-4f81-11ed-bd07-0242ac140004",
     "Name": "golangを学習する",
     "Finished": false
+
 }
+
 ```
 
 * 標準出力
@@ -130,6 +161,7 @@ DBにタスク追加後はjsonで返ってくる予定。
 curl -X POST -H "Content-Type: application/json" -d '{"name": "ネットワークを学習する"}' localhost:8000/api/tasks
 
 {"ID":"187821c7-4f83-11ed-bd07-0242ac140004", "Name":"ネットワークを学習する", "Finished":false}
+
 ```
 
 ### 5-2. phpMyAdmin
@@ -148,3 +180,73 @@ todolist -> tasksでPOST出来ているのが確認出来た。
 
 * DELETE
  `e.DELETE("/api/tasks/:taskID", DeleteTaskHandler)`
+
+* 前回POSTしたものの確認から
+
+1. Dockerの立ち上げ
+2. コンテナに入ってEchoを立ち上げる
+3. POSTMANとCLIで確認する
+
+```json:
+// POSTMAN
+// GET, `http://localhost:8000/api/tasks`
+
+[
+
+    {
+        "ID": "187821c7-4f83-11ed-bd07-0242ac140004",
+        "Name": "ネットワークを学習する",
+        "Finished": false
+    },
+    {
+        "ID": "569455f5-4f81-11ed-bd07-0242ac140004",
+        "Name": "golangを学習する",
+        "Finished": false
+    }
+
+]
+
+// -> http http://localhost:8000/api/tasks
+HTTP/1.1 200 OK
+Content-Length: 202
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 19 Oct 2022 23:43:39 GMT
+Vary: Origin
+
+[
+
+    {
+        "Finished": false,
+        "ID": "187821c7-4f83-11ed-bd07-0242ac140004",
+        "Name": "ネットワークを学習する"
+    },
+    {
+        "Finished": false,
+        "ID": "569455f5-4f81-11ed-bd07-0242ac140004",
+        "Name": "golangを学習する"
+    }
+
+]
+```
+
+![](2022-10-20-08-46-56.png)
+
+4. PUTを叩く
+PUTを送ってタスクを終了(Finished)にする。
+PUTで `localhost:8000/api/tasks/` に続けてtaskIDを指定する。
+今回は「ネットワークを学習する」のtaskIDを指定する。
+
+![](2022-10-20-08-51-30.png)
+
+![](2022-10-20-08-49-07.png)
+指定した「ネットワークを学習する」がFished1に変更された。
+
+1. DELETEを叩く
+DELETEを送ってタスク自体を削除する。
+DELETEで `localhost:8000/api/tasks/` に続けてtaskIDを指定する。
+今回も「ネットワークを学習する」のtaskIDを指定する。
+
+![](2022-10-20-08-51-48.png)
+
+![](2022-10-20-08-52-21.png)
+指定した「ネットワークを学習する」がなくなっているのが確認できる。
