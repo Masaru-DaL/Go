@@ -32,9 +32,6 @@
 
 ```
 
-- 完成コード
-https://github.com/Masaru-DaL/Go/tree/main/src/ToDoList-Server
-
 ## 1. 要件定義
 
 * TODOアプリケーションに必要な要件定義
