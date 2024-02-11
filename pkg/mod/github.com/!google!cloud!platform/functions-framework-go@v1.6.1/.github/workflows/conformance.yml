@@ -1,0 +1,96 @@
+name: Go Conformance CI
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  # Download the Go conformance client binary in it's own Github runner so that the version of Go used doesn't matter
+  download-conformance-client:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.resolve-latest-client.outputs.version }}
+    steps:
+    - name: Resolve latest client version
+      id: resolve-latest-client
+      uses: GoogleCloudPlatform/functions-framework-conformance/.github/actions/client/resolve-latest@v1.7.0
+    # Check if it's already in the cache
+    - name: Cache client
+      id: check-for-cached-client
+      uses: actions/cache@v3
+      with:
+        path: ~/go/bin/client
+        key: ${{ steps.resolve-latest-client.outputs.version }}
+    - name: Install and cache client
+      if: ${{ steps.check-for-cached-client.outputs.cache-hit != 'true' }}
+      uses: GoogleCloudPlatform/functions-framework-conformance/.github/actions/client/install@v1.7.0
+      with:
+        cache-path: ~/client
+        cache-key: ${{ steps.resolve-latest-client.outputs.version }}
+  build:
+    needs:
+    - download-conformance-client
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.13, 1.16, 1.18]
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Set up Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v2
+      with:
+        go-version: '${{ matrix.go-version }}'
+    - name: Pre-fetch go dependencies and build
+      run: 'go build ./...'
+    - name: Fetch conformance client
+      uses: actions/cache@v3
+      with:
+        path: ~/go/bin/client
+        key: ${{ needs.download-conformance-client.outputs.cache-key }}
+    - name: Run HTTP conformance tests
+      run: |
+        client \
+            -type=http \
+            -buildpacks=false \
+            -start-delay=5 \
+            -cmd="go run testdata/conformance/cmd/http/main.go"
+    - name: Run event conformance tests
+      run: |
+        client \
+          -type=legacyevent \
+          -buildpacks=false \
+          -start-delay=5 \
+          -cmd="go run testdata/conformance/cmd/legacyevent/main.go"
+    - name: Run CloudEvent conformance tests
+      run: |
+          client \
+            -type=cloudevent \
+            -buildpacks=false \
+            -start-delay=5 \
+            -cmd="go run testdata/conformance/cmd/cloudevent/main.go"
+    - name: Run HTTP conformance tests using declarative API
+      run: |
+          FUNCTION_TARGET=declarativeHTTP client \
+            -type=http \
+            -buildpacks=false \
+            -start-delay=5 \
+            -cmd="go run testdata/conformance/cmd/declarative/main.go"
+    - name: Run CloudEvent conformance tests using declarative API
+      run: |
+          FUNCTION_TARGET=declarativeCloudEvent client \
+            -type=cloudevent \
+            -buildpacks=false \
+            -start-delay=5 \
+            -cmd="go run testdata/conformance/cmd/declarative/main.go"
+    - name: Run HTTP concurrency conformance tests
+      run: |
+          FUNCTION_TARGET=concurrentHTTP client \
+            -type=http \
+            -buildpacks=false \
+            -start-delay=5 \
+            -cmd="go run testdata/conformance/cmd/declarative/main.go" \
+            -validate-concurrency=true
